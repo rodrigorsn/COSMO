@@ -40,7 +40,7 @@ export const InterviewsView: React.FC<{ onNewInterviewClick?: () => void }> = ({
   const [showEmergentQuestionModal, setShowEmergentQuestionModal] = useState(false);
   const [emergentText, setEmergentText] = useState('');
   const [emergentCategory, setEmergentCategory] = useState('Processo / Foco');
-  const [promoteTo, setPromoteTo] = useState<'interview' | 'vertical' | 'global'>('vertical');
+  const [promoteTo, setPromoteTo] = useState<'interview' | 'organizacao' | 'subvertical' | 'vertical' | 'global'>('vertical');
 
   // Finding Extraction state
   const [extractingForQuestionId, setExtractingForQuestionId] = useState<string | null>(null);
@@ -75,10 +75,10 @@ export const InterviewsView: React.FC<{ onNewInterviewClick?: () => void }> = ({
     const newQ: InterviewQuestionInstance = {
       id: `IP-EMERG-${Date.now().toString().slice(-4)}`,
       texto: emergentText.trim(),
-      escopo: promoteTo === 'global' ? 'global' : promoteTo === 'vertical' ? 'vertical' : 'entrevista',
+      escopo: promoteTo,
       categoria: emergentCategory,
       respostaQualitativa: '',
-      followUps: ['Quanto tempo isso consome?', 'Qual a frequência?'],
+      followUps: ['Quanto tempo isso consome?', 'Qual a frequência dessa ocorrência?'],
       isEmergente: true
     };
 
@@ -89,8 +89,21 @@ export const InterviewsView: React.FC<{ onNewInterviewClick?: () => void }> = ({
     setActiveInterview(updated);
     saveInterview(updated);
 
-    if (promoteTo === 'vertical' || promoteTo === 'global') {
-      promoteQuestion(emergentText.trim(), emergentCategory, newQ.followUps, promoteTo, activeInterview.verticalId);
+    if (promoteTo !== 'interview') {
+      promoteQuestion(
+        emergentText.trim(),
+        emergentCategory,
+        newQ.followUps,
+        promoteTo,
+        {
+          interviewId: activeInterview.id,
+          organizacaoId: activeInterview.organizacaoId,
+          verticalId: activeInterview.verticalId,
+          subverticalId: currentOrg?.subvertical,
+          previousScope: 'Entrevista',
+          originNote: `Entrevista ${activeInterview.id} (${currentOrg?.nome})`
+        }
+      );
     }
 
     setEmergentText('');
@@ -116,9 +129,31 @@ export const InterviewsView: React.FC<{ onNewInterviewClick?: () => void }> = ({
       dorConsolidadaId: findingSelectedPainId
     });
 
+    const updatedAchadosIds = activeInterview.achadosGeradosIds.includes(newFinding.id)
+      ? activeInterview.achadosGeradosIds
+      : [...activeInterview.achadosGeradosIds, newFinding.id];
+
+    const updatedInterview = {
+      ...activeInterview,
+      achadosGeradosIds: updatedAchadosIds
+    };
+    setActiveInterview(updatedInterview);
+    saveInterview(updatedInterview);
+
     setExtractingForQuestionId(null);
     setFindingOriginalQuote('');
     setFindingInterpretation('');
+  };
+
+  const handleFinalizeInterview = () => {
+    if (!activeInterview) return;
+    const updated: Interview = {
+      ...activeInterview,
+      status: 'Concluída'
+    };
+    setActiveInterview(updated);
+    saveInterview(updated);
+    setShowReviewModal(false);
   };
 
   return (
@@ -166,8 +201,23 @@ export const InterviewsView: React.FC<{ onNewInterviewClick?: () => void }> = ({
             {/* Top Bar of active interview */}
             <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <span className="font-mono text-xs text-slate-400 font-semibold">{activeInterview.id}</span>
-                <h2 className="text-base font-bold text-slate-900 mt-0.5">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs text-slate-400 font-semibold">{activeInterview.id}</span>
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase ${
+                    activeInterview.status === 'Concluída' 
+                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
+                      : 'bg-amber-100 text-amber-800 border border-amber-300'
+                  }`}>
+                    {activeInterview.status}
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] font-semibold">
+                    {activeInterview.formato || 'Individual'}
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-semibold">
+                    {activeInterview.tipo}
+                  </span>
+                </div>
+                <h2 className="text-base font-bold text-slate-900 mt-1">
                   {currentPerson?.nome} — {currentPerson?.cargo} ({currentPerson?.perfil})
                 </h2>
                 <div className="text-xs text-slate-500 mt-0.5">
@@ -483,7 +533,7 @@ export const InterviewsView: React.FC<{ onNewInterviewClick?: () => void }> = ({
 
             <div className="space-y-1.5">
               <label className="font-semibold text-slate-700 block">Destino da Pergunta (Promoção):</label>
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="radio"
@@ -491,7 +541,25 @@ export const InterviewsView: React.FC<{ onNewInterviewClick?: () => void }> = ({
                     checked={promoteTo === 'interview'}
                     onChange={() => setPromoteTo('interview')}
                   />
-                  <span>Manter somente nesta entrevista</span>
+                  <span>Manter somente nesta entrevista (Escopo: Entrevista)</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="promote"
+                    checked={promoteTo === 'organizacao'}
+                    onChange={() => setPromoteTo('organizacao')}
+                  />
+                  <span><strong>Promover para a Organização</strong> (Escopo: {currentOrg?.nome || 'Organização atual'})</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="promote"
+                    checked={promoteTo === 'subvertical'}
+                    onChange={() => setPromoteTo('subvertical')}
+                  />
+                  <span><strong>Promover para a Subvertical</strong> (Escopo: {currentOrg?.subvertical || 'Subvertical'})</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -500,7 +568,7 @@ export const InterviewsView: React.FC<{ onNewInterviewClick?: () => void }> = ({
                     checked={promoteTo === 'vertical'}
                     onChange={() => setPromoteTo('vertical')}
                   />
-                  <span><strong>Promover para a Vertical</strong> (aparecerá nas próximas entrevistas de Contabilidade)</span>
+                  <span><strong>Promover para a Vertical</strong> (aparecerá nas próximas entrevistas da vertical)</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -509,7 +577,7 @@ export const InterviewsView: React.FC<{ onNewInterviewClick?: () => void }> = ({
                     checked={promoteTo === 'global'}
                     onChange={() => setPromoteTo('global')}
                   />
-                  <span><strong>Promover para Biblioteca Global</strong> (aplicável a qualquer setor)</span>
+                  <span><strong>Promover para Biblioteca Global</strong> (aplicável cross-vertical)</span>
                 </label>
               </div>
             </div>
@@ -539,30 +607,43 @@ export const InterviewsView: React.FC<{ onNewInterviewClick?: () => void }> = ({
             <div className="flex items-center justify-between border-b border-slate-100 pb-2">
               <h3 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                Revisar Achados da Entrevista (PRD Seção 60)
+                Revisar e Finalizar Entrevista (PRD Seção 60)
               </h3>
               <button onClick={() => setShowReviewModal(false)} className="text-slate-400 hover:text-slate-700">✕</button>
             </div>
 
             <p className="text-slate-600">
-              Ao concluir uma entrevista, os achados gerados devem ser revisados e associados formalmente às dores. Dores <strong>não</strong> são criadas automaticamente sem confirmação humana (PRD Seção 60).
+              Ao clicar em finalizar, o status da entrevista mudará formalmente para <strong>Concluída</strong>. Os achados associados alimentam a cadeia de evidências e o cálculo de maturidade da organização.
             </p>
 
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
-              <div className="font-bold text-slate-800">Achados registrados nesta sessão:</div>
-              <ul className="list-disc list-inside text-slate-600 space-y-1">
-                {activeInterview.achadosGeradosIds.map(id => (
-                  <li key={id} className="font-mono">{id}</li>
-                ))}
-              </ul>
+              <div className="font-bold text-slate-800">Achados vinculados a esta sessão ({activeInterview.achadosGeradosIds.length}):</div>
+              {activeInterview.achadosGeradosIds.length > 0 ? (
+                <ul className="list-disc list-inside text-slate-600 space-y-1">
+                  {activeInterview.achadosGeradosIds.map(id => (
+                    <li key={id} className="font-mono">{id}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-slate-400 italic">Nenhum achado marcado ainda nesta sessão.</p>
+              )}
             </div>
 
             <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
               <button
+                type="button"
                 onClick={() => setShowReviewModal(false)}
-                className="px-4 py-1.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
+                className="px-3 py-1.5 rounded border border-slate-200 text-slate-600 hover:bg-slate-50"
               >
-                Concluir e Salvar Entrevista
+                Voltar
+              </button>
+              <button
+                type="button"
+                onClick={handleFinalizeInterview}
+                className="px-4 py-1.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-semibold flex items-center gap-1.5"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Marcar como Concluída</span>
               </button>
             </div>
           </div>

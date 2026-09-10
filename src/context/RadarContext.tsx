@@ -12,7 +12,9 @@ import {
   Competitor, 
   CrossVerticalComparison,
   InterviewQuestionInstance,
-  PainScoreBreakdown
+  PainScoreBreakdown,
+  QuestionTargetScope,
+  QuestionPromotionContext
 } from '../types/radar';
 import { 
   INITIAL_VERTICAIS, 
@@ -89,7 +91,7 @@ interface RadarContextType {
   addQuestionToLibrary: (question: Omit<QuestionLibraryItem, 'id'>) => void;
   addSource: (source: Omit<MarketSource, 'id'>) => void;
   addCompetitor: (competitor: Omit<Competitor, 'id'>) => void;
-  promoteQuestion: (texto: string, categoria: string, followUps: string[], targetScope: 'vertical' | 'global', verticalId?: string) => void;
+  promoteQuestion: (texto: string, categoria: string, followUps: string[], targetScope: QuestionTargetScope, contextData?: QuestionPromotionContext) => void;
   resetToDemoData: () => void;
 }
 
@@ -138,8 +140,16 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return saved ? JSON.parse(saved) : INITIAL_QUESTION_LIBRARY;
   });
 
-  const [fontes, setFontes] = useState<MarketSource[]>(INITIAL_FONTES);
-  const [concorrentes, setConcorrentes] = useState<Competitor[]>(INITIAL_CONCORRENTES);
+  const [fontes, setFontes] = useState<MarketSource[]>(() => {
+    const saved = localStorage.getItem(`${LOCAL_STORAGE_KEY}_FONT`);
+    return saved ? JSON.parse(saved) : INITIAL_FONTES;
+  });
+
+  const [concorrentes, setConcorrentes] = useState<Competitor[]>(() => {
+    const saved = localStorage.getItem(`${LOCAL_STORAGE_KEY}_CONC`);
+    return saved ? JSON.parse(saved) : INITIAL_CONCORRENTES;
+  });
+
   const [crossVertical] = useState<CrossVerticalComparison[]>(INITIAL_CROSS_VERTICAL);
 
   // Active navigation selection
@@ -186,6 +196,14 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem(`${LOCAL_STORAGE_KEY}_PERG`, JSON.stringify(perguntasBiblioteca));
   }, [perguntasBiblioteca]);
 
+  useEffect(() => {
+    localStorage.setItem(`${LOCAL_STORAGE_KEY}_FONT`, JSON.stringify(fontes));
+  }, [fontes]);
+
+  useEffect(() => {
+    localStorage.setItem(`${LOCAL_STORAGE_KEY}_CONC`, JSON.stringify(concorrentes));
+  }, [concorrentes]);
+
   const addFinding = (f: Omit<Finding, 'id' | 'dataRegistro'>): Finding => {
     const newId = `ACH-${Date.now().toString().slice(-4)}`;
     const newFinding: Finding = {
@@ -195,7 +213,52 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
     setAchados(prev => [newFinding, ...prev]);
 
-    // If associated to a consolidated pain, update pain's references
+    // Reforçar Evidence Chain (PRD Seção 4, 28, 29):
+    // Achado -> Ocorrência de Dor da Organização (única por dorConsolidadaId + organizacaoId) -> Dor Consolidada
+    if (f.dorConsolidadaId && f.organizacaoId) {
+      setOcorrenciasDores(prevOcc => {
+        const existingIdx = prevOcc.findIndex(
+          o => o.dorConsolidadaId === f.dorConsolidadaId && o.organizacaoId === f.organizacaoId
+        );
+
+        if (existingIdx >= 0) {
+          // Múltiplos achados da mesma organização alimentam a mesma ocorrência conceitual
+          const existing = prevOcc[existingIdx];
+          const updatedAchados = existing.achadosIds.includes(newId)
+            ? existing.achadosIds
+            : [...existing.achadosIds, newId];
+
+          const updatedOcc: PainOccurrence = {
+            ...existing,
+            achadosIds: updatedAchados,
+            evidenciaNatureza: f.natureza === 'contraria' ? 'contraria' : existing.evidenciaNatureza
+          };
+          const copy = [...prevOcc];
+          copy[existingIdx] = updatedOcc;
+          return copy;
+        } else {
+          // Criação da ocorrência de dor associada para esta organização
+          const newOcc: PainOccurrence = {
+            id: `OCC-${Date.now().toString().slice(-4)}`,
+            organizacaoId: f.organizacaoId!,
+            dorConsolidadaId: f.dorConsolidadaId!,
+            painScore: calculatePainScore({
+              frequencia: 3,
+              tempoCusto: 3,
+              severidade: 3,
+              manualidade: 3,
+              repetibilidade: 3
+            }),
+            evidenciaNatureza: f.natureza,
+            notasEspecificas: `Ocorrência registrada a partir do achado: ${f.titulo}`,
+            achadosIds: [newId]
+          };
+          return [...prevOcc, newOcc];
+        }
+      });
+    }
+
+    // Se associado a uma dor consolidada, atualiza as referências de evidências da dor
     if (f.dorConsolidadaId) {
       setDoresConsolidadas(prev => prev.map(p => {
         if (p.id === f.dorConsolidadaId) {
@@ -284,18 +347,26 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     texto: string, 
     categoria: string, 
     followUps: string[], 
-    targetScope: 'vertical' | 'global', 
-    verticalId?: string
+    targetScope: QuestionTargetScope, 
+    contextData?: QuestionPromotionContext
   ) => {
+    const orig = contextData?.originNote || (contextData?.interviewId ? `Entrevista ${contextData.interviewId}` : 'Pesquisa de campo');
+    const prev = contextData?.previousScope || 'Entrevista';
+    const dataStr = new Date().toLocaleDateString('pt-BR');
+
     const newQuestion: QuestionLibraryItem = {
       id: `Q-PROM-${Date.now().toString().slice(-4)}`,
       texto,
       categoria,
       escopo: targetScope,
-      verticalId: targetScope === 'vertical' ? verticalId || selectedVerticalId : undefined,
+      verticalId: (targetScope === 'vertical' || targetScope === 'subvertical' || targetScope === 'organizacao')
+        ? (contextData?.verticalId || selectedVerticalId)
+        : undefined,
+      subverticalId: targetScope === 'subvertical' ? contextData?.subverticalId : undefined,
+      organizacaoId: targetScope === 'organizacao' ? contextData?.organizacaoId : undefined,
       followUps,
       criadaEm: new Date().toISOString().split('T')[0],
-      historicoPromocao: `Promovida para escopo ${targetScope.toUpperCase()} em ${new Date().toLocaleDateString('pt-BR')} via Question Engine.`
+      historicoPromocao: `Criada em ${orig}. Promovida de ${prev} para ${targetScope.toUpperCase()} em ${dataStr}.`
     };
     setPerguntasBiblioteca(prev => [newQuestion, ...prev]);
   };
@@ -309,6 +380,8 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.removeItem(`${LOCAL_STORAGE_KEY}_OCC`);
     localStorage.removeItem(`${LOCAL_STORAGE_KEY}_OPP`);
     localStorage.removeItem(`${LOCAL_STORAGE_KEY}_PERG`);
+    localStorage.removeItem(`${LOCAL_STORAGE_KEY}_FONT`);
+    localStorage.removeItem(`${LOCAL_STORAGE_KEY}_CONC`);
 
     setVerticais(INITIAL_VERTICAIS);
     setOrganizacoes(INITIAL_ORGANIZACOES);
@@ -318,6 +391,8 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setOcorrenciasDores(INITIAL_PAIN_OCCURRENCES);
     setOportunidades(INITIAL_OPPORTUNITIES);
     setPerguntasBiblioteca(INITIAL_QUESTION_LIBRARY);
+    setFontes(INITIAL_FONTES);
+    setConcorrentes(INITIAL_CONCORRENTES);
     setCurrentJourneyStep(1);
     setActiveView('dashboard');
   };

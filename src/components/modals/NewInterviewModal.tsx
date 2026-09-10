@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useRadar } from '../../context/RadarContext';
 import { MessageSquareText, X, Play } from 'lucide-react';
-import { Interview, InterviewQuestionInstance } from '../../types/radar';
+import { Interview, InterviewQuestionInstance, InterviewType, InterviewFormat } from '../../types/radar';
 
 export const NewInterviewModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
   const { organizacoes, perguntasBiblioteca, saveInterview, setActiveInterviewToConduct, setActiveView } = useRadar();
 
   const [orgId, setOrgId] = useState(organizacoes[0]?.id || '');
-  const [selectedOrg, setSelectedOrg] = useState(organizacoes[0]);
   const [entrevistadoId, setEntrevistadoId] = useState(organizacoes[0]?.entrevistados[0]?.id || '');
-  const [tipo, setTipo] = useState<'individual' | 'observacao_processo' | 'dupla'>('individual');
+  const [tipo, setTipo] = useState<InterviewType>('Descoberta');
+  const [formato, setFormato] = useState<InterviewFormat>('Individual');
   const [duracao, setDuracao] = useState(45);
   const [notasGerais, setNotasGerais] = useState('');
 
@@ -30,16 +30,20 @@ export const NewInterviewModal: React.FC<{ isOpen: boolean; onClose: () => void 
     e.preventDefault();
     if (!currentOrg || !currentPerson) return;
 
-    // Compose questions from Question Engine: Global + Vertical + Perfil
+    // Composição rigorosa do Question Engine (PRD Seção 17):
+    // 6 níveis: Global, Vertical, Subvertical, Perfil, Organização, Entrevista
     const relevantQuestions = perguntasBiblioteca.filter(q => {
       if (q.escopo === 'global') return true;
       if (q.escopo === 'vertical' && q.verticalId === currentOrg.verticalId) return true;
-      if (q.escopo === 'perfil' && q.perfilAlvo === currentPerson.perfil) return true;
+      if (q.escopo === 'subvertical' && (q.subverticalId === currentOrg.subvertical || q.subverticalId === currentOrg.verticalId)) return true;
+      if (q.escopo === 'perfil' && q.perfilAplicavel === currentPerson.perfil) return true;
+      if (q.escopo === 'organizacao' && q.organizacaoId === currentOrg.id) return true;
       return false;
     });
 
     const questionInstances: InterviewQuestionInstance[] = relevantQuestions.map((q, idx) => ({
       id: `INST-${idx + 1}-${Date.now().toString().slice(-4)}`,
+      libraryQuestionId: q.id,
       texto: q.texto,
       escopo: q.escopo,
       categoria: q.categoria,
@@ -53,12 +57,13 @@ export const NewInterviewModal: React.FC<{ isOpen: boolean; onClose: () => void 
       verticalId: currentOrg.verticalId,
       entrevistadoId: currentPerson.id,
       data: new Date().toISOString().split('T')[0],
-      tipo: 'Descoberta',
-      status: 'Concluída',
+      tipo: tipo,
+      formato: formato,
+      status: 'Em andamento', // Inicia rigorosamente em 'Em andamento'
       duracaoMinutos: Number(duracao),
       perguntas: questionInstances,
       achadosGeradosIds: [],
-      notasGerais: notasGerais.trim() || 'Entrevista em andamento com roteiro dinâmico composto pelo Question Engine.'
+      notasGerais: notasGerais.trim() || 'Entrevista iniciada com roteiro dinâmico composto pelo Question Engine.'
     };
 
     saveInterview(newInterview);
@@ -81,7 +86,7 @@ export const NewInterviewModal: React.FC<{ isOpen: boolean; onClose: () => void 
         </div>
 
         <p className="text-slate-500">
-          O Question Engine montará automaticamente o roteiro com base nas perguntas Globais, da Vertical e do Perfil do profissional (PRD Seção 17).
+          O Question Engine montará o roteiro com base nas perguntas Globais, da Vertical, da Subvertical, do Perfil ({currentPerson?.perfil || 'selecionado'}) e da Organização (PRD Seção 17).
         </p>
 
         <form onSubmit={handleStart} className="space-y-4">
@@ -117,18 +122,36 @@ export const NewInterviewModal: React.FC<{ isOpen: boolean; onClose: () => void 
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-slate-700 block mb-1">Tipo de Sessão:</label>
+              <label className="font-semibold text-slate-700 block mb-1">Objetivo Metodológico:</label>
               <select
                 value={tipo}
-                onChange={(e) => setTipo(e.target.value as any)}
+                onChange={(e) => setTipo(e.target.value as InterviewType)}
                 className="w-full p-2 border border-slate-200 rounded-lg text-xs"
               >
-                <option value="individual">Entrevista Individual</option>
-                <option value="observacao_processo">Observação de Processo (Shadowing)</option>
-                <option value="dupla">Entrevista em Dupla</option>
+                <option value="Descoberta">Descoberta</option>
+                <option value="Aprofundamento">Aprofundamento</option>
+                <option value="Validação">Validação</option>
+                <option value="Demonstração">Demonstração</option>
+                <option value="Piloto">Piloto</option>
+                <option value="Follow-up">Follow-up</option>
               </select>
             </div>
 
+            <div>
+              <label className="font-semibold text-slate-700 block mb-1">Formato da Sessão:</label>
+              <select
+                value={formato}
+                onChange={(e) => setFormato(e.target.value as InterviewFormat)}
+                className="w-full p-2 border border-slate-200 rounded-lg text-xs"
+              >
+                <option value="Individual">Individual</option>
+                <option value="Dupla">Dupla</option>
+                <option value="Observação de processo">Observação de processo (Shadowing)</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="font-semibold text-slate-700 block mb-1">Duração Estimada (min):</label>
               <input
@@ -138,10 +161,17 @@ export const NewInterviewModal: React.FC<{ isOpen: boolean; onClose: () => void 
                 className="w-full p-2 border border-slate-200 rounded-lg text-xs"
               />
             </div>
+
+            <div>
+              <label className="font-semibold text-slate-700 block mb-1">Status Inicial:</label>
+              <div className="p-2 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 font-medium">
+                Em andamento (iniciando sessão)
+              </div>
+            </div>
           </div>
 
           <div>
-            <label className="font-semibold text-slate-700 block mb-1">Objetivo / Notas Prévias:</label>
+            <label className="font-semibold text-slate-700 block mb-1">Notas Prévias:</label>
             <textarea
               rows={2}
               value={notasGerais}

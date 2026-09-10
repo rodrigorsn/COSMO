@@ -246,10 +246,37 @@ export const INITIAL_QUESTION_LIBRARY: QuestionLibraryItem[] = [
     verticalId: 'VERT-CONT',
     categoria: 'Fiscal / Caixa Postal',
     criadaEm: '2026-08-15 em ORG-CONT-001',
-    historicoPromocao: 'Criada originalmente na entrevista com Maria (ORG-CONT-001). Promovida para a vertical Contabilidade em 18/08/2026 após repetição no Escritório 003.',
+    historicoPromocao: 'Criada originalmente na entrevista com Maria (ORG-CONT-001). Promovida de Entrevista para Vertical em 18/08/2026 após repetição no Escritório 003.',
     followUps: [
       'Quantos certificados digitais precisam gerenciar?',
       'Já aconteceu de um cliente receber notificação importante e perder o prazo?'
+    ]
+  },
+
+  // Pergunta específica de Subvertical (PRD Seção 17 e 50)
+  {
+    id: 'Q-SUB-GEN-01',
+    texto: 'Como vocês lidam com a diversidade de regimes tributários (Simples, Presumido, Real) na rotina de fechamento dos clientes generalistas?',
+    escopo: 'subvertical',
+    verticalId: 'VERT-CONT',
+    subverticalId: 'Escritório contábil generalista',
+    categoria: 'Subvertical / Generalista',
+    followUps: [
+      'Quais regimes geram mais retrabalho de conciliação?',
+      'Os clientes de comércio exigem rotinas muito diferentes dos de serviços?'
+    ]
+  },
+
+  // Pergunta específica de Organização (PRD Seção 17 e 50)
+  {
+    id: 'Q-ORG-001-01',
+    texto: 'Considerando a meta do Escritório Alfa de atingir 400 clientes este ano, qual o principal gargalo nas rotinas entre os coordenadores e analistas?',
+    escopo: 'organizacao',
+    verticalId: 'VERT-CONT',
+    organizacaoId: 'ORG-CONT-001',
+    categoria: 'Organização / Gargalo Alfa',
+    followUps: [
+      'A divisão atual em 3 áreas (fiscal, contábil, DP) cria silos de atendimento com o cliente?'
     ]
   }
 ];
@@ -604,6 +631,7 @@ export const INITIAL_ENTREVISTAS: Interview[] = [
     data: '2026-08-14',
     duracaoMinutos: 45,
     tipo: 'Descoberta',
+    formato: 'Individual',
     status: 'Concluída',
     notasGerais: 'Carlos foi muito aberto sobre a trava de margem do negócio. Gastam muito com salários de analistas que passam metade do dia cobrando cliente ao invés de analisar.',
     perguntas: [
@@ -652,6 +680,7 @@ export const INITIAL_ENTREVISTAS: Interview[] = [
     data: '2026-08-16',
     duracaoMinutos: 40,
     tipo: 'Aprofundamento',
+    formato: 'Individual',
     status: 'Concluída',
     notasGerais: 'Maria mostrou na prática a rotina e as planilhas de controle. Frase de impacto sobre o tempo gasto.',
     perguntas: [
@@ -686,6 +715,7 @@ export const INITIAL_ENTREVISTAS: Interview[] = [
     data: '2026-08-20',
     duracaoMinutos: 35,
     tipo: 'Descoberta',
+    formato: 'Individual',
     status: 'Concluída',
     notasGerais: 'Entrevista de contraponto essencial (Evidência Contrária para o gap em pequenas carteiras).',
     perguntas: [
@@ -717,6 +747,7 @@ export const INITIAL_ENTREVISTAS: Interview[] = [
     data: '2026-08-24',
     duracaoMinutos: 50,
     tipo: 'Descoberta',
+    formato: 'Individual',
     status: 'Concluída',
     notasGerais: 'Ana Paula confirmou em escala maior (480 clientes) a hipótese que surgiu no Escritório 001. A correlação com o número de clientes é altíssima.',
     perguntas: [
@@ -748,6 +779,7 @@ export const INITIAL_ENTREVISTAS: Interview[] = [
     data: '2026-08-26',
     duracaoMinutos: 40,
     tipo: 'Aprofundamento',
+    formato: 'Individual',
     status: 'Concluída',
     notasGerais: 'Juliana focou no Departamento Pessoal e eSocial. Dores severas com risco de autuação para o cliente.',
     perguntas: [

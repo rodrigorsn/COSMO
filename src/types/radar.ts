@@ -22,6 +22,11 @@ export type InterviewType =
   | 'Piloto' 
   | 'Follow-up';
 
+export type InterviewFormat = 
+  | 'Individual' 
+  | 'Dupla' 
+  | 'Observação de processo';
+
 export type InterviewStatus = 'Agendada' | 'Em andamento' | 'Concluída' | 'Cancelada';
 
 export type HierarchyProfile = 
@@ -41,6 +46,17 @@ export type QuestionScope =
   | 'perfil' 
   | 'organizacao' 
   | 'entrevista';
+
+export type QuestionTargetScope = 'organizacao' | 'subvertical' | 'vertical' | 'global';
+
+export interface QuestionPromotionContext {
+  interviewId?: string;
+  organizacaoId?: string;
+  subverticalId?: string;
+  verticalId?: string;
+  previousScope?: string;
+  originNote?: string;
+}
 
 export interface TechStackItem {
   id: string;
@@ -139,12 +155,13 @@ export interface Finding {
   origem: 'Entrevista' | 'Processo' | 'Observação direta' | 'Fonte externa';
   tipoEvidencia: EvidenceType;
   natureza: EvidenceNature; // favoravel | contraria | neutra
-  organizacaoId: string;
+  organizacaoId?: string; // Obrigatório em Entrevista/Processo/Observação, opcional em Fonte externa (PRD)
+  fonteId?: string; // Rastreabilidade de fonte secundária quando aplicável
   entrevistadoId?: string;
   entrevistaId?: string;
   processoId?: string;
   categoria: string;
-  fraseOriginal: string; // Preservação da fala original (Seção 26)
+  fraseOriginal: string; // Preservação da fala original ou citação da fonte (Seção 26)
   interpretacao: string; // Interpretação analítica separada
   tags: string[];
   dorConsolidadaId?: string;
@@ -329,6 +346,7 @@ export interface Interview {
   data: string;
   duracaoMinutos: number;
   tipo: InterviewType;
+  formato: InterviewFormat;
   status: InterviewStatus;
   perguntas: InterviewQuestionInstance[];
   notasGerais: string;

@@ -5,7 +5,8 @@ import { Quote, X, Sparkles } from 'lucide-react';
 export const NewFindingModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
   const { organizacoes, doresConsolidadas, addFinding } = useRadar();
 
-  const [orgId, setOrgId] = useState(organizacoes[0]?.id || '');
+  const [orgId, setOrgId] = useState<string>(organizacoes[0]?.id || '');
+  const [origem, setOrigem] = useState<'Entrevista' | 'Fonte Secundária' | 'Observação de Campo' | 'Outro'>('Entrevista');
   const [titulo, setTitulo] = useState('');
   const [fraseOriginal, setFraseOriginal] = useState('');
   const [interpretacao, setInterpretacao] = useState('');
@@ -15,7 +16,7 @@ export const NewFindingModal: React.FC<{ isOpen: boolean; onClose: () => void }>
 
   if (!isOpen) return null;
 
-  const currentOrg = organizacoes.find(o => o.id === orgId) || organizacoes[0];
+  const currentOrg = organizacoes.find(o => o.id === orgId);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,11 +25,11 @@ export const NewFindingModal: React.FC<{ isOpen: boolean; onClose: () => void }>
     addFinding({
       titulo: titulo.trim(),
       descricao: interpretacao.trim() || 'Evidência de campo.',
-      origem: 'Entrevista',
+      origem,
       tipoEvidencia: 'evidencia_observada',
       natureza,
-      organizacaoId: currentOrg.id,
-      entrevistadoId: currentOrg.entrevistados[0]?.id,
+      organizacaoId: orgId ? orgId : undefined,
+      entrevistadoId: currentOrg ? currentOrg.entrevistados[0]?.id : undefined,
       categoria,
       fraseOriginal: fraseOriginal.trim(),
       interpretacao: interpretacao.trim() || 'Achado registrado na pesquisa.',
@@ -72,7 +73,21 @@ export const NewFindingModal: React.FC<{ isOpen: boolean; onClose: () => void }>
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="font-semibold text-slate-700 block mb-1">Origem:</label>
+              <select
+                value={origem}
+                onChange={(e) => setOrigem(e.target.value as any)}
+                className="w-full p-2 border border-slate-200 rounded-lg text-xs"
+              >
+                <option value="Entrevista">Entrevista</option>
+                <option value="Fonte Secundária">Fonte Secundária</option>
+                <option value="Observação de Campo">Observação de Campo</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+
             <div>
               <label className="font-semibold text-slate-700 block mb-1">Organização de Origem:</label>
               <select
@@ -80,6 +95,7 @@ export const NewFindingModal: React.FC<{ isOpen: boolean; onClose: () => void }>
                 onChange={(e) => setOrgId(e.target.value)}
                 className="w-full p-2 border border-slate-200 rounded-lg text-xs"
               >
+                <option value="">Nenhuma (Mercado Geral / Externa)</option>
                 {organizacoes.map(o => (
                   <option key={o.id} value={o.id}>{o.nome}</option>
                 ))}

@@ -21,6 +21,10 @@ import { OpportunityDetailView } from './components/views/OpportunityDetailView'
 import { QuestionsView } from './components/views/QuestionsView';
 import { SourcesView } from './components/views/SourcesView';
 import { CompetitorsView } from './components/views/CompetitorsView';
+import { RankingView } from './components/views/RankingView';
+import { CrossVerticalView } from './components/views/CrossVerticalView';
+import { FontesEMercadoView } from './components/views/FontesEMercadoView';
+import { SimulacaoBanner } from './components/common/SimulacaoBadge';
 import { NewOrganizationModal } from './components/modals/NewOrganizationModal';
 import { NewInterviewModal } from './components/modals/NewInterviewModal';
 import { NewFindingModal } from './components/modals/NewFindingModal';
@@ -58,12 +62,18 @@ const RadarAppContent: React.FC = () => {
         return <OpportunitiesView />;
       case 'oportunidade-detail':
         return <OpportunityDetailView />;
+      case 'ranking':
+        return <RankingView />;
       case 'perguntas':
         return <QuestionsView />;
       case 'fontes':
-        return <SourcesView />;
+        return <FontesEMercadoView defaultTab="fontes" />;
       case 'concorrentes':
-        return <CompetitorsView />;
+        return <FontesEMercadoView defaultTab="concorrentes" />;
+      case 'fontes-concorrentes':
+        return <FontesEMercadoView defaultTab="fontes" />;
+      case 'cross-vertical':
+        return <CrossVerticalView />;
       default:
         return <DashboardView />;
     }
@@ -73,6 +83,9 @@ const RadarAppContent: React.FC = () => {
     <div className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-800 antialiased selection:bg-blue-100 selection:text-blue-900">
       {/* Top Main Navigation Header */}
       <Header />
+
+      {/* Persistent Simulation Disclaimer Banner (PRD Seções 67 e 77) */}
+      <SimulacaoBanner />
 
       {/* Guided 18-step Journey Bar from the PRD */}
       <GuidedJourneyBar />

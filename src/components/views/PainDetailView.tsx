@@ -215,17 +215,25 @@ export const PainDetailView: React.FC = () => {
                   <XCircle className="w-4 h-4 text-rose-600" />
                   Evidência Contrária Observada ({contraryFindings.length}):
                 </div>
-                {contraryFindings.map(cf => (
-                  <div key={cf.id} className="p-3.5 rounded-lg border border-rose-300 bg-rose-50/60 text-xs space-y-1.5">
-                    <div className="font-bold text-rose-950">{cf.titulo}</div>
-                    <div className="italic text-rose-900 bg-white/80 p-2.5 rounded border border-rose-200">
-                      "{cf.fraseOriginal}"
+                {contraryFindings.map(cf => {
+                  const org = cf.organizacaoId ? organizacoes.find(o => o.id === cf.organizacaoId) : null;
+                  return (
+                    <div key={cf.id} className="p-3.5 rounded-lg border border-rose-300 bg-rose-50/60 text-xs space-y-1.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="font-bold text-rose-950">{cf.titulo}</div>
+                        <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200">
+                          {org ? org.nome : (cf.origem || 'Fonte Externa')}
+                        </span>
+                      </div>
+                      <div className="italic text-rose-900 bg-white/80 p-2.5 rounded border border-rose-200">
+                        "{cf.fraseOriginal}"
+                      </div>
+                      <p className="text-rose-800 text-[11px]">
+                        <strong>Interpretação:</strong> {cf.interpretacao}
+                      </p>
                     </div>
-                    <p className="text-rose-800 text-[11px]">
-                      <strong>Interpretação:</strong> {cf.interpretacao}
-                    </p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
 
@@ -236,17 +244,25 @@ export const PainDetailView: React.FC = () => {
                 Evidências Favoráveis Observadas ({favorableFindings.length}):
               </div>
               <div className="space-y-2">
-                {favorableFindings.map(ff => (
-                  <div key={ff.id} className="p-3.5 rounded-lg border border-emerald-200 bg-emerald-50/40 text-xs space-y-1.5">
-                    <div className="font-bold text-slate-900">{ff.titulo}</div>
-                    <div className="italic text-slate-800 bg-white p-2.5 rounded border border-slate-200">
-                      "{ff.fraseOriginal}"
+                {favorableFindings.map(ff => {
+                  const org = ff.organizacaoId ? organizacoes.find(o => o.id === ff.organizacaoId) : null;
+                  return (
+                    <div key={ff.id} className="p-3.5 rounded-lg border border-emerald-200 bg-emerald-50/40 text-xs space-y-1.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="font-bold text-slate-900">{ff.titulo}</div>
+                        <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                          {org ? org.nome : (ff.origem || 'Fonte Externa')}
+                        </span>
+                      </div>
+                      <div className="italic text-slate-800 bg-white p-2.5 rounded border border-slate-200">
+                        "{ff.fraseOriginal}"
+                      </div>
+                      <p className="text-slate-600 text-[11px]">
+                        <strong>Interpretação:</strong> {ff.interpretacao}
+                      </p>
                     </div>
-                    <p className="text-slate-600 text-[11px]">
-                      <strong>Interpretação:</strong> {ff.interpretacao}
-                    </p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>

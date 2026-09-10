@@ -78,6 +78,8 @@ export interface PainConsolidationStats {
   evidenciasContrarias: number;
   evidenciasNeutras: number;
   dadosSuficientes: boolean;
+  amostraLimitada: boolean;
+  alertaAmostra?: string;
 }
 
 export function calculatePainConsolidation(
@@ -87,7 +89,9 @@ export function calculatePainConsolidation(
   findings: Finding[]
 ): PainConsolidationStats {
   const relevantOccurrences = occurrences.filter(o => o.dorConsolidadaId === painId);
-  const orgsComDor = relevantOccurrences.length;
+  // Cálculo rigoroso da incidência: contagem de organizações ÚNICAS (PRD Seção 30)
+  const uniqueOrgIds = Array.from(new Set(relevantOccurrences.map(o => o.organizacaoId).filter(Boolean)));
+  const orgsComDor = uniqueOrgIds.length;
   
   if (verticalOrgsCount === 0 || orgsComDor === 0) {
     return {
@@ -103,6 +107,8 @@ export function calculatePainConsolidation(
       evidenciasContrarias: 0,
       evidenciasNeutras: 0,
       dadosSuficientes: false,
+      amostraLimitada: true,
+      alertaAmostra: 'Nenhuma organização registrada com esta dor na vertical.',
     };
   }
 
@@ -126,6 +132,12 @@ export function calculatePainConsolidation(
   const con = relevantFindings.filter(f => f.natureza === 'contraria').length;
   const neu = relevantFindings.filter(f => f.natureza === 'neutra').length;
 
+  const amostraLimitada = verticalOrgsCount < 5 || orgsComDor < 3;
+  const dadosSuficientes = verticalOrgsCount >= 3 && orgsComDor >= 2;
+  const alertaAmostra = amostraLimitada
+    ? `Amostra limitada: ${orgsComDor} de ${verticalOrgsCount} organização(ões) pesquisada(s). Percentual preliminar sujeito a validação em campo.`
+    : undefined;
+
   return {
     totalOrgsVertical: verticalOrgsCount,
     orgsComDor,
@@ -138,7 +150,9 @@ export function calculatePainConsolidation(
     evidenciasFavoraveis: fav,
     evidenciasContrarias: con,
     evidenciasNeutras: neu,
-    dadosSuficientes: verticalOrgsCount >= 2,
+    dadosSuficientes,
+    amostraLimitada,
+    alertaAmostra,
   };
 }
 
@@ -207,7 +221,7 @@ export function evaluateEvidenceLevel(
   hasCommercialCommitment: boolean
 ): EvidenceLevel {
   if (hasCommercialCommitment) return 'H5';
-  if (hasEconomicSpendingEvidence && independentOrgsCount >= 2) return 'H4';
+  if (hasEconomicSpendingEvidence) return 'H4';
   if (independentOrgsCount >= 2) return 'H3';
   if (independentOrgsCount === 1) return 'H2';
   if (hasExternalSource) return 'H1';

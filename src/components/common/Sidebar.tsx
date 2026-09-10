@@ -59,7 +59,8 @@ export const Sidebar: React.FC = () => {
             (item.id === 'verticais' && activeView === 'vertical-detail') ||
             (item.id === 'organizacoes' && activeView === 'organizacao-detail') ||
             (item.id === 'dores' && activeView === 'dor-detail') ||
-            (item.id === 'oportunidades' && activeView === 'oportunidade-detail');
+            (item.id === 'oportunidades' && activeView === 'oportunidade-detail') ||
+            (item.id === 'fontes-concorrentes' && (activeView === 'fontes' || activeView === 'concorrentes'));
 
           const Icon = item.icon;
 
