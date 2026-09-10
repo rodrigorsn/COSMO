@@ -1,11 +1,12 @@
 import React from 'react';
+import { Link } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
 import { VerticalStatusBadge } from '../common/Badge';
 import { SimulacaoTag } from '../common/SimulacaoBadge';
 import { Layers, ArrowRight, Building2, MessageSquareText, Flame, Sparkles } from 'lucide-react';
 
 export const VerticalsView: React.FC = () => {
-  const { verticais, setSelectedVerticalId, setActiveView, organizacoes, entrevistas, doresConsolidadas, oportunidades } = useRadar();
+  const { verticais, organizacoes, entrevistas, doresConsolidadas, oportunidades } = useRadar();
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
@@ -32,13 +33,11 @@ export const VerticalsView: React.FC = () => {
           const oppCount = isContabilidade ? oportunidades.length : 0;
 
           return (
-            <div
+            <Link
               key={vert.id}
-              onClick={() => {
-                setSelectedVerticalId(vert.id);
-                setActiveView('vertical-detail');
-              }}
-              className={`p-5 rounded-xl border transition-all cursor-pointer bg-white shadow-xs hover:border-blue-300 hover:shadow-sm ${
+              to="/verticais/$verticalId"
+              params={{ verticalId: vert.id }}
+              className={`block p-5 rounded-xl border transition-all bg-white shadow-xs hover:border-blue-300 hover:shadow-sm group ${
                 isContabilidade ? 'ring-1 ring-blue-500/20 border-blue-200' : 'border-slate-200'
               }`}
             >
@@ -95,7 +94,7 @@ export const VerticalsView: React.FC = () => {
                   Acessar Vertical <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>

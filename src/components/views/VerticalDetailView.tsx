@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from '@tanstack/react-router';
+import { Link, useMatches } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
+import { ROUTES } from '../../navigation/routeMap';
 import { VerticalStatusBadge, EvidenceLevelBadge, EvidenceNatureBadge } from '../common/Badge';
 import { SimulacaoTag } from '../common/SimulacaoBadge';
 import { 
@@ -16,7 +17,8 @@ import {
   BookOpen,
   ArrowRight,
   TrendingUp,
-  FileCheck
+  FileCheck,
+  Layers
 } from 'lucide-react';
 
 type VerticalTab = 
@@ -29,13 +31,14 @@ type VerticalTab =
   | 'oportunidades' 
   | 'perguntas';
 
-export const VerticalDetailView: React.FC = () => {
+export const VerticalDetailView: React.FC<{
+  verticalId?: string;
+}> = ({ verticalId: propVerticalId }) => {
   const { 
     verticais, 
     selectedVerticalId, 
     setActiveView, 
     setSelectedOrgId,
-    setSelectedPainId,
     setSelectedOpportunityId,
     organizacoes, 
     entrevistas, 
@@ -48,7 +51,50 @@ export const VerticalDetailView: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<VerticalTab>('visao-geral');
 
-  const vertical = verticais.find(v => v.id === selectedVerticalId) || verticais[0];
+  // Resolução da fonte da verdade: parâmetro da rota dinâmica do TanStack Router
+  const matches = useMatches();
+  const verticalMatch = matches.find(m => m.routeId === '/verticais/$verticalId');
+  const routeVerticalId = (verticalMatch?.params as Record<string, string> | undefined)?.verticalId;
+
+  // Fonte prioritária: parâmetro da rota (TanStack Router) ou prop; fallback para selectedVerticalId legado
+  const isDynamicRoute = Boolean(routeVerticalId);
+  const effectiveVerticalId = propVerticalId || routeVerticalId || selectedVerticalId;
+
+  // Se estiver em rota dinâmica, busca estritamente pelo ID fornecido na URL sem fallback silencioso para outra vertical
+  const vertical = isDynamicRoute
+    ? verticais.find(v => v.id === effectiveVerticalId)
+    : (verticais.find(v => v.id === effectiveVerticalId) || null);
+
+  if (!vertical) {
+    return (
+      <div className="max-w-2xl mx-auto py-12 px-4 text-center">
+        <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-xs space-y-4">
+          <div className="w-12 h-12 rounded-full bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto">
+            <Layers className="w-6 h-6" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Vertical não encontrada</h2>
+            <p className="text-xs text-slate-500 mt-1">
+              Não foi possível localizar uma vertical com o identificador{' '}
+              <code className="font-mono font-semibold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded">
+                {effectiveVerticalId}
+              </code>.
+            </p>
+          </div>
+          <div className="pt-2">
+            <Link
+              to={ROUTES.VERTICAIS}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Voltar para Verticais</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const isContabilidade = vertical.id === 'VERT-CONT';
 
   const verticalOrgs = isContabilidade ? organizacoes : [];
@@ -65,13 +111,13 @@ export const VerticalDetailView: React.FC = () => {
       <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setActiveView('verticais')}
-              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors"
+            <Link
+              to={ROUTES.VERTICAIS}
+              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors inline-flex items-center justify-center"
               title="Voltar para lista de verticais"
             >
               <ArrowLeft className="w-4 h-4" />
-            </button>
+            </Link>
             <div>
               <div className="flex items-center gap-2.5">
                 <h1 className="text-xl font-bold text-slate-900 tracking-tight">
@@ -290,12 +336,12 @@ export const VerticalDetailView: React.FC = () => {
               <h3 className="text-sm font-bold text-slate-900">Organizações Pesquisadas nesta Vertical</h3>
               <p className="text-xs text-slate-500">Cada empresa tem ambiente e dados estritamente segregados (PRD Seção 9).</p>
             </div>
-            <button
-              onClick={() => setActiveView('organizacoes')}
+            <Link
+              to={ROUTES.ORGANIZACOES}
               className="text-xs text-blue-600 font-semibold hover:underline"
             >
               Abrir Visão Completa de Organizações →
-            </button>
+            </Link>
           </div>
 
           <div className="divide-y divide-slate-100">
@@ -363,15 +409,13 @@ export const VerticalDetailView: React.FC = () => {
                   <div className="font-bold text-xs text-slate-900 mt-0.5">{pain.titulo}</div>
                   <div className="text-[11px] text-slate-500 mt-0.5">{pain.categoria}</div>
                 </div>
-                <button
-                  onClick={() => {
-                    setSelectedPainId(pain.id);
-                    setActiveView('dor-detail');
-                  }}
-                  className="px-2.5 py-1.5 rounded text-xs font-semibold text-blue-700 hover:bg-blue-50 border border-blue-200"
+                <Link
+                  to="/dores/$painId"
+                  params={{ painId: pain.id }}
+                  className="px-2.5 py-1.5 rounded text-xs font-semibold text-blue-700 hover:bg-blue-50 border border-blue-200 inline-block transition-colors"
                 >
                   Ver Estatísticas
-                </button>
+                </Link>
               </div>
             ))}
           </div>

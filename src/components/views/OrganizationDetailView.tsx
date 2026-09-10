@@ -255,7 +255,13 @@ export const OrganizationDetailView: React.FC<{
                 return (
                   <div key={occ.id} className="p-4 rounded-lg border border-slate-200 bg-slate-50/70 space-y-2 text-xs">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-semibold text-slate-900">{painObj?.titulo || occ.dorConsolidadaId}</span>
+                      <Link
+                        to="/dores/$painId"
+                        params={{ painId: occ.dorConsolidadaId }}
+                        className="font-semibold text-slate-900 hover:text-blue-600 transition-colors"
+                      >
+                        {painObj?.titulo || occ.dorConsolidadaId}
+                      </Link>
                       {measured ? (
                         <span className={`font-mono text-xs font-bold px-2 py-0.5 rounded ${
                           score! >= 20 ? 'bg-orange-100 text-orange-900 border border-orange-200' : 'bg-slate-200 text-slate-800'
@@ -667,10 +673,14 @@ export const OrganizationDetailView: React.FC<{
               return (
                 <div key={occ.id} className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3 text-xs">
                   <div className="flex items-center justify-between">
-                    <div>
-                      <span className="font-mono text-xs text-slate-400">{occ.id} • {occ.dorConsolidadaId}</span>
-                      <h4 className="text-sm font-bold text-slate-900 mt-0.5">{painObj?.titulo}</h4>
-                    </div>
+                    <Link
+                      to="/dores/$painId"
+                      params={{ painId: occ.dorConsolidadaId }}
+                      className="group block"
+                    >
+                      <span className="font-mono text-xs text-slate-400 group-hover:text-blue-600 transition-colors">{occ.id} • {occ.dorConsolidadaId}</span>
+                      <h4 className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors mt-0.5">{painObj?.titulo}</h4>
+                    </Link>
                     <div className="flex items-center gap-3">
                       <div className="text-right">
                         <span className="text-slate-400 text-[11px] block">Pain Score</span>

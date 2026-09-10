@@ -27,9 +27,7 @@ export const DashboardView: React.FC = () => {
     doresConsolidadas, 
     oportunidades, 
     setActiveView, 
-    setSelectedPainId,
     setSelectedOpportunityId,
-    setSelectedVerticalId,
     jumpToJourneyStep 
   } = useRadar();
 
@@ -301,15 +299,13 @@ export const DashboardView: React.FC = () => {
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      setSelectedPainId(dor.id);
-                      setActiveView('dor-detail');
-                    }}
-                    className="px-2.5 py-1 rounded text-xs font-medium border border-slate-200 hover:bg-slate-50 text-slate-700 shrink-0 inline-block text-center cursor-pointer"
+                  <Link
+                    to="/dores/$painId"
+                    params={{ painId: dor.id }}
+                    className="px-2.5 py-1 rounded text-xs font-medium border border-slate-200 hover:bg-slate-50 text-slate-700 shrink-0 inline-block text-center cursor-pointer transition-colors"
                   >
                     Detalhar
-                  </button>
+                  </Link>
                 </div>
               ))}
             </div>

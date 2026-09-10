@@ -22,10 +22,17 @@ const indexRoute = createRoute({
   component: RadarAppContent,
 });
 
-// 2. Verticais
+// 2. Verticais (Lista)
 const verticaisRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/verticais',
+  component: RadarAppContent,
+});
+
+// 2b. Vertical (Detalhe dinâmico da Etapa 2B)
+const verticalDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/verticais/$verticalId',
   component: RadarAppContent,
 });
 
@@ -54,6 +61,13 @@ const entrevistasRoute = createRoute({
 const doresRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/dores',
+  component: RadarAppContent,
+});
+
+// 5b. Dor Consolidada (Detalhe dinâmico da Etapa 2C)
+const painDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/dores/$painId',
   component: RadarAppContent,
 });
 
@@ -103,10 +117,12 @@ const catchAllRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   indexRoute,
   verticaisRoute,
+  verticalDetailRoute,
   organizacoesRoute,
   organizacaoDetailRoute,
   entrevistasRoute,
   doresRoute,
+  painDetailRoute,
   oportunidadesRoute,
   rankingRoute,
   perguntasRoute,

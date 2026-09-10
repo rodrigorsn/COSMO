@@ -160,12 +160,24 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (/^\/organizacoes\/[^/]+$/.test(pathname)) {
         return 'organizacao-detail';
       }
+      if (/^\/verticais\/[^/]+$/.test(pathname)) {
+        return 'vertical-detail';
+      }
+      if (/^\/dores\/[^/]+$/.test(pathname)) {
+        return 'dor-detail';
+      }
       const initialView = PATH_TO_VIEW_MAP[pathname];
       if (initialView) return initialView;
     }
     return 'dashboard';
   });
-  const [selectedVerticalId, setSelectedVerticalId] = useState<string>('VERT-CONT');
+  const [selectedVerticalId, setSelectedVerticalId] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const match = window.location.pathname.match(/^\/verticais\/([^/]+)$/);
+      if (match) return decodeURIComponent(match[1]);
+    }
+    return 'VERT-CONT';
+  });
   const [selectedOrgId, setSelectedOrgId] = useState<string>(() => {
     if (typeof window !== 'undefined') {
       const match = window.location.pathname.match(/^\/organizacoes\/([^/]+)$/);
@@ -173,7 +185,13 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
     return 'ORG-CONT-001';
   });
-  const [selectedPainId, setSelectedPainId] = useState<string>('DOR-CONT-001');
+  const [selectedPainId, setSelectedPainId] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const match = window.location.pathname.match(/^\/dores\/([^/]+)$/);
+      if (match) return decodeURIComponent(match[1]);
+    }
+    return 'DOR-CONT-001';
+  });
   const [selectedOpportunityId, setSelectedOpportunityId] = useState<string>('OP-CONT-001');
   const [activeInterviewToConduct, setActiveInterviewToConduct] = useState<Interview | null>(null);
 

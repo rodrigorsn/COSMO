@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate, useMatches } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
 import { ROUTES } from '../../navigation/routeMap';
 import { SimulacaoTag } from './SimulacaoBadge';
@@ -9,12 +9,17 @@ export const Header: React.FC = () => {
   const { 
     verticais, 
     selectedVerticalId, 
-    setSelectedVerticalId, 
-    resetToDemoData,
-    setActiveView 
+    resetToDemoData
   } = useRadar();
 
-  const activeVertical = verticais.find(v => v.id === selectedVerticalId) || verticais[0];
+  const navigate = useNavigate();
+  const matches = useMatches();
+  const verticalMatch = matches.find(m => m.routeId === '/verticais/$verticalId');
+  const routeVerticalId = (verticalMatch?.params as Record<string, string> | undefined)?.verticalId;
+
+  // Fonte prioritária: reflete a URL se estiver em rota dinâmica de vertical, fallback para selectedVerticalId
+  const activeVerticalValue = routeVerticalId || selectedVerticalId;
+  const activeVertical = verticais.find(v => v.id === activeVerticalValue) || verticais[0];
 
   return (
     <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40">
@@ -52,10 +57,13 @@ export const Header: React.FC = () => {
         <div className="hidden md:flex items-center gap-2 bg-slate-800/80 px-3 py-1 rounded-lg border border-slate-700">
           <span className="text-xs text-slate-400 font-medium">Vertical em foco:</span>
           <select
-            value={selectedVerticalId}
+            value={activeVerticalValue}
             onChange={(e) => {
-              setSelectedVerticalId(e.target.value);
-              setActiveView('vertical-detail');
+              const nextVerticalId = e.target.value;
+              navigate({
+                to: '/verticais/$verticalId',
+                params: { verticalId: nextVerticalId },
+              });
             }}
             className="bg-transparent text-xs font-semibold text-white focus:outline-hidden cursor-pointer"
           >

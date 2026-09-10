@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
 import { SimulacaoTag } from '../common/SimulacaoBadge';
 import { EvidenceLevelBadge } from '../common/Badge';
@@ -20,7 +21,6 @@ export const RankingView: React.FC = () => {
     oportunidades, 
     doresConsolidadas, 
     setSelectedOpportunityId, 
-    setSelectedPainId, 
     setActiveView 
   } = useRadar();
 
@@ -223,16 +223,14 @@ export const RankingView: React.FC = () => {
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      setSelectedPainId(pain.id);
-                      setActiveView('dor-detail');
-                    }}
+                  <Link
+                    to="/dores/$painId"
+                    params={{ painId: pain.id }}
                     className="flex items-center gap-1 px-3 py-2 rounded-lg bg-slate-50 hover:bg-amber-50 text-amber-800 font-semibold border border-slate-200 hover:border-amber-200 transition-colors"
                   >
                     <span>Ver Detalhes da Dor</span>
                     <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))}

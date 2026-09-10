@@ -1,9 +1,10 @@
 import React from 'react';
-import { Link } from '@tanstack/react-router';
+import { Link, useMatches } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
 import { calculatePainConsolidation, isPainScoreMeasured } from '../../utils/calculations';
 import { EvidenceNatureBadge, EvidenceCompositionBadge } from '../common/Badge';
 import { SimulacaoTag } from '../common/SimulacaoBadge';
+import { ROUTES } from '../../navigation/routeMap';
 import { 
   ArrowLeft, 
   Flame, 
@@ -16,10 +17,15 @@ import {
   Sparkles, 
   ArrowRight,
   Filter,
-  BarChart3
+  BarChart3,
+  AlertTriangle
 } from 'lucide-react';
 
-export const PainDetailView: React.FC = () => {
+interface PainDetailViewProps {
+  painId?: string;
+}
+
+export const PainDetailView: React.FC<PainDetailViewProps> = ({ painId: propPainId }) => {
   const { 
     doresConsolidadas, 
     selectedPainId, 
@@ -32,7 +38,51 @@ export const PainDetailView: React.FC = () => {
     setSelectedOpportunityId
   } = useRadar();
 
-  const pain = doresConsolidadas.find(p => p.id === selectedPainId) || doresConsolidadas[0];
+  // Resolução da fonte da verdade: parâmetro da rota dinâmica do TanStack Router
+  const matches = useMatches();
+  const painMatch = matches.find(m => m.routeId === '/dores/$painId');
+  const routePainId = (painMatch?.params as Record<string, string> | undefined)?.painId;
+
+  // Fonte prioritária: parâmetro da rota (TanStack Router) ou prop; fallback para selectedPainId legado
+  const isDynamicRoute = Boolean(routePainId);
+  const effectivePainId = propPainId || routePainId || selectedPainId;
+
+  // Se estiver em rota dinâmica, busca estritamente pelo ID fornecido na URL sem fallback silencioso para outra dor
+  const pain = isDynamicRoute
+    ? doresConsolidadas.find(p => p.id === effectivePainId)
+    : (doresConsolidadas.find(p => p.id === effectivePainId) || null);
+
+  // Tratamento explícito de Dor Não Encontrada (PRD Seção 8 / Etapa 2C)
+  if (!pain) {
+    return (
+      <div className="max-w-3xl mx-auto py-12 px-4 text-center space-y-6">
+        <div className="w-16 h-16 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto border border-amber-200 shadow-xs">
+          <AlertTriangle className="w-8 h-8" />
+        </div>
+        <div className="space-y-2">
+          <span className="font-mono text-xs font-semibold uppercase tracking-wider text-amber-700 bg-amber-100/60 px-2.5 py-1 rounded-full">
+            Dor não encontrada
+          </span>
+          <h2 className="text-xl font-bold text-slate-900">
+            Nenhuma dor consolidada encontrada para "{effectivePainId}"
+          </h2>
+          <p className="text-sm text-slate-500 max-w-md mx-auto">
+            O identificador fornecido na URL não corresponde a nenhuma dor consolidada registrada nesta vertical de pesquisa.
+          </p>
+        </div>
+        <div className="pt-2">
+          <Link
+            to={ROUTES.DORES}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800 text-xs font-semibold shadow-xs transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Voltar para a Lista de Dores
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const stats = calculatePainConsolidation(pain.id, ocorrenciasDores, organizacoes.length, achados);
 
   const relevantOccurrences = ocorrenciasDores.filter(o => o.dorConsolidadaId === pain.id);
@@ -48,13 +98,13 @@ export const PainDetailView: React.FC = () => {
       {/* Header (PRD Seção 62) */}
       <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setActiveView('dores')}
-            className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors"
+          <Link
+            to={ROUTES.DORES}
+            className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors inline-flex items-center justify-center"
             title="Voltar para a lista de dores"
           >
             <ArrowLeft className="w-4 h-4" />
-          </button>
+          </Link>
           <div>
             <div className="flex items-center gap-2">
               <span className="font-mono text-xs text-slate-400 font-semibold">{pain.id}</span>

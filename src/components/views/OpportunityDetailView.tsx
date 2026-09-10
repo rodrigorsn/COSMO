@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
 import { EvidenceLevelBadge } from '../common/Badge';
 import { SimulacaoTag } from '../common/SimulacaoBadge';
@@ -33,8 +34,7 @@ export const OpportunityDetailView: React.FC = () => {
     achados, 
     entrevistas, 
     organizacoes,
-    setSelectedOrgId,
-    setSelectedPainId
+    setSelectedOrgId
   } = useRadar();
 
   const opp = oportunidades.find(o => o.id === selectedOpportunityId) || oportunidades[0];
@@ -123,6 +123,24 @@ export const OpportunityDetailView: React.FC = () => {
           <span className="text-[11px] text-slate-400 font-mono">100% Rastreável</span>
         </div>
 
+        {/* Dores Consolidadas Relacionadas */}
+        {relatedPains.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap text-xs bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+            <span className="text-slate-500 font-semibold text-[11px]">Dores Consolidadas Vinculadas:</span>
+            {relatedPains.map(p => (
+              <Link
+                key={p.id}
+                to="/dores/$painId"
+                params={{ painId: p.id }}
+                className="inline-flex items-center gap-1 font-mono text-[11px] px-2 py-0.5 rounded bg-white hover:bg-blue-50 text-blue-700 border border-blue-200 font-semibold transition-colors"
+              >
+                <span>{p.id}</span>
+                <span className="font-sans text-slate-600 font-normal">({p.titulo})</span>
+              </Link>
+            ))}
+          </div>
+        )}
+
         {/* Visual Breadcrumb / Chain Nodes */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 text-xs">
           {/* List of Evidence Nodes in the Chain */}
@@ -170,7 +188,7 @@ export const OpportunityDetailView: React.FC = () => {
             </div>
 
             {/* Step-by-Step Chain Flow */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 text-[11px]">
               <div className="p-2.5 rounded bg-white border border-slate-200">
                 <span className="text-slate-400 block text-[10px]">1. Organização</span>
                 <span className="font-bold text-slate-900 block mt-0.5">{inspectOrg?.nome}</span>
@@ -187,6 +205,22 @@ export const OpportunityDetailView: React.FC = () => {
                 <span className="text-slate-400 block text-[10px]">3. Sessão de Entrevista</span>
                 <span className="font-bold text-slate-900 block mt-0.5">{inspectInterview?.id}</span>
                 <span className="text-slate-500 text-[10px]">Data: {inspectInterview?.data}</span>
+              </div>
+
+              <div className="p-2.5 rounded bg-white border border-slate-200">
+                <span className="text-slate-400 block text-[10px]">4. Dor Consolidada</span>
+                {inspectFinding?.dorConsolidadaId ? (
+                  <Link
+                    to="/dores/$painId"
+                    params={{ painId: inspectFinding.dorConsolidadaId }}
+                    className="font-bold text-blue-700 hover:underline block mt-0.5 font-mono"
+                  >
+                    {inspectFinding.dorConsolidadaId}
+                  </Link>
+                ) : (
+                  <span className="text-slate-400 text-[10px] block mt-0.5">Não vinculada</span>
+                )}
+                <span className="text-slate-500 text-[10px]">Rastreabilidade</span>
               </div>
             </div>
 

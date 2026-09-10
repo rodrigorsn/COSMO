@@ -6,10 +6,12 @@ import { ActiveView } from '../context/RadarContext';
 export const ROUTES = {
   DASHBOARD: '/',
   VERTICAIS: '/verticais',
+  VERTICAL_DETAIL: '/verticais/$verticalId',
   ORGANIZACOES: '/organizacoes',
   ORGANIZACAO_DETAIL: '/organizacoes/$orgId',
   ENTREVISTAS: '/entrevistas',
   DORES: '/dores',
+  PAIN_DETAIL: '/dores/$painId',
   OPORTUNIDADES: '/oportunidades',
   RANKING: '/ranking',
   PERGUNTAS: '/perguntas',
@@ -18,6 +20,20 @@ export const ROUTES = {
 } as const;
 
 export type RoutePath = typeof ROUTES[keyof typeof ROUTES];
+
+/**
+ * Constrói o caminho canônico para o detalhe de uma vertical.
+ */
+export function getVerticalDetailRoute(verticalId: string): string {
+  return `/verticais/${encodeURIComponent(verticalId)}`;
+}
+
+/**
+ * Verifica se um caminho corresponde ao detalhe de vertical (/verticais/:verticalId).
+ */
+export function isVerticalDetailRoute(pathname: string): boolean {
+  return /^\/verticais\/[^/]+$/.test(pathname);
+}
 
 /**
  * Constrói o caminho canônico para o detalhe de uma organização.
@@ -34,18 +50,32 @@ export function isOrganizacaoDetailRoute(pathname: string): boolean {
 }
 
 /**
+ * Constrói o caminho canônico para o detalhe de uma dor consolidada.
+ */
+export function getPainDetailRoute(painId: string): string {
+  return `/dores/${encodeURIComponent(painId)}`;
+}
+
+/**
+ * Verifica se um caminho corresponde ao detalhe de dor consolidada (/dores/:painId).
+ */
+export function isPainDetailRoute(pathname: string): boolean {
+  return /^\/dores\/[^/]+$/.test(pathname);
+}
+
+/**
  * Mapeamento central único entre os valores de ActiveView e as rotas principais do COSMO.
  * Fonte única de verdade para a sincronização bidirecional.
  */
 export const VIEW_TO_PATH_MAP: Record<ActiveView, string> = {
   'dashboard': ROUTES.DASHBOARD,
   'verticais': ROUTES.VERTICAIS,
-  'vertical-detail': ROUTES.VERTICAIS,
+  'vertical-detail': ROUTES.VERTICAL_DETAIL,
   'organizacoes': ROUTES.ORGANIZACOES,
-  'organizacao-detail': ROUTES.ORGANIZACOES,
+  'organizacao-detail': ROUTES.ORGANIZACAO_DETAIL,
   'entrevistas': ROUTES.ENTREVISTAS,
   'dores': ROUTES.DORES,
-  'dor-detail': ROUTES.DORES,
+  'dor-detail': ROUTES.PAIN_DETAIL,
   'oportunidades': ROUTES.OPORTUNIDADES,
   'oportunidade-detail': ROUTES.OPORTUNIDADES,
   'ranking': ROUTES.RANKING,

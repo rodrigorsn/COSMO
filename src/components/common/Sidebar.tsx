@@ -57,7 +57,7 @@ export const Sidebar: React.FC = () => {
 
       <nav className="flex-1 px-2 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const isActive = location.pathname === item.path || (item.path !== ROUTES.DASHBOARD && location.pathname.startsWith(`${item.path}/`));
           const Icon = item.icon;
 
           return (

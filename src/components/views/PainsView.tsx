@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
 import { SimulacaoTag } from '../common/SimulacaoBadge';
 import { Flame, ArrowRight, CheckCircle2, XCircle } from 'lucide-react';
@@ -10,9 +11,7 @@ export const PainsView: React.FC = () => {
     doresConsolidadas, 
     ocorrenciasDores, 
     organizacoes, 
-    achados, 
-    setSelectedPainId, 
-    setActiveView 
+    achados 
   } = useRadar();
 
   return (
@@ -59,9 +58,15 @@ export const PainsView: React.FC = () => {
                 return (
                   <tr key={pain.id} className="hover:bg-slate-50/80 transition-colors">
                     <td className="py-3.5 px-4">
-                      <div className="font-mono text-[11px] text-slate-400">{pain.id}</div>
-                      <div className="font-bold text-slate-900 mt-0.5 text-sm">{pain.titulo}</div>
-                      <div className="text-[11px] text-slate-500 mt-0.5">{pain.categoria}</div>
+                      <Link
+                        to="/dores/$painId"
+                        params={{ painId: pain.id }}
+                        className="group block"
+                      >
+                        <div className="font-mono text-[11px] text-slate-400 group-hover:text-blue-600 transition-colors">{pain.id}</div>
+                        <div className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors mt-0.5 text-sm">{pain.titulo}</div>
+                        <div className="text-[11px] text-slate-500 mt-0.5">{pain.categoria}</div>
+                      </Link>
                     </td>
                     <td className="py-3.5 px-4 font-medium text-slate-700">
                       Contabilidade
@@ -93,15 +98,13 @@ export const PainsView: React.FC = () => {
                       </div>
                     </td>
                     <td className="py-3.5 px-4 text-right">
-                      <button
-                        onClick={() => {
-                          setSelectedPainId(pain.id);
-                          setActiveView('dor-detail');
-                        }}
-                        className="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-blue-50 hover:text-blue-700 text-xs font-semibold"
+                      <Link
+                        to="/dores/$painId"
+                        params={{ painId: pain.id }}
+                        className="inline-block px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-blue-50 hover:text-blue-700 text-xs font-semibold transition-colors"
                       >
                         Ver Detalhe & Evidências
-                      </button>
+                      </Link>
                     </td>
                   </tr>
                 );
