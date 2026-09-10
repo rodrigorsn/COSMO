@@ -1,5 +1,7 @@
 import React from 'react';
+import { Link } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
+import { ROUTES } from '../../navigation/routeMap';
 import { 
   Building2, 
   MessageSquareText, 
@@ -104,9 +106,9 @@ export const DashboardView: React.FC = () => {
 
       {/* KPI Cards (Seção 51) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <div 
-          onClick={() => setActiveView('verticais')}
-          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-blue-300 cursor-pointer transition-all"
+        <Link 
+          to={ROUTES.VERTICAIS}
+          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-blue-300 cursor-pointer transition-all block"
         >
           <div className="text-xs font-medium text-slate-500">Verticais Ativas</div>
           <div className="text-2xl font-bold text-slate-900 mt-1">{verticais.length}</div>
@@ -114,62 +116,62 @@ export const DashboardView: React.FC = () => {
             <span>1 em campo</span>
             <ArrowRight className="w-2.5 h-2.5" />
           </div>
-        </div>
+        </Link>
 
-        <div 
-          onClick={() => setActiveView('organizacoes')}
-          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-blue-300 cursor-pointer transition-all"
+        <Link 
+          to={ROUTES.ORGANIZACOES}
+          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-blue-300 cursor-pointer transition-all block"
         >
           <div className="text-xs font-medium text-slate-500">Organizações</div>
           <div className="text-2xl font-bold text-slate-900 mt-1">{organizacoes.length}</div>
           <div className="text-[11px] text-slate-500 mt-1">
             865 clientes B2B somados
           </div>
-        </div>
+        </Link>
 
-        <div 
-          onClick={() => setActiveView('entrevistas')}
-          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-blue-300 cursor-pointer transition-all"
+        <Link 
+          to={ROUTES.ENTREVISTAS}
+          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-blue-300 cursor-pointer transition-all block"
         >
           <div className="text-xs font-medium text-slate-500">Entrevistas</div>
           <div className="text-2xl font-bold text-slate-900 mt-1">{entrevistas.length}</div>
           <div className="text-[11px] text-emerald-600 font-medium mt-1">
             5 perfis mapeados
           </div>
-        </div>
+        </Link>
 
-        <div 
-          onClick={() => setActiveView('dores')}
-          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-blue-300 cursor-pointer transition-all"
+        <Link 
+          to={ROUTES.DORES}
+          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-blue-300 cursor-pointer transition-all block"
         >
           <div className="text-xs font-medium text-slate-500">Dores Consolidadas</div>
           <div className="text-2xl font-bold text-slate-900 mt-1">{doresConsolidadas.length}</div>
           <div className="text-[11px] text-slate-500 mt-1">
             Incidência max 67%
           </div>
-        </div>
+        </Link>
 
-        <div 
-          onClick={() => setActiveView('oportunidades')}
-          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-blue-300 cursor-pointer transition-all"
+        <Link 
+          to={ROUTES.OPORTUNIDADES}
+          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-blue-300 cursor-pointer transition-all block"
         >
           <div className="text-xs font-medium text-slate-500">Oportunidades</div>
           <div className="text-2xl font-bold text-slate-900 mt-1">{oportunidades.length}</div>
           <div className="text-[11px] text-purple-600 font-medium mt-1">
             Top Score: 88
           </div>
-        </div>
+        </Link>
 
-        <div 
-          onClick={() => setActiveView('ranking')}
-          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-blue-300 cursor-pointer transition-all bg-linear-to-b from-indigo-50/30 to-white"
+        <Link 
+          to={ROUTES.RANKING}
+          className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-blue-300 cursor-pointer transition-all bg-linear-to-b from-indigo-50/30 to-white block"
         >
           <div className="text-xs font-medium text-slate-500">Nível H4 / H5</div>
           <div className="text-2xl font-bold text-indigo-900 mt-1">{h4h5Count}</div>
           <div className="text-[11px] text-indigo-700 font-medium mt-1">
             Evidência econômica
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Main Content Split: Prioridades de Investigação vs. Oportunidade em Destaque */}
@@ -222,12 +224,12 @@ export const DashboardView: React.FC = () => {
                   <p className="text-slate-600 leading-relaxed">
                     Apenas 1 organização pequena foi pesquisada (Escritório Beta - 65 clientes) e apresentou <strong>evidência contrária</strong> (o portal resolve bem). É necessário entrevistar mais 2 escritórios com &lt;80 clientes para confirmar se a dor realmente só emerge em médias empresas.
                   </p>
-                  <button
-                    onClick={() => setActiveView('organizacoes')}
+                  <Link
+                    to={ROUTES.ORGANIZACOES}
                     className="text-blue-700 hover:text-blue-900 font-semibold inline-flex items-center gap-1 pt-1"
                   >
                     Ver Organizações Pesquisadas <ArrowRight className="w-3 h-3" />
-                  </button>
+                  </Link>
                 </div>
               </div>
 
@@ -262,12 +264,12 @@ export const DashboardView: React.FC = () => {
                 <Flame className="w-4 h-4 text-orange-600" />
                 Dores Consolidadas em Alta Intensidade
               </h2>
-              <button 
-                onClick={() => setActiveView('dores')}
+              <Link 
+                to={ROUTES.DORES}
                 className="text-xs text-blue-600 hover:underline font-medium"
               >
                 Ver todas ({doresConsolidadas.length})
-              </button>
+              </Link>
             </div>
 
             <div className="divide-y divide-slate-100">
@@ -298,15 +300,12 @@ export const DashboardView: React.FC = () => {
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      // Navigate to pain detail
-                      setActiveView('dores');
-                    }}
-                    className="px-2.5 py-1 rounded text-xs font-medium border border-slate-200 hover:bg-slate-50 text-slate-700 shrink-0"
+                  <Link
+                    to={ROUTES.DORES}
+                    className="px-2.5 py-1 rounded text-xs font-medium border border-slate-200 hover:bg-slate-50 text-slate-700 shrink-0 inline-block text-center"
                   >
                     Detalhar
-                  </button>
+                  </Link>
                 </div>
               ))}
             </div>
@@ -404,12 +403,12 @@ export const DashboardView: React.FC = () => {
                 <span className="font-semibold text-slate-900">54% (H2)</span>
               </div>
             </div>
-            <button
-              onClick={() => setActiveView('cross-vertical')}
+            <Link
+              to={ROUTES.CROSS_VERTICAL}
               className="mt-3 w-full text-center text-blue-600 font-semibold text-xs hover:underline block"
             >
               Abrir Matriz Cross-Vertical
-            </button>
+            </Link>
           </div>
         </div>
       </div>

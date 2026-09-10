@@ -1,5 +1,7 @@
 import React from 'react';
+import { Link, useLocation } from '@tanstack/react-router';
 import { useRadar, ActiveView } from '../../context/RadarContext';
+import { ROUTES } from '../../navigation/routeMap';
 import { 
   LayoutDashboard, 
   Layers, 
@@ -17,14 +19,13 @@ interface NavItem {
   id: ActiveView;
   label: string;
   icon: React.ElementType;
+  path: string;
   count?: number;
   badge?: string;
 }
 
 export const Sidebar: React.FC = () => {
   const { 
-    activeView, 
-    setActiveView, 
     verticais, 
     organizacoes, 
     entrevistas, 
@@ -33,18 +34,19 @@ export const Sidebar: React.FC = () => {
     perguntasBiblioteca,
     fontes 
   } = useRadar();
+  const location = useLocation();
 
   const navItems: NavItem[] = [
-    { id: 'dashboard', label: 'Visão Geral', icon: LayoutDashboard },
-    { id: 'verticais', label: 'Verticais', icon: Layers, count: verticais.length },
-    { id: 'organizacoes', label: 'Organizações', icon: Building2, count: organizacoes.length },
-    { id: 'entrevistas', label: 'Entrevistas', icon: MessageSquareText, count: entrevistas.length },
-    { id: 'dores', label: 'Dores Consolidadas', icon: Flame, count: doresConsolidadas.length },
-    { id: 'oportunidades', label: 'Oportunidades', icon: Sparkles, count: oportunidades.length },
-    { id: 'ranking', label: 'Ranking', icon: Trophy },
-    { id: 'perguntas', label: 'Question Engine', icon: BookOpen, count: perguntasBiblioteca.length },
-    { id: 'fontes-concorrentes', label: 'Fontes & Mercado', icon: Database, count: fontes.length },
-    { id: 'cross-vertical', label: 'Cross-Vertical', icon: GitCompare, badge: 'Matriz' },
+    { id: 'dashboard', label: 'Visão Geral', icon: LayoutDashboard, path: ROUTES.DASHBOARD },
+    { id: 'verticais', label: 'Verticais', icon: Layers, count: verticais.length, path: ROUTES.VERTICAIS },
+    { id: 'organizacoes', label: 'Organizações', icon: Building2, count: organizacoes.length, path: ROUTES.ORGANIZACOES },
+    { id: 'entrevistas', label: 'Entrevistas', icon: MessageSquareText, count: entrevistas.length, path: ROUTES.ENTREVISTAS },
+    { id: 'dores', label: 'Dores Consolidadas', icon: Flame, count: doresConsolidadas.length, path: ROUTES.DORES },
+    { id: 'oportunidades', label: 'Oportunidades', icon: Sparkles, count: oportunidades.length, path: ROUTES.OPORTUNIDADES },
+    { id: 'ranking', label: 'Ranking', icon: Trophy, path: ROUTES.RANKING },
+    { id: 'perguntas', label: 'Question Engine', icon: BookOpen, count: perguntasBiblioteca.length, path: ROUTES.PERGUNTAS },
+    { id: 'fontes-concorrentes', label: 'Fontes & Mercado', icon: Database, count: fontes.length, path: ROUTES.FONTES },
+    { id: 'cross-vertical', label: 'Cross-Vertical', icon: GitCompare, badge: 'Matriz', path: ROUTES.CROSS_VERTICAL },
   ];
 
   return (
@@ -55,19 +57,13 @@ export const Sidebar: React.FC = () => {
 
       <nav className="flex-1 px-2 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = activeView === item.id || 
-            (item.id === 'verticais' && activeView === 'vertical-detail') ||
-            (item.id === 'organizacoes' && activeView === 'organizacao-detail') ||
-            (item.id === 'dores' && activeView === 'dor-detail') ||
-            (item.id === 'oportunidades' && activeView === 'oportunidade-detail') ||
-            (item.id === 'fontes-concorrentes' && (activeView === 'fontes' || activeView === 'concorrentes'));
-
+          const isActive = location.pathname === item.path;
           const Icon = item.icon;
 
           return (
-            <button
+            <Link
               key={item.id}
-              onClick={() => setActiveView(item.id)}
+              to={item.path}
               className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
                 isActive
                   ? 'bg-blue-600 text-white shadow-xs font-semibold'
@@ -92,7 +88,7 @@ export const Sidebar: React.FC = () => {
                   {item.badge}
                 </span>
               )}
-            </button>
+            </Link>
           );
         })}
       </nav>

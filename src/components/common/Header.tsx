@@ -1,5 +1,7 @@
 import React from 'react';
+import { Link } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
+import { ROUTES } from '../../navigation/routeMap';
 import { SimulacaoTag } from './SimulacaoBadge';
 import { Radar, RotateCcw, Building2, HelpCircle, Layers, ExternalLink } from 'lucide-react';
 
@@ -19,8 +21,8 @@ export const Header: React.FC = () => {
       <div className="px-4 py-2.5 flex items-center justify-between gap-4">
         {/* Brand & Logo */}
         <div className="flex items-center gap-3">
-          <div 
-            onClick={() => setActiveView('dashboard')}
+          <Link 
+            to={ROUTES.DASHBOARD}
             className="flex items-center gap-2.5 cursor-pointer group"
           >
             <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm group-hover:bg-blue-500 transition-colors">
@@ -39,7 +41,7 @@ export const Header: React.FC = () => {
                 Investigação Estruturada de Mercados B2B & Evidence Chain
               </p>
             </div>
-          </div>
+          </Link>
 
           <div className="hidden lg:block ml-2 pl-3 border-l border-slate-800">
             <SimulacaoTag />
