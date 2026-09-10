@@ -1,27 +1,28 @@
 import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from '@tanstack/react-router';
 import { useRadar } from '../context/RadarContext';
-import { VIEW_TO_PATH_MAP, PATH_TO_VIEW_MAP } from './routeMap';
+import { VIEW_TO_PATH_MAP, PATH_TO_VIEW_MAP, getOrganizacaoDetailRoute, isOrganizacaoDetailRoute } from './routeMap';
 
 /**
  * useNavigationAdapter
  * 
- * Camada de compatibilidade bidirecional da Etapa 1C entre o estado legado (activeView)
- * e as rotas principais do TanStack Router.
+ * Camada de compatibilidade bidirecional entre o estado legado (activeView)
+ * e o TanStack Router (Etapa 1C + Etapa 2A).
  * 
  * Garante:
  * 1. activeView -> URL: quando a UI legada chama setActiveView(), a URL correspondente é atualizada.
- * 2. URL -> activeView: quando uma rota principal é acessada diretamente ou via histórico (Back/Forward),
- *    o activeView é sincronizado com a tela correspondente.
+ *    Para 'organizacao-detail', direciona para /organizacoes/:orgId (usando selectedOrgId transitório).
+ * 2. URL -> activeView: quando uma rota canônica ou dinâmica (/organizacoes/:orgId) é acessada diretamente
+ *    ou via histórico (Back/Forward), o activeView e o selectedOrgId são sincronizados.
  * 3. Prevenção estrita de loops de navegação via verificação de estado e flag de rastreio de origem.
  */
 export function useNavigationAdapter() {
-  const { activeView, setActiveView } = useRadar();
+  const { activeView, setActiveView, selectedOrgId, setSelectedOrgId } = useRadar();
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Rastreia o último pathname processado
-  const lastPathnameRef = useRef<string>(location.pathname);
+  // Rastreia o último pathname processado (inicia vazio para processar a rota inicial no mount)
+  const lastPathnameRef = useRef<string>('');
   // Rastreia se a navegação foi disparada pelo setActiveView para evitar re-gatilho
   const isNavigatingFromActiveViewRef = useRef<boolean>(false);
 
@@ -42,6 +43,21 @@ export function useNavigationAdapter() {
     }
 
     lastPathnameRef.current = currentPath;
+
+    // Caso especial da Etapa 2A: Rota dinâmica /organizacoes/:orgId
+    const orgDetailMatch = currentPath.match(/^\/organizacoes\/([^/]+)$/);
+    if (orgDetailMatch) {
+      const routeOrgId = decodeURIComponent(orgDetailMatch[1]);
+      // Sincronização temporária de selectedOrgId para compatibilidade transitória com fluxos legados
+      if (selectedOrgId !== routeOrgId) {
+        setSelectedOrgId(routeOrgId);
+      }
+      if (activeView !== 'organizacao-detail') {
+        setActiveView('organizacao-detail');
+      }
+      return;
+    }
+
     const targetView = PATH_TO_VIEW_MAP[currentPath];
 
     if (targetView) {
@@ -52,17 +68,34 @@ export function useNavigationAdapter() {
         setActiveView(targetView);
       }
     }
-  }, [location.pathname, activeView, setActiveView]);
+  }, [location.pathname, activeView, setActiveView, selectedOrgId, setSelectedOrgId]);
 
   // 2. Sincronização activeView -> URL (quando a UI legada invoca setActiveView)
   useEffect(() => {
-    const targetPath = VIEW_TO_PATH_MAP[activeView];
     const currentPath = location.pathname;
+
+    // Caso especial da Etapa 2A: quando o activeView for 'organizacao-detail'
+    if (activeView === 'organizacao-detail') {
+      // Se a URL já for uma rota de detalhe de organização, não reduza para /organizacoes
+      if (isOrganizacaoDetailRoute(currentPath)) {
+        return;
+      }
+      // Se acionado por fluxo legado (ex: Guided Journey), navega para a URL com selectedOrgId
+      const targetPath = getOrganizacaoDetailRoute(selectedOrgId);
+      if (targetPath !== currentPath) {
+        lastPathnameRef.current = targetPath;
+        isNavigatingFromActiveViewRef.current = true;
+        navigate({ to: targetPath as any });
+      }
+      return;
+    }
+
+    const targetPath = VIEW_TO_PATH_MAP[activeView];
 
     if (targetPath && targetPath !== currentPath) {
       lastPathnameRef.current = targetPath;
       isNavigatingFromActiveViewRef.current = true;
       navigate({ to: targetPath as any });
     }
-  }, [activeView, location.pathname, navigate]);
+  }, [activeView, selectedOrgId, location.pathname, navigate]);
 }

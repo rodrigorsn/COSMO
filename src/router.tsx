@@ -29,10 +29,17 @@ const verticaisRoute = createRoute({
   component: RadarAppContent,
 });
 
-// 3. Organizações
+// 3. Organizações (Lista)
 const organizacoesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/organizacoes',
+  component: RadarAppContent,
+});
+
+// 3b. Organização (Detalhe dinâmico da Etapa 2A)
+const organizacaoDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/organizacoes/$orgId',
   component: RadarAppContent,
 });
 
@@ -97,6 +104,7 @@ const routeTree = rootRoute.addChildren([
   indexRoute,
   verticaisRoute,
   organizacoesRoute,
+  organizacaoDetailRoute,
   entrevistasRoute,
   doresRoute,
   oportunidadesRoute,

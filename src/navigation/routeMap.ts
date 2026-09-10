@@ -7,6 +7,7 @@ export const ROUTES = {
   DASHBOARD: '/',
   VERTICAIS: '/verticais',
   ORGANIZACOES: '/organizacoes',
+  ORGANIZACAO_DETAIL: '/organizacoes/$orgId',
   ENTREVISTAS: '/entrevistas',
   DORES: '/dores',
   OPORTUNIDADES: '/oportunidades',
@@ -17,6 +18,20 @@ export const ROUTES = {
 } as const;
 
 export type RoutePath = typeof ROUTES[keyof typeof ROUTES];
+
+/**
+ * Constrói o caminho canônico para o detalhe de uma organização.
+ */
+export function getOrganizacaoDetailRoute(orgId: string): string {
+  return `/organizacoes/${encodeURIComponent(orgId)}`;
+}
+
+/**
+ * Verifica se um caminho corresponde ao detalhe de organização (/organizacoes/:orgId).
+ */
+export function isOrganizacaoDetailRoute(pathname: string): boolean {
+  return /^\/organizacoes\/[^/]+$/.test(pathname);
+}
 
 /**
  * Mapeamento central único entre os valores de ActiveView e as rotas principais do COSMO.

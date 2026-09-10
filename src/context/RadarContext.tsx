@@ -156,13 +156,23 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Active navigation selection
   const [activeView, setActiveView] = useState<ActiveView>(() => {
     if (typeof window !== 'undefined') {
-      const initialView = PATH_TO_VIEW_MAP[window.location.pathname];
+      const pathname = window.location.pathname;
+      if (/^\/organizacoes\/[^/]+$/.test(pathname)) {
+        return 'organizacao-detail';
+      }
+      const initialView = PATH_TO_VIEW_MAP[pathname];
       if (initialView) return initialView;
     }
     return 'dashboard';
   });
   const [selectedVerticalId, setSelectedVerticalId] = useState<string>('VERT-CONT');
-  const [selectedOrgId, setSelectedOrgId] = useState<string>('ORG-CONT-001');
+  const [selectedOrgId, setSelectedOrgId] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const match = window.location.pathname.match(/^\/organizacoes\/([^/]+)$/);
+      if (match) return decodeURIComponent(match[1]);
+    }
+    return 'ORG-CONT-001';
+  });
   const [selectedPainId, setSelectedPainId] = useState<string>('DOR-CONT-001');
   const [selectedOpportunityId, setSelectedOpportunityId] = useState<string>('OP-CONT-001');
   const [activeInterviewToConduct, setActiveInterviewToConduct] = useState<Interview | null>(null);

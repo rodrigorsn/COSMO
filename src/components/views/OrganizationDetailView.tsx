@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { Link, useMatches } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
+import { ROUTES } from '../../navigation/routeMap';
 import { calculateOrgMaturity, calculatePainScore, isPainScoreMeasured } from '../../utils/calculations';
 import { EvidenceNatureBadge, EvidenceCompositionBadge } from '../common/Badge';
 import { SimulacaoTag } from '../common/SimulacaoBadge';
@@ -35,9 +37,10 @@ type OrgTab =
   | 'dores';
 
 export const OrganizationDetailView: React.FC<{ 
+  orgId?: string;
   onNewInterviewClick?: () => void;
   onNewFindingClick?: () => void;
-}> = ({ onNewInterviewClick, onNewFindingClick }) => {
+}> = ({ orgId: propOrgId, onNewInterviewClick, onNewFindingClick }) => {
   const { 
     organizacoes, 
     selectedOrgId, 
@@ -53,7 +56,50 @@ export const OrganizationDetailView: React.FC<{
   const [activeTab, setActiveTab] = useState<OrgTab>('resumo');
   const [editingPainId, setEditingPainId] = useState<string | null>(null);
 
-  const org = organizacoes.find(o => o.id === selectedOrgId) || organizacoes[0];
+  // Resolução da fonte da verdade: parâmetro da rota dinâmica do TanStack Router
+  const matches = useMatches();
+  const orgMatch = matches.find(m => m.routeId === '/organizacoes/$orgId');
+  const routeOrgId = (orgMatch?.params as Record<string, string> | undefined)?.orgId;
+
+  // Fonte prioritária: parâmetro da rota (TanStack Router) ou prop; fallback para selectedOrgId legado
+  const isDynamicRoute = Boolean(routeOrgId);
+  const effectiveOrgId = propOrgId || routeOrgId || selectedOrgId;
+
+  // Se estiver em rota dinâmica, busca estritamente pelo ID fornecido na URL sem fallback silencioso para outra organização
+  const org = isDynamicRoute
+    ? organizacoes.find(o => o.id === effectiveOrgId)
+    : (organizacoes.find(o => o.id === effectiveOrgId) || null);
+
+  if (!org) {
+    return (
+      <div className="max-w-2xl mx-auto py-12 px-4 text-center">
+        <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-xs space-y-4">
+          <div className="w-12 h-12 rounded-full bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto">
+            <Building2 className="w-6 h-6" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Organização não encontrada</h2>
+            <p className="text-xs text-slate-500 mt-1">
+              Não foi possível localizar uma organização com o identificador{' '}
+              <code className="font-mono font-semibold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded">
+                {effectiveOrgId}
+              </code>.
+            </p>
+          </div>
+          <div className="pt-2">
+            <Link
+              to={ROUTES.ORGANIZACOES}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Voltar para Organizações</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const orgInterviews = entrevistas.filter(e => e.organizacaoId === org.id);
   const orgFindings = achados.filter(f => f.organizacaoId === org.id);
   const orgPainOccurrences = ocorrenciasDores.filter(o => o.organizacaoId === org.id);
@@ -66,13 +112,13 @@ export const OrganizationDetailView: React.FC<{
       <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setActiveView('organizacoes')}
-              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors"
+            <Link
+              to={ROUTES.ORGANIZACOES}
+              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors inline-flex items-center justify-center"
               title="Voltar para a lista de organizações"
             >
               <ArrowLeft className="w-4 h-4" />
-            </button>
+            </Link>
             <div>
               <div className="flex items-center gap-2.5">
                 <h1 className="text-xl font-bold text-slate-900 tracking-tight">

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
 import { calculatePainConsolidation, isPainScoreMeasured } from '../../utils/calculations';
 import { EvidenceNatureBadge, EvidenceCompositionBadge } from '../common/Badge';
@@ -189,15 +190,13 @@ export const PainDetailView: React.FC = () => {
                     )}
 
                     <div className="pt-2 text-right">
-                      <button
-                        onClick={() => {
-                          setSelectedOrgId(occ.organizacaoId);
-                          setActiveView('organizacao-detail');
-                        }}
+                      <Link
+                        to="/organizacoes/$orgId"
+                        params={{ orgId: occ.organizacaoId }}
                         className="text-blue-700 font-semibold text-[11px] hover:underline inline-flex items-center gap-1"
                       >
                         Ver ambiente da organização <ArrowRight className="w-3 h-3" />
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 );

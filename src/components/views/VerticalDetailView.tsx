@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
 import { VerticalStatusBadge, EvidenceLevelBadge, EvidenceNatureBadge } from '../common/Badge';
 import { SimulacaoTag } from '../common/SimulacaoBadge';
@@ -306,15 +307,13 @@ export const VerticalDetailView: React.FC = () => {
                     {org.numFuncionarios} funcionários • {org.numClientes} clientes • {org.cidade}/{org.estado} • {org.subvertical}
                   </div>
                 </div>
-                <button
-                  onClick={() => {
-                    setSelectedOrgId(org.id);
-                    setActiveView('organizacao-detail');
-                  }}
-                  className="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700"
+                <Link
+                  to="/organizacoes/$orgId"
+                  params={{ orgId: org.id }}
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 inline-flex items-center justify-center"
                 >
                   Abrir Detalhe
-                </button>
+                </Link>
               </div>
             ))}
           </div>

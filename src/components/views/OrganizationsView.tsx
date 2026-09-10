@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import { Link } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
 import { SimulacaoTag } from '../common/SimulacaoBadge';
 import { Building2, Plus, Filter, Users, Layers, Search, ArrowRight, ExternalLink } from 'lucide-react';
 import { Organization } from '../../types/radar';
 
 export const OrganizationsView: React.FC<{ onNewOrgClick?: () => void }> = ({ onNewOrgClick }) => {
-  const { organizacoes, setSelectedOrgId, setActiveView, verticais, entrevistas, ocorrenciasDores } = useRadar();
+  const { organizacoes, verticais, entrevistas, ocorrenciasDores } = useRadar();
   
   const [filterSize, setFilterSize] = useState<string>('all');
   const [filterSoftware, setFilterSoftware] = useState<string>('all');
@@ -162,15 +163,13 @@ export const OrganizationsView: React.FC<{ onNewOrgClick?: () => void }> = ({ on
                       </span>
                     </td>
                     <td className="py-3.5 px-4 text-right">
-                      <button
-                        onClick={() => {
-                          setSelectedOrgId(org.id);
-                          setActiveView('organizacao-detail');
-                        }}
-                        className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-colors shadow-xs"
+                      <Link
+                        to="/organizacoes/$orgId"
+                        params={{ orgId: org.id }}
+                        className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-colors shadow-xs inline-flex items-center justify-center"
                       >
                         Abrir Ambiente
-                      </button>
+                      </Link>
                     </td>
                   </tr>
                 );
