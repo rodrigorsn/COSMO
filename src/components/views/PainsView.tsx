@@ -3,7 +3,7 @@ import { useRadar } from '../../context/RadarContext';
 import { SimulacaoTag } from '../common/SimulacaoBadge';
 import { Flame, ArrowRight, CheckCircle2, XCircle } from 'lucide-react';
 import { calculatePainConsolidation } from '../../utils/calculations';
-import { EvidenceLevelBadge } from '../common/Badge';
+import { EvidenceLevelBadge, EvidenceCompositionBadge } from '../common/Badge';
 
 export const PainsView: React.FC = () => {
   const { 
@@ -77,17 +77,19 @@ export const PainsView: React.FC = () => {
                       </span>
                     </td>
                     <td className="py-3.5 px-4 text-center font-mono font-bold text-slate-900 text-sm">
-                      {stats.mediana}/25
+                      {stats.ocorrenciasMensuradasCount > 0 ? (
+                        `${stats.mediana}/25`
+                      ) : (
+                        <span className="text-[11px] font-normal text-slate-400 italic">Não mensurado</span>
+                      )}
                     </td>
                     <td className="py-3.5 px-4 text-center">
-                      <div className="inline-flex items-center gap-2 font-mono text-[11px]">
-                        <span className="text-emerald-700 font-semibold" title="Evidências favoráveis">
-                          +{pain.evidenciasFavoraveisIds.length}
-                        </span>
-                        <span>/</span>
-                        <span className="text-rose-700 font-semibold" title="Evidências contrárias">
-                          -{pain.evidenciasContrariasIds.length}
-                        </span>
+                      <div className="inline-flex justify-center">
+                        <EvidenceCompositionBadge 
+                          favCount={pain.evidenciasFavoraveisIds.length} 
+                          conCount={pain.evidenciasContrariasIds.length} 
+                          neuCount={pain.evidenciasNeutrasIds?.length || 0} 
+                        />
                       </div>
                     </td>
                     <td className="py-3.5 px-4 text-right">

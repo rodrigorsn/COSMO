@@ -181,10 +181,11 @@ export interface PainOccurrence {
   id: string;
   dorConsolidadaId: string;
   organizacaoId: string;
-  painScore: PainScoreBreakdown;
+  painScore?: PainScoreBreakdown | null; // null/undefined quando não mensurado (Seção 29)
+  isMeasured?: boolean; // Flag explícita: true quando avaliado conscientemente, false quando não mensurado
   achadosIds: string[];
   notasEspecificas: string;
-  evidenciaNatureza: EvidenceNature;
+  evidenciaNatureza?: EvidenceNature; // Mantido apenas para compatibilidade legada; a verdade está em Finding.natureza
 }
 
 export interface PainConsolidated {
@@ -310,7 +311,8 @@ export interface Organization {
   id: string;
   nome: string; // ou anonimizado: "Escritório Contábil 001"
   verticalId: string;
-  subvertical: string;
+  subverticalId?: string; // ID canônico da Subvertical (ex: "SUB-GEN")
+  subvertical?: string; // Rótulo descritivo para exibição e compatibilidade
   cidade: string;
   estado: string;
   regiao: string;

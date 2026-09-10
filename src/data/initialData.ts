@@ -259,11 +259,23 @@ export const INITIAL_QUESTION_LIBRARY: QuestionLibraryItem[] = [
     texto: 'Como vocês lidam com a diversidade de regimes tributários (Simples, Presumido, Real) na rotina de fechamento dos clientes generalistas?',
     escopo: 'subvertical',
     verticalId: 'VERT-CONT',
-    subverticalId: 'Escritório contábil generalista',
+    subverticalId: 'SUB-GEN',
     categoria: 'Subvertical / Generalista',
     followUps: [
       'Quais regimes geram mais retrabalho de conciliação?',
       'Os clientes de comércio exigem rotinas muito diferentes dos de serviços?'
+    ]
+  },
+  {
+    id: 'Q-SUB-DP-01',
+    texto: 'Como é feito o controle de prazos críticos de fechamento de folha e envio dos eventos de admissão e demissão ao eSocial no DP terceirizado?',
+    escopo: 'subvertical',
+    verticalId: 'VERT-CONT',
+    subverticalId: 'SUB-DP',
+    categoria: 'Subvertical / DP Terceirizado',
+    followUps: [
+      'Quantas retificações de folha ocorrem mensalmente por dados enviados atrasados pelos clientes?',
+      'Qual a porcentagem de clientes que envia o ponto no último dia do prazo?'
     ]
   },
 
@@ -286,6 +298,7 @@ export const INITIAL_ORGANIZACOES: Organization[] = [
     id: 'ORG-CONT-001',
     nome: 'Escritório Contábil Alfa (ORG-CONT-001)',
     verticalId: 'VERT-CONT',
+    subverticalId: 'SUB-GEN',
     subvertical: 'Escritório contábil generalista',
     cidade: 'São Paulo',
     estado: 'SP',
@@ -420,6 +433,7 @@ export const INITIAL_ORGANIZACOES: Organization[] = [
     id: 'ORG-CONT-002',
     nome: 'Escritório Contábil Beta (ORG-CONT-002)',
     verticalId: 'VERT-CONT',
+    subverticalId: 'SUB-GEN',
     subvertical: 'Escritório contábil generalista',
     cidade: 'Campinas',
     estado: 'SP',
@@ -516,6 +530,7 @@ export const INITIAL_ORGANIZACOES: Organization[] = [
     id: 'ORG-CONT-003',
     nome: 'Escritório Contábil Gamma (ORG-CONT-003)',
     verticalId: 'VERT-CONT',
+    subverticalId: 'SUB-GEN',
     subvertical: 'Escritório contábil generalista',
     cidade: 'Belo Horizonte',
     estado: 'MG',
@@ -993,6 +1008,7 @@ export const INITIAL_PAIN_OCCURRENCES: PainOccurrence[] = [
     id: 'OCC-001-01',
     dorConsolidadaId: 'DOR-CONT-001',
     organizacaoId: 'ORG-CONT-001',
+    isMeasured: true,
     painScore: {
       frequencia: 4, // mensal/semanal intenso
       tempoCusto: 5, // 96 horas/mês
@@ -1010,6 +1026,7 @@ export const INITIAL_PAIN_OCCURRENCES: PainOccurrence[] = [
     id: 'OCC-001-02',
     dorConsolidadaId: 'DOR-CONT-001',
     organizacaoId: 'ORG-CONT-002',
+    isMeasured: true,
     painScore: {
       frequencia: 2, // controlado
       tempoCusto: 2, // 18 horas/mês
@@ -1027,6 +1044,7 @@ export const INITIAL_PAIN_OCCURRENCES: PainOccurrence[] = [
     id: 'OCC-001-03',
     dorConsolidadaId: 'DOR-CONT-001',
     organizacaoId: 'ORG-CONT-003',
+    isMeasured: true,
     painScore: {
       frequencia: 5, // contínuo
       tempoCusto: 5, // mais de 160 horas/mês (3 pessoas dedicadas)
@@ -1044,6 +1062,7 @@ export const INITIAL_PAIN_OCCURRENCES: PainOccurrence[] = [
     id: 'OCC-002-01',
     dorConsolidadaId: 'DOR-CONT-002',
     organizacaoId: 'ORG-CONT-001',
+    isMeasured: true,
     painScore: {
       frequencia: 4,
       tempoCusto: 4,
@@ -1061,6 +1080,7 @@ export const INITIAL_PAIN_OCCURRENCES: PainOccurrence[] = [
     id: 'OCC-002-03',
     dorConsolidadaId: 'DOR-CONT-002',
     organizacaoId: 'ORG-CONT-003',
+    isMeasured: true,
     painScore: {
       frequencia: 4,
       tempoCusto: 4,
@@ -1078,6 +1098,7 @@ export const INITIAL_PAIN_OCCURRENCES: PainOccurrence[] = [
     id: 'OCC-003-03',
     dorConsolidadaId: 'DOR-CONT-003',
     organizacaoId: 'ORG-CONT-003',
+    isMeasured: true,
     painScore: {
       frequencia: 4,
       tempoCusto: 4,
@@ -1088,6 +1109,17 @@ export const INITIAL_PAIN_OCCURRENCES: PainOccurrence[] = [
     },
     achadosIds: ['ACH-008'],
     notasEspecificas: '120 admissões por mês. Risco legal direto para os clientes.',
+    evidenciaNatureza: 'favoravel'
+  },
+  // Dor 003 no Escritório 001 (Ocorrência preliminar identificada com Pain Score NÃO MENSURADO)
+  {
+    id: 'OCC-003-01',
+    dorConsolidadaId: 'DOR-CONT-003',
+    organizacaoId: 'ORG-CONT-001',
+    isMeasured: false,
+    painScore: null,
+    achadosIds: [],
+    notasEspecificas: 'Ocorrência preliminar identificada em entrevista; aguardando mensuração consciente das 5 dimensões pelo pesquisador.',
     evidenciaNatureza: 'favoravel'
   }
 ];

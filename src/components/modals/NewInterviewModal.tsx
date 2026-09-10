@@ -35,7 +35,7 @@ export const NewInterviewModal: React.FC<{ isOpen: boolean; onClose: () => void 
     const relevantQuestions = perguntasBiblioteca.filter(q => {
       if (q.escopo === 'global') return true;
       if (q.escopo === 'vertical' && q.verticalId === currentOrg.verticalId) return true;
-      if (q.escopo === 'subvertical' && (q.subverticalId === currentOrg.subvertical || q.subverticalId === currentOrg.verticalId)) return true;
+      if (q.escopo === 'subvertical' && currentOrg.subverticalId && q.subverticalId === currentOrg.subverticalId) return true;
       if (q.escopo === 'perfil' && q.perfilAplicavel === currentPerson.perfil) return true;
       if (q.escopo === 'organizacao' && q.organizacaoId === currentOrg.id) return true;
       return false;

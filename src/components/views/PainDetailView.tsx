@@ -1,13 +1,14 @@
 import React from 'react';
 import { useRadar } from '../../context/RadarContext';
-import { calculatePainConsolidation } from '../../utils/calculations';
-import { EvidenceNatureBadge } from '../common/Badge';
+import { calculatePainConsolidation, isPainScoreMeasured } from '../../utils/calculations';
+import { EvidenceNatureBadge, EvidenceCompositionBadge } from '../common/Badge';
 import { SimulacaoTag } from '../common/SimulacaoBadge';
 import { 
   ArrowLeft, 
   Flame, 
   CheckCircle2, 
   XCircle, 
+  HelpCircle,
   Building2, 
   Quote, 
   TrendingUp, 
@@ -37,6 +38,7 @@ export const PainDetailView: React.FC = () => {
   const relevantFindings = achados.filter(f => f.dorConsolidadaId === pain.id);
   const favorableFindings = relevantFindings.filter(f => f.natureza === 'favoravel');
   const contraryFindings = relevantFindings.filter(f => f.natureza === 'contraria');
+  const neutralFindings = relevantFindings.filter(f => f.natureza === 'neutra');
 
   const relatedOpportunities = oportunidades.filter(o => o.doresRelacionadasIds.includes(pain.id));
 
@@ -80,19 +82,27 @@ export const PainDetailView: React.FC = () => {
           </div>
           <div>
             <span className="text-slate-400 text-[11px] block">Pain Mediano</span>
-            <span className="font-bold text-slate-900 text-base font-mono">{stats.mediana}/25</span>
+            <span className="font-bold text-slate-900 text-base font-mono">
+              {stats.ocorrenciasMensuradasCount > 0 ? `${stats.mediana}/25` : <span className="text-xs font-normal text-slate-400 italic">Não mensurado</span>}
+            </span>
           </div>
           <div>
             <span className="text-slate-400 text-[11px] block">Pain Médio</span>
-            <span className="font-bold text-slate-900 text-base font-mono">{stats.media}</span>
+            <span className="font-bold text-slate-900 text-base font-mono">
+              {stats.ocorrenciasMensuradasCount > 0 ? stats.media : <span className="text-xs font-normal text-slate-400 italic">Não mensurado</span>}
+            </span>
           </div>
           <div>
             <span className="text-slate-400 text-[11px] block">Score Mínimo</span>
-            <span className="font-mono font-semibold text-slate-700 text-sm">{stats.minimo}</span>
+            <span className="font-mono font-semibold text-slate-700 text-sm">
+              {stats.ocorrenciasMensuradasCount > 0 ? stats.minimo : '—'}
+            </span>
           </div>
           <div>
             <span className="text-slate-400 text-[11px] block">Score Máximo</span>
-            <span className="font-mono font-bold text-orange-800 text-sm">{stats.maximo}</span>
+            <span className="font-mono font-bold text-orange-800 text-sm">
+              {stats.ocorrenciasMensuradasCount > 0 ? stats.maximo : '—'}
+            </span>
           </div>
           <div>
             <span className="text-slate-400 text-[11px] block">Evid. Favoráveis</span>
@@ -102,6 +112,12 @@ export const PainDetailView: React.FC = () => {
             <span className="text-slate-400 text-[11px] block">Evid. Contrárias</span>
             <span className="font-mono font-bold text-rose-700 text-sm">-{contraryFindings.length}</span>
           </div>
+          {neutralFindings.length > 0 && (
+            <div>
+              <span className="text-slate-400 text-[11px] block">Evid. Neutras</span>
+              <span className="font-mono font-bold text-slate-600 text-sm">{neutralFindings.length}</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -118,23 +134,33 @@ export const PainDetailView: React.FC = () => {
             <div className="space-y-3">
               {relevantOccurrences.map(occ => {
                 const org = organizacoes.find(o => o.id === occ.organizacaoId);
-                const score = occ.painScore.total;
+                const measured = isPainScoreMeasured(occ);
+                const score = measured ? occ.painScore!.total : null;
+                const occFindings = achados.filter(f => occ.achadosIds.includes(f.id));
+                const favCount = occFindings.filter(f => f.natureza === 'favoravel').length;
+                const conCount = occFindings.filter(f => f.natureza === 'contraria').length;
+                const neuCount = occFindings.filter(f => f.natureza === 'neutra').length;
 
                 return (
                   <div key={occ.id} className="p-4 rounded-lg border border-slate-200 bg-slate-50/70 space-y-2 text-xs">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                       <div>
                         <div className="font-bold text-sm text-slate-900">{org?.nome}</div>
                         <div className="text-[11px] text-slate-500">{org?.numClientes} clientes • {org?.numFuncionarios} funcionários</div>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <EvidenceNatureBadge nature={occ.evidenciaNatureza} />
-                        <span className={`font-mono font-bold px-2 py-0.5 rounded text-xs ${
-                          score >= 20 ? 'bg-orange-100 text-orange-900 border border-orange-200' : 'bg-slate-200 text-slate-800'
-                        }`}>
-                          {score}/25
-                        </span>
+                      <div className="flex items-center gap-2 flex-wrap justify-end">
+                        {measured ? (
+                          <span className={`font-mono font-bold px-2 py-0.5 rounded text-xs ${
+                            score! >= 20 ? 'bg-orange-100 text-orange-900 border border-orange-200' : 'bg-slate-200 text-slate-800'
+                          }`}>
+                            {score}/25
+                          </span>
+                        ) : (
+                          <span className="font-mono font-semibold px-2 py-0.5 rounded text-[11px] bg-amber-50 text-amber-800 border border-amber-200">
+                            Não mensurado
+                          </span>
+                        )}
                       </div>
                     </div>
 
@@ -142,13 +168,25 @@ export const PainDetailView: React.FC = () => {
                       {occ.notasEspecificas}
                     </p>
 
-                    <div className="grid grid-cols-5 gap-1 pt-1 text-center font-mono text-[10px] text-slate-500 border-t border-slate-200/60">
-                      <div>Freq: <strong>{occ.painScore.frequencia}</strong></div>
-                      <div>Tempo: <strong>{occ.painScore.tempoCusto}</strong></div>
-                      <div>Sev: <strong>{occ.painScore.severidade}</strong></div>
-                      <div>Man: <strong>{occ.painScore.manualidade}</strong></div>
-                      <div>Rep: <strong>{occ.painScore.repetibilidade}</strong></div>
+                    {/* Composição das evidências desta ocorrência */}
+                    <div className="flex items-center gap-1.5 flex-wrap pt-1 text-[11px]">
+                      <span className="text-slate-500 font-medium">Evidências:</span>
+                      <EvidenceCompositionBadge favCount={favCount} conCount={conCount} neuCount={neuCount} />
                     </div>
+
+                    {measured ? (
+                      <div className="grid grid-cols-5 gap-1 pt-1 text-center font-mono text-[10px] text-slate-500 border-t border-slate-200/60">
+                        <div>Freq: <strong>{occ.painScore!.frequencia}</strong></div>
+                        <div>Tempo: <strong>{occ.painScore!.tempoCusto}</strong></div>
+                        <div>Sev: <strong>{occ.painScore!.severidade}</strong></div>
+                        <div>Man: <strong>{occ.painScore!.manualidade}</strong></div>
+                        <div>Rep: <strong>{occ.painScore!.repetibilidade}</strong></div>
+                      </div>
+                    ) : (
+                      <div className="pt-1 text-center font-mono text-[11px] text-slate-400 italic border-t border-slate-200/60">
+                        Dimensões de dor ainda não mensuradas nesta organização.
+                      </div>
+                    )}
 
                     <div className="pt-2 text-right">
                       <button
@@ -265,6 +303,37 @@ export const PainDetailView: React.FC = () => {
                 })}
               </div>
             </div>
+
+            {/* Evidências Neutras */}
+            {neutralFindings.length > 0 && (
+              <div className="space-y-2">
+                <div className="font-bold text-slate-700 text-xs flex items-center gap-1.5 uppercase tracking-wider">
+                  <HelpCircle className="w-4 h-4 text-slate-500" />
+                  Evidências Neutras Observadas ({neutralFindings.length}):
+                </div>
+                <div className="space-y-2">
+                  {neutralFindings.map(nf => {
+                    const org = nf.organizacaoId ? organizacoes.find(o => o.id === nf.organizacaoId) : null;
+                    return (
+                      <div key={nf.id} className="p-3.5 rounded-lg border border-slate-300 bg-slate-50/60 text-xs space-y-1.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="font-bold text-slate-900">{nf.titulo}</div>
+                          <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                            {org ? org.nome : (nf.origem || 'Fonte Externa')}
+                          </span>
+                        </div>
+                        <div className="italic text-slate-800 bg-white p-2.5 rounded border border-slate-200">
+                          "{nf.fraseOriginal}"
+                        </div>
+                        <p className="text-slate-600 text-[11px]">
+                          <strong>Interpretação:</strong> {nf.interpretacao}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Oportunidades Derivadas */}

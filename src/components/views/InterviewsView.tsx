@@ -99,7 +99,7 @@ export const InterviewsView: React.FC<{ onNewInterviewClick?: () => void }> = ({
           interviewId: activeInterview.id,
           organizacaoId: activeInterview.organizacaoId,
           verticalId: activeInterview.verticalId,
-          subverticalId: currentOrg?.subvertical,
+          subverticalId: currentOrg?.subverticalId,
           previousScope: 'Entrevista',
           originNote: `Entrevista ${activeInterview.id} (${currentOrg?.nome})`
         }

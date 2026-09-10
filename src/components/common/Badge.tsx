@@ -66,6 +66,49 @@ export const EvidenceNatureBadge: React.FC<{ nature: EvidenceNature }> = ({ natu
   }
 };
 
+export const EvidenceCompositionBadge: React.FC<{
+  favCount: number;
+  conCount: number;
+  neuCount?: number;
+}> = ({ favCount, conCount, neuCount = 0 }) => {
+  const total = favCount + conCount + neuCount;
+
+  if (total === 0) {
+    return <span className="text-slate-400 text-[11px] italic">Sem achados</span>;
+  }
+
+  return (
+    <div className="inline-flex items-center gap-1.5 flex-wrap">
+      {favCount > 0 && (
+        <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+          <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
+          {favCount} {favCount === 1 ? 'favorável' : 'favoráveis'}
+        </span>
+      )}
+      {conCount > 0 && (
+        <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[11px] font-semibold bg-rose-50 text-rose-800 border border-rose-300 shadow-2xs">
+          <XCircle className="w-2.5 h-2.5 text-rose-600" />
+          {conCount} {conCount === 1 ? 'contrária' : 'contrárias'}
+        </span>
+      )}
+      {neuCount > 0 && (
+        <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
+          <MinusCircle className="w-2.5 h-2.5 text-slate-500" />
+          {neuCount} {neuCount === 1 ? 'neutra' : 'neutras'}
+        </span>
+      )}
+    </div>
+  );
+};
+
+export function formatEvidenceComposition(fav: number, con: number, neu: number = 0): string {
+  const parts: string[] = [];
+  if (fav > 0) parts.push(`${fav} ${fav === 1 ? 'favorável' : 'favoráveis'}`);
+  if (con > 0) parts.push(`${con} ${con === 1 ? 'contrária' : 'contrárias'}`);
+  if (neu > 0) parts.push(`${neu} ${neu === 1 ? 'neutra' : 'neutras'}`);
+  return parts.length > 0 ? parts.join(' · ') : 'Sem evidências';
+}
+
 export const EvidenceLevelBadge: React.FC<{ level: EvidenceLevel; tooltip?: boolean }> = ({ level }) => {
   const configs: Record<EvidenceLevel, { label: string; desc: string; bg: string; text: string; border: string }> = {
     H0: { label: 'H0', desc: 'Suposição (sem evidência externa)', bg: 'bg-slate-100', text: 'text-slate-700', border: 'border-slate-300' },

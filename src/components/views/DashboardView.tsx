@@ -289,6 +289,12 @@ export const DashboardView: React.FC = () => {
                           <span className="text-rose-700 font-semibold">{dor.evidenciasContrariasIds.length} contrária</span>
                         </>
                       )}
+                      {dor.evidenciasNeutrasIds && dor.evidenciasNeutrasIds.length > 0 && (
+                        <>
+                          <span>•</span>
+                          <span className="text-slate-600 font-medium">{dor.evidenciasNeutrasIds.length} neutra</span>
+                        </>
+                      )}
                     </div>
                   </div>
 

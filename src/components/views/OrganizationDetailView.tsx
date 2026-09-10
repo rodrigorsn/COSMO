@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useRadar } from '../../context/RadarContext';
-import { calculateOrgMaturity, calculatePainScore } from '../../utils/calculations';
-import { EvidenceNatureBadge } from '../common/Badge';
+import { calculateOrgMaturity, calculatePainScore, isPainScoreMeasured } from '../../utils/calculations';
+import { EvidenceNatureBadge, EvidenceCompositionBadge } from '../common/Badge';
 import { SimulacaoTag } from '../common/SimulacaoBadge';
 import { 
   Building2, 
@@ -199,32 +199,56 @@ export const OrganizationDetailView: React.FC<{
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
               {orgPainOccurrences.map(occ => {
                 const painObj = doresConsolidadas.find(d => d.id === occ.dorConsolidadaId);
-                const score = occ.painScore.total;
+                const measured = isPainScoreMeasured(occ);
+                const score = measured ? occ.painScore!.total : null;
+                const occFindings = achados.filter(f => occ.achadosIds.includes(f.id));
+                const favCount = occFindings.filter(f => f.natureza === 'favoravel').length;
+                const conCount = occFindings.filter(f => f.natureza === 'contraria').length;
+                const neuCount = occFindings.filter(f => f.natureza === 'neutra').length;
 
                 return (
                   <div key={occ.id} className="p-4 rounded-lg border border-slate-200 bg-slate-50/70 space-y-2 text-xs">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                       <span className="font-semibold text-slate-900">{painObj?.titulo || occ.dorConsolidadaId}</span>
-                      <span className={`font-mono text-xs font-bold px-2 py-0.5 rounded ${
-                        score >= 20 ? 'bg-orange-100 text-orange-900 border border-orange-200' : 'bg-slate-200 text-slate-800'
-                      }`}>
-                        Pain: {score}/25
-                      </span>
+                      {measured ? (
+                        <span className={`font-mono text-xs font-bold px-2 py-0.5 rounded ${
+                          score! >= 20 ? 'bg-orange-100 text-orange-900 border border-orange-200' : 'bg-slate-200 text-slate-800'
+                        }`}>
+                          Pain: {score}/25
+                        </span>
+                      ) : (
+                        <span className="font-mono text-[11px] font-semibold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
+                          Não mensurado
+                        </span>
+                      )}
                     </div>
                     <p className="text-slate-600 text-[11px] leading-relaxed">
                       {occ.notasEspecificas}
                     </p>
-                    <div className="flex items-center gap-2 pt-1 text-[11px] text-slate-500">
-                      <span>Freq: {occ.painScore.frequencia}/5</span>
-                      <span>•</span>
-                      <span>Tempo: {occ.painScore.tempoCusto}/5</span>
-                      <span>•</span>
-                      <span>Severidade: {occ.painScore.severidade}/5</span>
-                      <span>•</span>
-                      <span>Manual: {occ.painScore.manualidade}/5</span>
-                      <span>•</span>
-                      <span>Repet: {occ.painScore.repetibilidade}/5</span>
+
+                    {/* Composição das evidências dos Achados desta ocorrência */}
+                    <div className="flex items-center gap-1.5 flex-wrap pt-1 text-[11px]">
+                      <span className="text-slate-400 font-medium">Evidências:</span>
+                      <EvidenceCompositionBadge favCount={favCount} conCount={conCount} neuCount={neuCount} />
                     </div>
+
+                    {measured ? (
+                      <div className="flex items-center gap-2 pt-1 text-[11px] text-slate-500">
+                        <span>Freq: {occ.painScore!.frequencia}/5</span>
+                        <span>•</span>
+                        <span>Tempo: {occ.painScore!.tempoCusto}/5</span>
+                        <span>•</span>
+                        <span>Severidade: {occ.painScore!.severidade}/5</span>
+                        <span>•</span>
+                        <span>Manual: {occ.painScore!.manualidade}/5</span>
+                        <span>•</span>
+                        <span>Repet: {occ.painScore!.repetibilidade}/5</span>
+                      </div>
+                    ) : (
+                      <div className="pt-1 text-[11px] text-slate-400 italic">
+                        Dimensões de dor ainda não mensuradas nesta organização.
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -587,6 +611,12 @@ export const OrganizationDetailView: React.FC<{
             {orgPainOccurrences.map(occ => {
               const painObj = doresConsolidadas.find(d => d.id === occ.dorConsolidadaId);
               const isEditing = editingPainId === occ.id;
+              const measured = isPainScoreMeasured(occ);
+              const score = measured ? occ.painScore!.total : null;
+              const occFindings = achados.filter(f => occ.achadosIds.includes(f.id));
+              const favCount = occFindings.filter(f => f.natureza === 'favoravel').length;
+              const conCount = occFindings.filter(f => f.natureza === 'contraria').length;
+              const neuCount = occFindings.filter(f => f.natureza === 'neutra').length;
 
               return (
                 <div key={occ.id} className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3 text-xs">
@@ -598,70 +628,112 @@ export const OrganizationDetailView: React.FC<{
                     <div className="flex items-center gap-3">
                       <div className="text-right">
                         <span className="text-slate-400 text-[11px] block">Pain Score</span>
-                        <span className="font-mono font-bold text-lg text-orange-800">{occ.painScore.total}/25</span>
+                        {measured ? (
+                          <span className="font-mono font-bold text-lg text-orange-800">{score}/25</span>
+                        ) : (
+                          <span className="font-mono font-semibold text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 inline-block mt-0.5">
+                            Não mensurado
+                          </span>
+                        )}
                       </div>
                       <button
                         onClick={() => setEditingPainId(isEditing ? null : occ.id)}
-                        className="px-2 py-1 rounded text-xs font-semibold border border-slate-200 hover:bg-slate-50 text-slate-700"
+                        className="px-2.5 py-1 rounded text-xs font-semibold border border-slate-200 hover:bg-slate-50 text-slate-700 shadow-xs"
                       >
-                        {isEditing ? 'Fechar Edição' : 'Ajustar Dimensões'}
+                        {isEditing ? 'Fechar Edição' : (measured ? 'Ajustar Dimensões' : 'Avaliar Dimensões')}
                       </button>
                     </div>
                   </div>
 
                   <p className="text-slate-600">{occ.notasEspecificas}</p>
 
+                  {/* Composição das evidências */}
+                  <div className="flex items-center gap-2 flex-wrap p-2.5 bg-slate-50 rounded-lg border border-slate-100">
+                    <span className="text-slate-500 font-semibold text-[11px]">Composição de Evidências:</span>
+                    <EvidenceCompositionBadge favCount={favCount} conCount={conCount} neuCount={neuCount} />
+                    <span className="text-slate-400 text-[11px]">
+                      ({occFindings.length} achado{occFindings.length !== 1 ? 's' : ''} associado{occFindings.length !== 1 ? 's' : ''})
+                    </span>
+                  </div>
+
                   {/* Pain Score 5 Dimensions Breakdown */}
                   <div className="grid grid-cols-5 gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200 text-center">
                     <div>
                       <span className="text-[10px] text-slate-500 block">Frequência</span>
-                      <span className="font-mono font-bold text-slate-800 text-sm">{occ.painScore.frequencia}/5</span>
+                      <span className="font-mono font-bold text-slate-800 text-sm">
+                        {measured ? `${occ.painScore!.frequencia}/5` : '—'}
+                      </span>
                     </div>
                     <div>
                       <span className="text-[10px] text-slate-500 block">Tempo/Custo</span>
-                      <span className="font-mono font-bold text-slate-800 text-sm">{occ.painScore.tempoCusto}/5</span>
+                      <span className="font-mono font-bold text-slate-800 text-sm">
+                        {measured ? `${occ.painScore!.tempoCusto}/5` : '—'}
+                      </span>
                     </div>
                     <div>
                       <span className="text-[10px] text-slate-500 block">Severidade</span>
-                      <span className="font-mono font-bold text-slate-800 text-sm">{occ.painScore.severidade}/5</span>
+                      <span className="font-mono font-bold text-slate-800 text-sm">
+                        {measured ? `${occ.painScore!.severidade}/5` : '—'}
+                      </span>
                     </div>
                     <div>
                       <span className="text-[10px] text-slate-500 block">Manualidade</span>
-                      <span className="font-mono font-bold text-slate-800 text-sm">{occ.painScore.manualidade}/5</span>
+                      <span className="font-mono font-bold text-slate-800 text-sm">
+                        {measured ? `${occ.painScore!.manualidade}/5` : '—'}
+                      </span>
                     </div>
                     <div>
                       <span className="text-[10px] text-slate-500 block">Repetibilidade</span>
-                      <span className="font-mono font-bold text-slate-800 text-sm">{occ.painScore.repetibilidade}/5</span>
+                      <span className="font-mono font-bold text-slate-800 text-sm">
+                        {measured ? `${occ.painScore!.repetibilidade}/5` : '—'}
+                      </span>
                     </div>
                   </div>
 
                   {/* Interactive Dimension Sliders (when editing) */}
                   {isEditing && (
                     <div className="p-4 bg-blue-50/50 rounded-lg border border-blue-200 space-y-3">
-                      <div className="font-bold text-blue-900 text-xs">Ajustar Dimensões do Pain Score (0–5):</div>
+                      <div className="flex items-center justify-between">
+                        <div className="font-bold text-blue-900 text-xs">Avaliar / Ajustar Dimensões do Pain Score (0–5):</div>
+                        <span className="text-[10px] text-blue-700">Preencha as 5 dimensões conscientemente</span>
+                      </div>
                       
                       <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-                        {(['frequencia', 'tempoCusto', 'severidade', 'manualidade', 'repetibilidade'] as const).map(dim => (
-                          <div key={dim} className="space-y-1 text-slate-700">
-                            <label className="text-[11px] font-semibold capitalize block">
-                              {dim}: {occ.painScore[dim]}
-                            </label>
-                            <input
-                              type="range"
-                              min="0"
-                              max="5"
-                              value={occ.painScore[dim]}
-                              onChange={(e) => {
-                                const val = parseInt(e.target.value, 10);
-                                updatePainScore(occ.id, {
-                                  ...occ.painScore,
-                                  [dim]: val
-                                });
-                              }}
-                              className="w-full cursor-pointer accent-blue-600"
-                            />
-                          </div>
-                        ))}
+                        {(['frequencia', 'tempoCusto', 'severidade', 'manualidade', 'repetibilidade'] as const).map(dim => {
+                          const currentVal = (occ.painScore && typeof occ.painScore[dim] === 'number') ? occ.painScore[dim] : 0;
+                          return (
+                            <div key={dim} className="space-y-1 text-slate-700">
+                              <label className="text-[11px] font-semibold capitalize block">
+                                {dim}: {currentVal}
+                              </label>
+                              <input
+                                type="range"
+                                min="0"
+                                max="5"
+                                value={currentVal}
+                                onChange={(e) => {
+                                  const val = parseInt(e.target.value, 10);
+                                  const baseScore = occ.painScore || {
+                                    frequencia: 0,
+                                    tempoCusto: 0,
+                                    severidade: 0,
+                                    manualidade: 0,
+                                    repetibilidade: 0,
+                                    total: 0
+                                  };
+                                  updatePainScore(occ.id, {
+                                    frequencia: dim === 'frequencia' ? val : (baseScore.frequencia ?? 0),
+                                    tempoCusto: dim === 'tempoCusto' ? val : (baseScore.tempoCusto ?? 0),
+                                    severidade: dim === 'severidade' ? val : (baseScore.severidade ?? 0),
+                                    manualidade: dim === 'manualidade' ? val : (baseScore.manualidade ?? 0),
+                                    repetibilidade: dim === 'repetibilidade' ? val : (baseScore.repetibilidade ?? 0)
+                                  });
+                                }}
+                                className="w-full cursor-pointer accent-blue-600"
+                              />
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}

@@ -222,7 +222,8 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         );
 
         if (existingIdx >= 0) {
-          // Múltiplos achados da mesma organização alimentam a mesma ocorrência conceitual
+          // Múltiplos achados da mesma organização alimentam a mesma ocorrência conceitual.
+          // A natureza pertence a cada Achado (Finding) e NÃO à Ocorrência inteira.
           const existing = prevOcc[existingIdx];
           const updatedAchados = existing.achadosIds.includes(newId)
             ? existing.achadosIds
@@ -230,26 +231,20 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
           const updatedOcc: PainOccurrence = {
             ...existing,
-            achadosIds: updatedAchados,
-            evidenciaNatureza: f.natureza === 'contraria' ? 'contraria' : existing.evidenciaNatureza
+            achadosIds: updatedAchados
           };
           const copy = [...prevOcc];
           copy[existingIdx] = updatedOcc;
           return copy;
         } else {
-          // Criação da ocorrência de dor associada para esta organização
+          // Criação da ocorrência de dor associada para esta organização.
+          // Inicia estritamente com Pain Score NÃO MENSURADO (Seção 29), sem atribuir notas artificiais 3.
           const newOcc: PainOccurrence = {
             id: `OCC-${Date.now().toString().slice(-4)}`,
             organizacaoId: f.organizacaoId!,
             dorConsolidadaId: f.dorConsolidadaId!,
-            painScore: calculatePainScore({
-              frequencia: 3,
-              tempoCusto: 3,
-              severidade: 3,
-              manualidade: 3,
-              repetibilidade: 3
-            }),
-            evidenciaNatureza: f.natureza,
+            painScore: null,
+            isMeasured: false,
             notasEspecificas: `Ocorrência registrada a partir do achado: ${f.titulo}`,
             achadosIds: [newId]
           };
@@ -258,7 +253,7 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       });
     }
 
-    // Se associado a uma dor consolidada, atualiza as referências de evidências da dor
+    // Se associado a uma dor consolidada, atualiza as referências de evidências da dor sem descartar contrárias ou neutras
     if (f.dorConsolidadaId) {
       setDoresConsolidadas(prev => prev.map(p => {
         if (p.id === f.dorConsolidadaId) {
@@ -267,6 +262,9 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           }
           if (f.natureza === 'contraria' && !p.evidenciasContrariasIds.includes(newId)) {
             return { ...p, evidenciasContrariasIds: [...p.evidenciasContrariasIds, newId] };
+          }
+          if (f.natureza === 'neutra' && !p.evidenciasNeutrasIds.includes(newId)) {
+            return { ...p, evidenciasNeutrasIds: [...p.evidenciasNeutrasIds, newId] };
           }
         }
         return p;
@@ -295,7 +293,8 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (occ.id === occurrenceId) {
         return {
           ...occ,
-          painScore: fullScore
+          painScore: fullScore,
+          isMeasured: true
         };
       }
       return occ;

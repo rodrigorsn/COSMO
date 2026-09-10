@@ -65,6 +65,12 @@ export function calculateOpportunityScore(breakdown: Omit<OpportunityScoreBreakd
   };
 }
 
+export function isPainScoreMeasured(occ: PainOccurrence): boolean {
+  if (occ.isMeasured === false) return false;
+  if (!occ.painScore) return false;
+  return typeof occ.painScore.total === 'number';
+}
+
 export interface PainConsolidationStats {
   totalOrgsVertical: number;
   orgsComDor: number;
@@ -73,6 +79,7 @@ export interface PainConsolidationStats {
   mediana: number;
   minimo: number;
   maximo: number;
+  ocorrenciasMensuradasCount: number;
   totalEvidencias: number;
   evidenciasFavoraveis: number;
   evidenciasContrarias: number;
@@ -92,6 +99,11 @@ export function calculatePainConsolidation(
   // Cálculo rigoroso da incidência: contagem de organizações ÚNICAS (PRD Seção 30)
   const uniqueOrgIds = Array.from(new Set(relevantOccurrences.map(o => o.organizacaoId).filter(Boolean)));
   const orgsComDor = uniqueOrgIds.length;
+
+  const relevantFindings = findings.filter(f => f.dorConsolidadaId === painId);
+  const fav = relevantFindings.filter(f => f.natureza === 'favoravel').length;
+  const con = relevantFindings.filter(f => f.natureza === 'contraria').length;
+  const neu = relevantFindings.filter(f => f.natureza === 'neutra').length;
   
   if (verticalOrgsCount === 0 || orgsComDor === 0) {
     return {
@@ -102,6 +114,7 @@ export function calculatePainConsolidation(
       mediana: 0,
       minimo: 0,
       maximo: 0,
+      ocorrenciasMensuradasCount: 0,
       totalEvidencias: 0,
       evidenciasFavoraveis: 0,
       evidenciasContrarias: 0,
@@ -112,28 +125,33 @@ export function calculatePainConsolidation(
     };
   }
 
-  const scores = relevantOccurrences.map(o => o.painScore.total).sort((a, b) => a - b);
-  const sum = scores.reduce((acc, s) => acc + s, 0);
-  const media = parseFloat((sum / scores.length).toFixed(1));
-  
+  // Filtrar APENAS ocorrências com Pain Score conscientemente mensurado (Seção 29)
+  const measuredOccurrences = relevantOccurrences.filter(isPainScoreMeasured);
+  const scores = measuredOccurrences.map(o => o.painScore!.total).sort((a, b) => a - b);
+  const hasMeasured = scores.length > 0;
+
+  let media = 0;
   let mediana = 0;
-  const mid = Math.floor(scores.length / 2);
-  if (scores.length % 2 === 0) {
-    mediana = parseFloat(((scores[mid - 1] + scores[mid]) / 2).toFixed(1));
-  } else {
-    mediana = scores[mid];
+  let minimo = 0;
+  let maximo = 0;
+
+  if (hasMeasured) {
+    const sum = scores.reduce((acc, s) => acc + s, 0);
+    media = parseFloat((sum / scores.length).toFixed(1));
+    
+    const mid = Math.floor(scores.length / 2);
+    if (scores.length % 2 === 0) {
+      mediana = parseFloat(((scores[mid - 1] + scores[mid]) / 2).toFixed(1));
+    } else {
+      mediana = scores[mid];
+    }
+
+    minimo = scores[0];
+    maximo = scores[scores.length - 1];
   }
 
-  const minimo = scores[0];
-  const maximo = scores[scores.length - 1];
-
-  const relevantFindings = findings.filter(f => f.dorConsolidadaId === painId);
-  const fav = relevantFindings.filter(f => f.natureza === 'favoravel').length;
-  const con = relevantFindings.filter(f => f.natureza === 'contraria').length;
-  const neu = relevantFindings.filter(f => f.natureza === 'neutra').length;
-
   const amostraLimitada = verticalOrgsCount < 5 || orgsComDor < 3;
-  const dadosSuficientes = verticalOrgsCount >= 3 && orgsComDor >= 2;
+  const dadosSuficientes = verticalOrgsCount >= 3 && orgsComDor >= 2 && hasMeasured;
   const alertaAmostra = amostraLimitada
     ? `Amostra limitada: ${orgsComDor} de ${verticalOrgsCount} organização(ões) pesquisada(s). Percentual preliminar sujeito a validação em campo.`
     : undefined;
@@ -146,6 +164,7 @@ export function calculatePainConsolidation(
     mediana,
     minimo,
     maximo,
+    ocorrenciasMensuradasCount: scores.length,
     totalEvidencias: relevantFindings.length,
     evidenciasFavoraveis: fav,
     evidenciasContrarias: con,

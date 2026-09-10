@@ -8,7 +8,7 @@ export const NewOrganizationModal: React.FC<{ isOpen: boolean; onClose: () => vo
 
   const [nome, setNome] = useState('');
   const [verticalId, setVerticalId] = useState('VERT-CONT');
-  const [subvertical, setSubvertical] = useState('Escritório Tradicional B2B');
+  const [subverticalId, setSubverticalId] = useState('SUB-GEN');
   const [cidade, setCidade] = useState('Curitiba');
   const [estado, setEstado] = useState('PR');
   const [regiao, setRegiao] = useState('Sul');
@@ -21,6 +21,9 @@ export const NewOrganizationModal: React.FC<{ isOpen: boolean; onClose: () => vo
 
   if (!isOpen) return null;
 
+  const currentVert = verticais.find(v => v.id === verticalId) || verticais[0];
+  const selectedSub = currentVert?.subverticais.find(s => s.id === subverticalId) || currentVert?.subverticais[0];
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!nome.trim()) return;
@@ -28,7 +31,8 @@ export const NewOrganizationModal: React.FC<{ isOpen: boolean; onClose: () => vo
     addOrganization({
       nome: nome.trim(),
       verticalId,
-      subvertical,
+      subverticalId: selectedSub?.id || 'SUB-GEN',
+      subvertical: selectedSub?.nome || 'Escritório contábil generalista',
       cidade,
       estado,
       regiao,
@@ -124,7 +128,14 @@ export const NewOrganizationModal: React.FC<{ isOpen: boolean; onClose: () => vo
               <label className="font-semibold text-slate-700 block mb-1">Vertical:</label>
               <select
                 value={verticalId}
-                onChange={(e) => setVerticalId(e.target.value)}
+                onChange={(e) => {
+                  const newVId = e.target.value;
+                  setVerticalId(newVId);
+                  const newV = verticais.find(v => v.id === newVId);
+                  if (newV && newV.subverticais.length > 0) {
+                    setSubverticalId(newV.subverticais[0].id);
+                  }
+                }}
                 className="w-full p-2 border border-slate-200 rounded-lg text-xs"
               >
                 {verticais.map(v => (
@@ -135,12 +146,17 @@ export const NewOrganizationModal: React.FC<{ isOpen: boolean; onClose: () => vo
 
             <div>
               <label className="font-semibold text-slate-700 block mb-1">Subvertical:</label>
-              <input
-                type="text"
-                value={subvertical}
-                onChange={(e) => setSubvertical(e.target.value)}
+              <select
+                value={subverticalId}
+                onChange={(e) => setSubverticalId(e.target.value)}
                 className="w-full p-2 border border-slate-200 rounded-lg text-xs"
-              />
+              >
+                {currentVert?.subverticais.map(s => (
+                  <option key={s.id} value={s.id}>
+                    {s.nome} ({s.id})
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
