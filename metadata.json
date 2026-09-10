@@ -1,0 +1,6 @@
+{
+  "name": "Vertical Opportunity Radar",
+  "description": "Ferramenta de investigação estruturada de mercados B2B para descobrir oportunidades de software com base em evidências reais.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
