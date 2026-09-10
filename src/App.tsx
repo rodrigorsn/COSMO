@@ -28,8 +28,12 @@ import { SimulacaoBanner } from './components/common/SimulacaoBadge';
 import { NewOrganizationModal } from './components/modals/NewOrganizationModal';
 import { NewInterviewModal } from './components/modals/NewInterviewModal';
 import { NewFindingModal } from './components/modals/NewFindingModal';
+import { useNavigationAdapter } from './navigation/useNavigationAdapter';
 
 export const RadarAppContent: React.FC = () => {
+  // Sincronização bidirecional entre activeView e a URL do TanStack Router
+  useNavigationAdapter();
+
   const { activeView } = useRadar();
   const [isNewOrgOpen, setIsNewOrgOpen] = useState(false);
   const [isNewInterviewOpen, setIsNewInterviewOpen] = useState(false);

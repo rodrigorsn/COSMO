@@ -30,6 +30,7 @@ import {
   INITIAL_CROSS_VERTICAL 
 } from '../data/initialData';
 import { calculatePainScore } from '../utils/calculations';
+import { PATH_TO_VIEW_MAP } from '../navigation/routeMap';
 
 export type ActiveView = 
   | 'dashboard' 
@@ -153,7 +154,13 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [crossVertical] = useState<CrossVerticalComparison[]>(INITIAL_CROSS_VERTICAL);
 
   // Active navigation selection
-  const [activeView, setActiveView] = useState<ActiveView>('dashboard');
+  const [activeView, setActiveView] = useState<ActiveView>(() => {
+    if (typeof window !== 'undefined') {
+      const initialView = PATH_TO_VIEW_MAP[window.location.pathname];
+      if (initialView) return initialView;
+    }
+    return 'dashboard';
+  });
   const [selectedVerticalId, setSelectedVerticalId] = useState<string>('VERT-CONT');
   const [selectedOrgId, setSelectedOrgId] = useState<string>('ORG-CONT-001');
   const [selectedPainId, setSelectedPainId] = useState<string>('DOR-CONT-001');
