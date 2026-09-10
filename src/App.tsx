@@ -29,7 +29,7 @@ import { NewOrganizationModal } from './components/modals/NewOrganizationModal';
 import { NewInterviewModal } from './components/modals/NewInterviewModal';
 import { NewFindingModal } from './components/modals/NewFindingModal';
 
-const RadarAppContent: React.FC = () => {
+export const RadarAppContent: React.FC = () => {
   const { activeView } = useRadar();
   const [isNewOrgOpen, setIsNewOrgOpen] = useState(false);
   const [isNewInterviewOpen, setIsNewInterviewOpen] = useState(false);
