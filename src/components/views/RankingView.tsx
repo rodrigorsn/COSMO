@@ -19,9 +19,7 @@ import {
 export const RankingView: React.FC = () => {
   const { 
     oportunidades, 
-    doresConsolidadas, 
-    setSelectedOpportunityId, 
-    setActiveView 
+    doresConsolidadas
   } = useRadar();
 
   const [activeTab, setActiveTab] = useState<'oportunidades' | 'dores'>('oportunidades');
@@ -147,16 +145,14 @@ export const RankingView: React.FC = () => {
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      setSelectedOpportunityId(opp.id);
-                      setActiveView('oportunidade-detail');
-                    }}
+                  <Link
+                    to="/oportunidades/$opportunityId"
+                    params={{ opportunityId: opp.id }}
                     className="flex items-center gap-1 px-3 py-2 rounded-lg bg-slate-50 hover:bg-blue-50 text-blue-700 font-semibold border border-slate-200 hover:border-blue-200 transition-colors"
                   >
                     <span>Ver Detalhes</span>
                     <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))}

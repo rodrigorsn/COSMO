@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from '@tanstack/react-router';
-import { useRadar, ActiveView } from '../../context/RadarContext';
+import { useRadar } from '../../context/RadarContext';
 import { ROUTES } from '../../navigation/routeMap';
 import { 
   LayoutDashboard, 
@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 
 interface NavItem {
-  id: ActiveView;
+  id: string;
   label: string;
   icon: React.ElementType;
   path: string;

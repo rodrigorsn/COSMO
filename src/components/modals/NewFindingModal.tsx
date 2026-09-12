@@ -27,6 +27,7 @@ export const NewFindingModal: React.FC<{ isOpen: boolean; onClose: () => void }>
       descricao: interpretacao.trim() || 'Evidência de campo.',
       origem,
       tipoEvidencia: 'evidencia_observada',
+      reviewStatus: 'revisado',
       natureza,
       organizacaoId: orgId ? orgId : undefined,
       entrevistadoId: currentOrg ? currentOrg.entrevistados[0]?.id : undefined,

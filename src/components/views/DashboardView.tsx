@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
+import { useGuidedJourneyNavigation } from '../../navigation/useGuidedJourneyNavigation';
 import { ROUTES } from '../../navigation/routeMap';
 import { 
   Building2, 
@@ -25,11 +26,9 @@ export const DashboardView: React.FC = () => {
     organizacoes, 
     entrevistas, 
     doresConsolidadas, 
-    oportunidades, 
-    setActiveView, 
-    setSelectedOpportunityId,
-    jumpToJourneyStep 
+    oportunidades
   } = useRadar();
+  const { jumpToJourneyStep } = useGuidedJourneyNavigation();
 
   const h4h5Count = oportunidades.filter(o => o.evidenceLevel === 'H4' || o.evidenceLevel === 'H5').length;
   const topOpportunity = oportunidades.slice().sort((a, b) => b.opportunityScore.total - a.opportunityScore.total)[0];
@@ -201,15 +200,13 @@ export const DashboardView: React.FC = () => {
                   <p className="text-slate-600 leading-relaxed">
                     Já existe evidência econômica comprovada (H4) com despesas de 3 pessoas dedicadas na ORG-003. O próximo passo metodológico é apresentar proposta de piloto pago no Escritório 001 e Escritório 003.
                   </p>
-                  <button
-                    onClick={() => {
-                      setSelectedOpportunityId('OP-CONT-001');
-                      setActiveView('oportunidade-detail');
-                    }}
+                  <Link
+                    to="/oportunidades/$opportunityId"
+                    params={{ opportunityId: 'OP-CONT-001' }}
                     className="text-blue-700 hover:text-blue-900 font-semibold inline-flex items-center gap-1 pt-1"
                   >
                     Ver Opportunity Card OP-CONT-001 <ArrowRight className="w-3 h-3" />
-                  </button>
+                  </Link>
                 </div>
               </div>
 
@@ -242,15 +239,13 @@ export const DashboardView: React.FC = () => {
                   <p className="text-slate-600 leading-relaxed">
                     A dor de documentos de admissão foi verificada apenas no Escritório 003. Para conceder H3 (padrão inter-organizações), é mandatório confirmar em pelo menos mais 1 organização independente.
                   </p>
-                  <button
-                    onClick={() => {
-                      setSelectedOpportunityId('OP-CONT-002');
-                      setActiveView('oportunidade-detail');
-                    }}
+                  <Link
+                    to="/oportunidades/$opportunityId"
+                    params={{ opportunityId: 'OP-CONT-002' }}
                     className="text-blue-700 hover:text-blue-900 font-semibold inline-flex items-center gap-1 pt-1"
                   >
                     Abrir Detalhe de OP-CONT-002 <ArrowRight className="w-3 h-3" />
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -363,16 +358,14 @@ export const DashboardView: React.FC = () => {
             </div>
 
             <div className="mt-4 pt-3 border-t border-slate-100">
-              <button
-                onClick={() => {
-                  setSelectedOpportunityId(topOpportunity.id);
-                  setActiveView('oportunidade-detail');
-                }}
+              <Link
+                to="/oportunidades/$opportunityId"
+                params={{ opportunityId: topOpportunity.id }}
                 className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-colors shadow-xs"
               >
                 <span>Explorar Evidence Chain Completa</span>
                 <ArrowRight className="w-3.5 h-3.5" />
-              </button>
+              </Link>
             </div>
           </div>
 

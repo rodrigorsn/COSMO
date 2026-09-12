@@ -4,7 +4,8 @@
  */
 
 import React, { useState } from 'react';
-import { RadarProvider, useRadar } from './context/RadarContext';
+import { useMatches } from '@tanstack/react-router';
+import { RadarProvider } from './context/RadarContext';
 import { Header } from './components/common/Header';
 import { Sidebar } from './components/common/Sidebar';
 import { GuidedJourneyBar } from './components/common/GuidedJourneyBar';
@@ -28,55 +29,50 @@ import { SimulacaoBanner } from './components/common/SimulacaoBadge';
 import { NewOrganizationModal } from './components/modals/NewOrganizationModal';
 import { NewInterviewModal } from './components/modals/NewInterviewModal';
 import { NewFindingModal } from './components/modals/NewFindingModal';
-import { useNavigationAdapter } from './navigation/useNavigationAdapter';
 
 export const RadarAppContent: React.FC = () => {
-  // Sincronização bidirecional entre activeView e a URL do TanStack Router
-  useNavigationAdapter();
+  const matches = useMatches();
+  const currentRouteId = matches[matches.length - 1]?.routeId;
 
-  const { activeView } = useRadar();
   const [isNewOrgOpen, setIsNewOrgOpen] = useState(false);
   const [isNewInterviewOpen, setIsNewInterviewOpen] = useState(false);
   const [isNewFindingOpen, setIsNewFindingOpen] = useState(false);
 
   const renderActiveView = () => {
-    switch (activeView) {
-      case 'dashboard':
+    switch (currentRouteId) {
+      case '/':
         return <DashboardView />;
-      case 'verticais':
+      case '/verticais':
         return <VerticalsView />;
-      case 'vertical-detail':
+      case '/verticais/$verticalId':
         return <VerticalDetailView />;
-      case 'organizacoes':
+      case '/organizacoes':
         return <OrganizationsView onNewOrgClick={() => setIsNewOrgOpen(true)} />;
-      case 'organizacao-detail':
+      case '/organizacoes/$orgId':
         return (
           <OrganizationDetailView 
             onNewInterviewClick={() => setIsNewInterviewOpen(true)}
             onNewFindingClick={() => setIsNewFindingOpen(true)}
           />
         );
-      case 'entrevistas':
+      case '/entrevistas':
+      case '/entrevistas/$interviewId':
         return <InterviewsView onNewInterviewClick={() => setIsNewInterviewOpen(true)} />;
-      case 'dores':
+      case '/dores':
         return <PainsView />;
-      case 'dor-detail':
+      case '/dores/$painId':
         return <PainDetailView />;
-      case 'oportunidades':
+      case '/oportunidades':
         return <OpportunitiesView />;
-      case 'oportunidade-detail':
+      case '/oportunidades/$opportunityId':
         return <OpportunityDetailView />;
-      case 'ranking':
+      case '/ranking':
         return <RankingView />;
-      case 'perguntas':
+      case '/perguntas':
         return <QuestionsView />;
-      case 'fontes':
+      case '/fontes':
         return <FontesEMercadoView defaultTab="fontes" />;
-      case 'concorrentes':
-        return <FontesEMercadoView defaultTab="concorrentes" />;
-      case 'fontes-concorrentes':
-        return <FontesEMercadoView defaultTab="fontes" />;
-      case 'cross-vertical':
+      case '/cross-vertical':
         return <CrossVerticalView />;
       default:
         return <DashboardView />;

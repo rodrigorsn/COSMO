@@ -5,7 +5,8 @@ import {
   PainOccurrence, 
   Finding,
   EvidenceLevel,
-  Organization
+  Organization,
+  Interview
 } from '../types/radar';
 
 export function calculatePainScore(breakdown: Omit<PainScoreBreakdown, 'total'>): PainScoreBreakdown {
@@ -73,17 +74,31 @@ export function isPainScoreMeasured(occ: PainOccurrence): boolean {
 
 export interface PainConsolidationStats {
   totalOrgsVertical: number;
+  totalAmostraInvestigada: number;
   orgsComDor: number;
-  incidenciaPercent: number;
+  
+  // Organizações por tipo de evidência (Etapa 5A.3.2)
+  orgsFavoraveisCount: number;
+  orgsContrariasCount: number;
+  orgsNeutrasCount: number;
+
+  incidenciaPercent: number; // % de orgs com a dor sobre amostra investigada
+  incidenciaFavoravelPercent: number; // % de orgs com evidência favorável sobre amostra investigada
+  incidenciaContrariaPercent: number; // % de orgs com evidência contrária sobre amostra investigada
+  incidenciaNeutraPercent: number;
+
   media: number;
   mediana: number;
   minimo: number;
   maximo: number;
   ocorrenciasMensuradasCount: number;
+  
+  // Contagem por Findings (Evidências Individuais) - Mantido para Evidence Composition
   totalEvidencias: number;
   evidenciasFavoraveis: number;
   evidenciasContrarias: number;
   evidenciasNeutras: number;
+
   dadosSuficientes: boolean;
   amostraLimitada: boolean;
   alertaAmostra?: string;
@@ -93,23 +108,72 @@ export function calculatePainConsolidation(
   painId: string,
   occurrences: PainOccurrence[],
   verticalOrgsCount: number,
-  findings: Finding[]
+  findings: Finding[],
+  interviews?: Interview[],
+  verticalOrgs?: Organization[]
 ): PainConsolidationStats {
   const relevantOccurrences = occurrences.filter(o => o.dorConsolidadaId === painId);
-  // Cálculo rigoroso da incidência: contagem de organizações ÚNICAS (PRD Seção 30)
-  const uniqueOrgIds = Array.from(new Set(relevantOccurrences.map(o => o.organizacaoId).filter(Boolean)));
-  const orgsComDor = uniqueOrgIds.length;
+  // Contagem de organizações ÚNICAS com ocorrências
+  const uniqueOrgIdsWithOccs = Array.from(new Set(relevantOccurrences.map(o => o.organizacaoId).filter(Boolean)));
+  const orgsComDor = uniqueOrgIdsWithOccs.length;
 
-  const relevantFindings = findings.filter(f => f.dorConsolidadaId === painId);
-  const fav = relevantFindings.filter(f => f.natureza === 'favoravel').length;
-  const con = relevantFindings.filter(f => f.natureza === 'contraria').length;
-  const neu = relevantFindings.filter(f => f.natureza === 'neutra').length;
-  
-  if (verticalOrgsCount === 0 || orgsComDor === 0) {
+  // Determina Amostra Investigada: Organizações com ao menos 1 entrevista com status "Concluída" (Etapa 5A.3.2)
+  let investigatedOrgIds: string[] = [];
+  if (interviews && interviews.length > 0) {
+    const concludedInterviews = interviews.filter(i => i.status === 'Concluída');
+    const allInvestigatedOrgIds = Array.from(new Set(concludedInterviews.map(i => i.organizacaoId).filter(Boolean)));
+    
+    if (verticalOrgs && verticalOrgs.length > 0) {
+      const verticalOrgIdsSet = new Set(verticalOrgs.map(o => o.id));
+      investigatedOrgIds = allInvestigatedOrgIds.filter(id => verticalOrgIdsSet.has(id));
+    } else {
+      investigatedOrgIds = allInvestigatedOrgIds;
+    }
+  }
+
+  // Denominador real da amostra investigada: se entrevistas foram informadas, usamos investigatedOrgIds.length;
+  // se não ou se for 0, usamos o fallback de verticalOrgsCount para retrocompatibilidade.
+  const totalAmostraInvestigada = investigatedOrgIds.length > 0 ? investigatedOrgIds.length : verticalOrgsCount;
+
+  // Findings não descartados vinculados a esta Dor
+  const relevantFindings = findings.filter(f => 
+    f.dorConsolidadaId === painId && 
+    (f.reviewStatus === 'revisado' || f.reviewStatus === undefined) && 
+    Boolean(f.natureza)
+  );
+
+  const favFindingsCount = relevantFindings.filter(f => f.natureza === 'favoravel').length;
+  const conFindingsCount = relevantFindings.filter(f => f.natureza === 'contraria').length;
+  const neuFindingsCount = relevantFindings.filter(f => f.natureza === 'neutra').length;
+
+  // Organizações ÚNICAS por natureza de evidência (Etapa 5A.3.2)
+  const orgsFavoraveisSet = new Set(relevantFindings.filter(f => f.natureza === 'favoravel').map(f => f.organizacaoId).filter(Boolean));
+  const orgsContrariasSet = new Set(relevantFindings.filter(f => f.natureza === 'contraria').map(f => f.organizacaoId).filter(Boolean));
+  const orgsNeutrasSet = new Set(relevantFindings.filter(f => f.natureza === 'neutra').map(f => f.organizacaoId).filter(Boolean));
+
+  const orgsFavoraveisCount = orgsFavoraveisSet.size;
+  const orgsContrariasCount = orgsContrariasSet.size;
+  const orgsNeutrasCount = orgsNeutrasSet.size;
+
+  const denom = totalAmostraInvestigada > 0 ? totalAmostraInvestigada : 1;
+
+  const incidenciaPercent = Math.round((orgsComDor / denom) * 100);
+  const incidenciaFavoravelPercent = Math.round((orgsFavoraveisCount / denom) * 100);
+  const incidenciaContrariaPercent = Math.round((orgsContrariasCount / denom) * 100);
+  const incidenciaNeutraPercent = Math.round((orgsNeutrasCount / denom) * 100);
+
+  if (verticalOrgsCount === 0 && totalAmostraInvestigada === 0) {
     return {
-      totalOrgsVertical: verticalOrgsCount,
+      totalOrgsVertical: 0,
+      totalAmostraInvestigada: 0,
       orgsComDor: 0,
+      orgsFavoraveisCount: 0,
+      orgsContrariasCount: 0,
+      orgsNeutrasCount: 0,
       incidenciaPercent: 0,
+      incidenciaFavoravelPercent: 0,
+      incidenciaContrariaPercent: 0,
+      incidenciaNeutraPercent: 0,
       media: 0,
       mediana: 0,
       minimo: 0,
@@ -121,7 +185,7 @@ export function calculatePainConsolidation(
       evidenciasNeutras: 0,
       dadosSuficientes: false,
       amostraLimitada: true,
-      alertaAmostra: 'Nenhuma organização registrada com esta dor na vertical.',
+      alertaAmostra: 'Nenhuma organização registrada na amostra desta vertical.',
     };
   }
 
@@ -150,25 +214,32 @@ export function calculatePainConsolidation(
     maximo = scores[scores.length - 1];
   }
 
-  const amostraLimitada = verticalOrgsCount < 5 || orgsComDor < 3;
-  const dadosSuficientes = verticalOrgsCount >= 3 && orgsComDor >= 2 && hasMeasured;
+  const amostraLimitada = totalAmostraInvestigada < 5 || orgsFavoraveisCount < 3;
+  const dadosSuficientes = totalAmostraInvestigada >= 3 && orgsFavoraveisCount >= 2 && hasMeasured;
   const alertaAmostra = amostraLimitada
-    ? `Amostra limitada: ${orgsComDor} de ${verticalOrgsCount} organização(ões) pesquisada(s). Percentual preliminar sujeito a validação em campo.`
+    ? `Amostra limitada: ${orgsFavoraveisCount} de ${totalAmostraInvestigada} organização(ões) investigada(s) com evidência favorável. Percentual preliminar sujeito a validação em campo.`
     : undefined;
 
   return {
     totalOrgsVertical: verticalOrgsCount,
+    totalAmostraInvestigada,
     orgsComDor,
-    incidenciaPercent: Math.round((orgsComDor / verticalOrgsCount) * 100),
+    orgsFavoraveisCount,
+    orgsContrariasCount,
+    orgsNeutrasCount,
+    incidenciaPercent,
+    incidenciaFavoravelPercent,
+    incidenciaContrariaPercent,
+    incidenciaNeutraPercent,
     media,
     mediana,
     minimo,
     maximo,
     ocorrenciasMensuradasCount: scores.length,
     totalEvidencias: relevantFindings.length,
-    evidenciasFavoraveis: fav,
-    evidenciasContrarias: con,
-    evidenciasNeutras: neu,
+    evidenciasFavoraveis: favFindingsCount,
+    evidenciasContrarias: conFindingsCount,
+    evidenciasNeutras: neuFindingsCount,
     dadosSuficientes,
     amostraLimitada,
     alertaAmostra,

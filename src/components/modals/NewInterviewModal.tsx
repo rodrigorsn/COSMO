@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
 import { MessageSquareText, X, Play } from 'lucide-react';
 import { Interview, InterviewQuestionInstance, InterviewType, InterviewFormat } from '../../types/radar';
 
 export const NewInterviewModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
-  const { organizacoes, perguntasBiblioteca, saveInterview, setActiveInterviewToConduct, setActiveView } = useRadar();
+  const { organizacoes, perguntasBiblioteca, saveInterview } = useRadar();
+  const navigate = useNavigate();
 
   const [orgId, setOrgId] = useState(organizacoes[0]?.id || '');
   const [entrevistadoId, setEntrevistadoId] = useState(organizacoes[0]?.entrevistados[0]?.id || '');
@@ -67,8 +69,7 @@ export const NewInterviewModal: React.FC<{ isOpen: boolean; onClose: () => void 
     };
 
     saveInterview(newInterview);
-    setActiveInterviewToConduct(newInterview);
-    setActiveView('entrevistas');
+    navigate({ to: '/entrevistas/$interviewId', params: { interviewId: newInterview.id } });
     onClose();
   };
 

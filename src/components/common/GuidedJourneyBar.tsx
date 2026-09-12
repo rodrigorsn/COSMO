@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useRadar } from '../../context/RadarContext';
+import { useGuidedJourneyNavigation } from '../../navigation/useGuidedJourneyNavigation';
 import { ChevronRight, ChevronLeft, Compass, CheckCircle2, Play, ChevronDown } from 'lucide-react';
 
 const JOURNEY_STEPS = [
@@ -24,7 +24,7 @@ const JOURNEY_STEPS = [
 ];
 
 export const GuidedJourneyBar: React.FC = () => {
-  const { currentJourneyStep, jumpToJourneyStep } = useRadar();
+  const { currentJourneyStep, jumpToJourneyStep } = useGuidedJourneyNavigation();
   const [isOpen, setIsOpen] = useState(false);
 
   const currentStepObj = JOURNEY_STEPS.find(s => s.step === currentJourneyStep) || JOURNEY_STEPS[0];

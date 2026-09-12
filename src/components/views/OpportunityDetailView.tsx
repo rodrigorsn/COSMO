@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Link } from '@tanstack/react-router';
+import { Link, useMatches } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
 import { EvidenceLevelBadge } from '../common/Badge';
 import { SimulacaoTag } from '../common/SimulacaoBadge';
+import { ROUTES } from '../../navigation/routeMap';
 import { 
   ArrowLeft, 
   Sparkles, 
@@ -20,24 +21,59 @@ import {
   FlaskConical,
   TrendingUp,
   XCircle,
-  ExternalLink
+  ExternalLink,
+  AlertTriangle
 } from 'lucide-react';
 import { Opportunity, Finding } from '../../types/radar';
 
 export const OpportunityDetailView: React.FC = () => {
   const { 
     oportunidades, 
-    selectedOpportunityId, 
-    setActiveView, 
     doresConsolidadas, 
     ocorrenciasDores, 
     achados, 
     entrevistas, 
-    organizacoes,
-    setSelectedOrgId
+    organizacoes
   } = useRadar();
 
-  const opp = oportunidades.find(o => o.id === selectedOpportunityId) || oportunidades[0];
+  // Resolução da fonte da verdade: parâmetro da rota dinâmica do TanStack Router
+  const matches = useMatches();
+  const oppMatch = matches.find(m => m.routeId === '/oportunidades/$opportunityId');
+  const routeOppId = (oppMatch?.params as Record<string, string> | undefined)?.opportunityId;
+
+  // Busca a oportunidade correspondente ao ID da URL
+  const opp = routeOppId ? oportunidades.find(o => o.id === routeOppId) : null;
+
+  // Tratamento explícito de Oportunidade Não Encontrada
+  if (!opp) {
+    return (
+      <div className="max-w-3xl mx-auto py-12 px-4 text-center space-y-6">
+        <div className="w-16 h-16 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto border border-amber-200 shadow-xs">
+          <AlertTriangle className="w-8 h-8" />
+        </div>
+        <div className="space-y-2">
+          <span className="font-mono text-xs font-semibold uppercase tracking-wider text-amber-700 bg-amber-100/60 px-2.5 py-1 rounded-full">
+            Oportunidade não encontrada
+          </span>
+          <h2 className="text-xl font-bold text-slate-900">
+            Nenhuma oportunidade registrada para "{routeOppId || 'ID não informado'}"
+          </h2>
+          <p className="text-sm text-slate-500 max-w-md mx-auto">
+            O identificador fornecido na URL não corresponde a nenhuma oportunidade registrada.
+          </p>
+        </div>
+        <div className="pt-2">
+          <Link
+            to={ROUTES.OPORTUNIDADES}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800 text-xs font-semibold shadow-xs transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Voltar para a Lista de Oportunidades
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   // Selected node in the Evidence Chain for deep inspection
   const [selectedChainFindingId, setSelectedChainFindingId] = useState<string | null>(null);
@@ -45,7 +81,7 @@ export const OpportunityDetailView: React.FC = () => {
   // Derive evidence chain items for this opportunity
   const relatedPains = doresConsolidadas.filter(d => opp.doresRelacionadasIds.includes(d.id));
   const relatedOccurrences = ocorrenciasDores.filter(occ => opp.doresRelacionadasIds.includes(occ.dorConsolidadaId));
-  const relatedFindings = achados.filter(f => opp.doresRelacionadasIds.includes(f.dorConsolidadaId || ''));
+  const relatedFindings = achados.filter(f => opp.doresRelacionadasIds.includes(f.dorConsolidadaId || '') && f.reviewStatus !== 'descartado' && f.reviewStatus !== 'pendente');
 
   const inspectFinding = achados.find(f => f.id === selectedChainFindingId) || relatedFindings[0];
   const inspectInterview = entrevistas.find(e => e.id === inspectFinding?.entrevistaId);
@@ -58,13 +94,13 @@ export const OpportunityDetailView: React.FC = () => {
       <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setActiveView('oportunidades')}
-              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors"
+            <Link
+              to={ROUTES.OPORTUNIDADES}
+              className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors inline-flex items-center justify-center"
               title="Voltar para lista de oportunidades"
             >
               <ArrowLeft className="w-4 h-4" />
-            </button>
+            </Link>
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-mono text-xs font-bold text-blue-700">{opp.id}</span>
@@ -203,7 +239,17 @@ export const OpportunityDetailView: React.FC = () => {
 
               <div className="p-2.5 rounded bg-white border border-slate-200">
                 <span className="text-slate-400 block text-[10px]">3. Sessão de Entrevista</span>
-                <span className="font-bold text-slate-900 block mt-0.5">{inspectInterview?.id}</span>
+                {inspectInterview?.id ? (
+                  <Link
+                    to="/entrevistas/$interviewId"
+                    params={{ interviewId: inspectInterview.id }}
+                    className="font-bold text-blue-700 hover:underline block mt-0.5 font-mono"
+                  >
+                    {inspectInterview.id}
+                  </Link>
+                ) : (
+                  <span className="font-bold text-slate-900 block mt-0.5">-</span>
+                )}
                 <span className="text-slate-500 text-[10px]">Data: {inspectInterview?.data}</span>
               </div>
 

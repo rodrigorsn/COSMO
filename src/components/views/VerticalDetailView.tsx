@@ -36,10 +36,6 @@ export const VerticalDetailView: React.FC<{
 }> = ({ verticalId: propVerticalId }) => {
   const { 
     verticais, 
-    selectedVerticalId, 
-    setActiveView, 
-    setSelectedOrgId,
-    setSelectedOpportunityId,
     organizacoes, 
     entrevistas, 
     doresConsolidadas, 
@@ -56,14 +52,11 @@ export const VerticalDetailView: React.FC<{
   const verticalMatch = matches.find(m => m.routeId === '/verticais/$verticalId');
   const routeVerticalId = (verticalMatch?.params as Record<string, string> | undefined)?.verticalId;
 
-  // Fonte prioritária: parâmetro da rota (TanStack Router) ou prop; fallback para selectedVerticalId legado
-  const isDynamicRoute = Boolean(routeVerticalId);
-  const effectiveVerticalId = propVerticalId || routeVerticalId || selectedVerticalId;
+  // Fonte de seleção: parâmetro da rota (TanStack Router) ou prop
+  const effectiveVerticalId = propVerticalId || routeVerticalId;
 
-  // Se estiver em rota dinâmica, busca estritamente pelo ID fornecido na URL sem fallback silencioso para outra vertical
-  const vertical = isDynamicRoute
-    ? verticais.find(v => v.id === effectiveVerticalId)
-    : (verticais.find(v => v.id === effectiveVerticalId) || null);
+  // Busca a vertical correspondente ao ID da URL
+  const vertical = effectiveVerticalId ? verticais.find(v => v.id === effectiveVerticalId) : null;
 
   if (!vertical) {
     return (
@@ -443,15 +436,13 @@ export const VerticalDetailView: React.FC<{
 
               <div className="flex items-center justify-between pt-2 border-t border-slate-100">
                 <span className="text-xs text-slate-500">Próxima evidência: <em>{opp.proximaMelhorEvidencia}</em></span>
-                <button
-                  onClick={() => {
-                    setSelectedOpportunityId(opp.id);
-                    setActiveView('oportunidade-detail');
-                  }}
-                  className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold"
+                <Link
+                  to="/oportunidades/$opportunityId"
+                  params={{ opportunityId: opp.id }}
+                  className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold inline-block"
                 >
                   Abrir Opportunity Card
-                </button>
+                </Link>
               </div>
             </div>
           ))}

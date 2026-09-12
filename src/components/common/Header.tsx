@@ -8,7 +8,6 @@ import { Radar, RotateCcw, Building2, HelpCircle, Layers, ExternalLink } from 'l
 export const Header: React.FC = () => {
   const { 
     verticais, 
-    selectedVerticalId, 
     resetToDemoData
   } = useRadar();
 
@@ -16,10 +15,6 @@ export const Header: React.FC = () => {
   const matches = useMatches();
   const verticalMatch = matches.find(m => m.routeId === '/verticais/$verticalId');
   const routeVerticalId = (verticalMatch?.params as Record<string, string> | undefined)?.verticalId;
-
-  // Fonte prioritária: reflete a URL se estiver em rota dinâmica de vertical, fallback para selectedVerticalId
-  const activeVerticalValue = routeVerticalId || selectedVerticalId;
-  const activeVertical = verticais.find(v => v.id === activeVerticalValue) || verticais[0];
 
   return (
     <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40">
@@ -57,16 +52,21 @@ export const Header: React.FC = () => {
         <div className="hidden md:flex items-center gap-2 bg-slate-800/80 px-3 py-1 rounded-lg border border-slate-700">
           <span className="text-xs text-slate-400 font-medium">Vertical em foco:</span>
           <select
-            value={activeVerticalValue}
+            value={routeVerticalId || ''}
             onChange={(e) => {
               const nextVerticalId = e.target.value;
-              navigate({
-                to: '/verticais/$verticalId',
-                params: { verticalId: nextVerticalId },
-              });
+              if (nextVerticalId) {
+                navigate({
+                  to: '/verticais/$verticalId',
+                  params: { verticalId: nextVerticalId },
+                });
+              }
             }}
             className="bg-transparent text-xs font-semibold text-white focus:outline-hidden cursor-pointer"
           >
+            <option value="" disabled className="bg-slate-800 text-slate-400">
+              Selecionar vertical...
+            </option>
             {verticais.map(v => (
               <option key={v.id} value={v.id} className="bg-slate-800 text-white">
                 {v.nome} ({v.status})
@@ -81,6 +81,7 @@ export const Header: React.FC = () => {
             onClick={() => {
               if (window.confirm('Deseja restaurar todos os dados fictícios originais do protótipo (Seção 67)?')) {
                 resetToDemoData();
+                navigate({ to: '/' });
               }
             }}
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors border border-slate-700/80"

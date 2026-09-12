@@ -1,6 +1,6 @@
 import React from 'react';
-import { EvidenceType, EvidenceNature, EvidenceLevel, VerticalStatus } from '../../types/radar';
-import { FileText, Eye, HelpCircle, DollarSign, CheckCircle2, XCircle, MinusCircle, AlertTriangle } from 'lucide-react';
+import { EvidenceType, EvidenceNature, EvidenceLevel, VerticalStatus, FindingReviewStatus } from '../../types/radar';
+import { FileText, Eye, HelpCircle, DollarSign, CheckCircle2, XCircle, MinusCircle, AlertTriangle, Clock } from 'lucide-react';
 
 interface BadgeProps {
   children?: React.ReactNode;
@@ -40,7 +40,23 @@ export const EvidenceTypeBadge: React.FC<{ type: EvidenceType; showIcon?: boolea
   }
 };
 
-export const EvidenceNatureBadge: React.FC<{ nature: EvidenceNature }> = ({ nature }) => {
+export const EvidenceNatureBadge: React.FC<{ nature?: EvidenceNature; reviewStatus?: FindingReviewStatus }> = ({ nature, reviewStatus }) => {
+  if (reviewStatus === 'descartado') {
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-slate-200 text-slate-700 border border-slate-300">
+        <XCircle className="w-3 h-3 text-slate-500" />
+        Descartado
+      </span>
+    );
+  }
+  if (reviewStatus === 'pendente' || !nature) {
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 text-amber-900 border border-amber-300">
+        <Clock className="w-3 h-3 text-amber-700" />
+        Aguardando Revisão
+      </span>
+    );
+  }
   switch (nature) {
     case 'favoravel':
       return (
@@ -70,8 +86,9 @@ export const EvidenceCompositionBadge: React.FC<{
   favCount: number;
   conCount: number;
   neuCount?: number;
-}> = ({ favCount, conCount, neuCount = 0 }) => {
-  const total = favCount + conCount + neuCount;
+  pendingCount?: number;
+}> = ({ favCount, conCount, neuCount = 0, pendingCount = 0 }) => {
+  const total = favCount + conCount + neuCount + pendingCount;
 
   if (total === 0) {
     return <span className="text-slate-400 text-[11px] italic">Sem achados</span>;
@@ -97,15 +114,22 @@ export const EvidenceCompositionBadge: React.FC<{
           {neuCount} {neuCount === 1 ? 'neutra' : 'neutras'}
         </span>
       )}
+      {pendingCount > 0 && (
+        <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[11px] font-semibold bg-amber-100 text-amber-900 border border-amber-300">
+          <Clock className="w-2.5 h-2.5 text-amber-700" />
+          {pendingCount} {pendingCount === 1 ? 'pendente' : 'pendentes'}
+        </span>
+      )}
     </div>
   );
 };
 
-export function formatEvidenceComposition(fav: number, con: number, neu: number = 0): string {
+export function formatEvidenceComposition(fav: number, con: number, neu: number = 0, pending: number = 0): string {
   const parts: string[] = [];
   if (fav > 0) parts.push(`${fav} ${fav === 1 ? 'favorável' : 'favoráveis'}`);
   if (con > 0) parts.push(`${con} ${con === 1 ? 'contrária' : 'contrárias'}`);
   if (neu > 0) parts.push(`${neu} ${neu === 1 ? 'neutra' : 'neutras'}`);
+  if (pending > 0) parts.push(`${pending} ${pending === 1 ? 'pendente' : 'pendentes'}`);
   return parts.length > 0 ? parts.join(' · ') : 'Sem evidências';
 }
 

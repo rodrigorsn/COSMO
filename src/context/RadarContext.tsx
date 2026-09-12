@@ -30,25 +30,6 @@ import {
   INITIAL_CROSS_VERTICAL 
 } from '../data/initialData';
 import { calculatePainScore } from '../utils/calculations';
-import { PATH_TO_VIEW_MAP } from '../navigation/routeMap';
-
-export type ActiveView = 
-  | 'dashboard' 
-  | 'verticais' 
-  | 'vertical-detail' 
-  | 'organizacoes' 
-  | 'organizacao-detail' 
-  | 'entrevistas' 
-  | 'dores' 
-  | 'dor-detail' 
-  | 'oportunidades' 
-  | 'oportunidade-detail' 
-  | 'ranking' 
-  | 'perguntas' 
-  | 'fontes'
-  | 'concorrentes'
-  | 'fontes-concorrentes' 
-  | 'cross-vertical';
 
 interface RadarContextType {
   verticais: Vertical[];
@@ -63,20 +44,6 @@ interface RadarContextType {
   concorrentes: Competitor[];
   crossVertical: CrossVerticalComparison[];
   
-  // Navigation State
-  activeView: ActiveView;
-  setActiveView: (view: ActiveView) => void;
-  selectedVerticalId: string;
-  setSelectedVerticalId: (id: string) => void;
-  selectedOrgId: string;
-  setSelectedOrgId: (id: string) => void;
-  selectedPainId: string;
-  setSelectedPainId: (id: string) => void;
-  selectedOpportunityId: string;
-  setSelectedOpportunityId: (id: string) => void;
-  activeInterviewToConduct: Interview | null;
-  setActiveInterviewToConduct: (interview: Interview | null) => void;
-
   // Guided Journey State (18 steps from Section 81)
   currentJourneyStep: number;
   setCurrentJourneyStep: (step: number) => void;
@@ -85,6 +52,7 @@ interface RadarContextType {
   // Actions
   addFinding: (finding: Omit<Finding, 'id' | 'dataRegistro'>) => Finding;
   updateFinding: (finding: Finding) => void;
+  deleteFinding: (id: string) => void;
   addPainOccurrence: (occurrence: Omit<PainOccurrence, 'id'>) => void;
   updatePainScore: (occurrenceId: string, breakdown: Omit<PainScoreBreakdown, 'total'>) => void;
   addOrganization: (org: Organization) => void;
@@ -153,48 +121,6 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const [crossVertical] = useState<CrossVerticalComparison[]>(INITIAL_CROSS_VERTICAL);
 
-  // Active navigation selection
-  const [activeView, setActiveView] = useState<ActiveView>(() => {
-    if (typeof window !== 'undefined') {
-      const pathname = window.location.pathname;
-      if (/^\/organizacoes\/[^/]+$/.test(pathname)) {
-        return 'organizacao-detail';
-      }
-      if (/^\/verticais\/[^/]+$/.test(pathname)) {
-        return 'vertical-detail';
-      }
-      if (/^\/dores\/[^/]+$/.test(pathname)) {
-        return 'dor-detail';
-      }
-      const initialView = PATH_TO_VIEW_MAP[pathname];
-      if (initialView) return initialView;
-    }
-    return 'dashboard';
-  });
-  const [selectedVerticalId, setSelectedVerticalId] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      const match = window.location.pathname.match(/^\/verticais\/([^/]+)$/);
-      if (match) return decodeURIComponent(match[1]);
-    }
-    return 'VERT-CONT';
-  });
-  const [selectedOrgId, setSelectedOrgId] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      const match = window.location.pathname.match(/^\/organizacoes\/([^/]+)$/);
-      if (match) return decodeURIComponent(match[1]);
-    }
-    return 'ORG-CONT-001';
-  });
-  const [selectedPainId, setSelectedPainId] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      const match = window.location.pathname.match(/^\/dores\/([^/]+)$/);
-      if (match) return decodeURIComponent(match[1]);
-    }
-    return 'DOR-CONT-001';
-  });
-  const [selectedOpportunityId, setSelectedOpportunityId] = useState<string>('OP-CONT-001');
-  const [activeInterviewToConduct, setActiveInterviewToConduct] = useState<Interview | null>(null);
-
   // Guided Journey (1 to 18)
   const [currentJourneyStep, setCurrentJourneyStep] = useState<number>(1);
 
@@ -241,24 +167,25 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const addFinding = (f: Omit<Finding, 'id' | 'dataRegistro'>): Finding => {
     const newId = `ACH-${Date.now().toString().slice(-4)}`;
+    const reviewStatus = f.reviewStatus || (f.natureza ? 'revisado' : 'pendente');
     const newFinding: Finding = {
       ...f,
       id: newId,
+      reviewStatus,
       dataRegistro: new Date().toISOString().split('T')[0]
     };
     setAchados(prev => [newFinding, ...prev]);
 
     // Reforçar Evidence Chain (PRD Seção 4, 28, 29):
-    // Achado -> Ocorrência de Dor da Organização (única por dorConsolidadaId + organizacaoId) -> Dor Consolidada
-    if (f.dorConsolidadaId && f.organizacaoId) {
+    // Achado REVISADO -> Ocorrência de Dor da Organização -> Dor Consolidada
+    // Capturas PENDENTES (reviewStatus === 'pendente') NÃO geram nem alteram Ocorrência de Dor
+    if (reviewStatus === 'revisado' && f.dorConsolidadaId && f.organizacaoId && f.natureza) {
       setOcorrenciasDores(prevOcc => {
         const existingIdx = prevOcc.findIndex(
           o => o.dorConsolidadaId === f.dorConsolidadaId && o.organizacaoId === f.organizacaoId
         );
 
         if (existingIdx >= 0) {
-          // Múltiplos achados da mesma organização alimentam a mesma ocorrência conceitual.
-          // A natureza pertence a cada Achado (Finding) e NÃO à Ocorrência inteira.
           const existing = prevOcc[existingIdx];
           const updatedAchados = existing.achadosIds.includes(newId)
             ? existing.achadosIds
@@ -272,8 +199,6 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           copy[existingIdx] = updatedOcc;
           return copy;
         } else {
-          // Criação da ocorrência de dor associada para esta organização.
-          // Inicia estritamente com Pain Score NÃO MENSURADO (Seção 29), sem atribuir notas artificiais 3.
           const newOcc: PainOccurrence = {
             id: `OCC-${Date.now().toString().slice(-4)}`,
             organizacaoId: f.organizacaoId!,
@@ -288,8 +213,8 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       });
     }
 
-    // Se associado a uma dor consolidada, atualiza as referências de evidências da dor sem descartar contrárias ou neutras
-    if (f.dorConsolidadaId) {
+    // Se REVISADO e associado a uma dor consolidada com natureza definida, atualiza as referências da dor
+    if (reviewStatus === 'revisado' && f.dorConsolidadaId && f.natureza) {
       setDoresConsolidadas(prev => prev.map(p => {
         if (p.id === f.dorConsolidadaId) {
           if (f.natureza === 'favoravel' && !p.evidenciasFavoraveisIds.includes(newId)) {
@@ -311,6 +236,87 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const updateFinding = (updated: Finding) => {
     setAchados(prev => prev.map(f => f.id === updated.id ? updated : f));
+
+    // Quando um Achado é promovido de Pendente para Revisado e possui Dor e Natureza, vincular na Ocorrência e Dor
+    if (updated.reviewStatus === 'revisado' && updated.dorConsolidadaId && updated.organizacaoId && updated.natureza) {
+      setOcorrenciasDores(prevOcc => {
+        const existingIdx = prevOcc.findIndex(
+          o => o.dorConsolidadaId === updated.dorConsolidadaId && o.organizacaoId === updated.organizacaoId
+        );
+
+        if (existingIdx >= 0) {
+          const existing = prevOcc[existingIdx];
+          const updatedAchados = existing.achadosIds.includes(updated.id)
+            ? existing.achadosIds
+            : [...existing.achadosIds, updated.id];
+
+          const updatedOcc: PainOccurrence = {
+            ...existing,
+            achadosIds: updatedAchados
+          };
+          const copy = [...prevOcc];
+          copy[existingIdx] = updatedOcc;
+          return copy;
+        } else {
+          const newOcc: PainOccurrence = {
+            id: `OCC-${Date.now().toString().slice(-4)}`,
+            organizacaoId: updated.organizacaoId!,
+            dorConsolidadaId: updated.dorConsolidadaId!,
+            painScore: null,
+            isMeasured: false,
+            notasEspecificas: `Ocorrência registrada a partir do achado revisado: ${updated.titulo}`,
+            achadosIds: [updated.id]
+          };
+          return [...prevOcc, newOcc];
+        }
+      });
+
+      setDoresConsolidadas(prev => prev.map(p => {
+        if (p.id === updated.dorConsolidadaId) {
+          if (updated.natureza === 'favoravel' && !p.evidenciasFavoraveisIds.includes(updated.id)) {
+            return { ...p, evidenciasFavoraveisIds: [...p.evidenciasFavoraveisIds, updated.id] };
+          }
+          if (updated.natureza === 'contraria' && !p.evidenciasContrariasIds.includes(updated.id)) {
+            return { ...p, evidenciasContrariasIds: [...p.evidenciasContrariasIds, updated.id] };
+          }
+          if (updated.natureza === 'neutra' && !p.evidenciasNeutrasIds.includes(updated.id)) {
+            return { ...p, evidenciasNeutrasIds: [...p.evidenciasNeutrasIds, updated.id] };
+          }
+        }
+        return p;
+      }));
+    } else if (updated.reviewStatus === 'descartado') {
+      // Garantir que captura descartada não permanece em ocorrências de dor nem evidencia composição
+      setOcorrenciasDores(prevOcc => prevOcc.map(occ => ({
+        ...occ,
+        achadosIds: occ.achadosIds.filter(fId => fId !== updated.id)
+      })));
+
+      setDoresConsolidadas(prevDores => prevDores.map(p => ({
+        ...p,
+        evidenciasFavoraveisIds: p.evidenciasFavoraveisIds.filter(fId => fId !== updated.id),
+        evidenciasContrariasIds: p.evidenciasContrariasIds.filter(fId => fId !== updated.id),
+        evidenciasNeutrasIds: p.evidenciasNeutrasIds.filter(fId => fId !== updated.id)
+      })));
+    }
+  };
+
+  const deleteFinding = (id: string) => {
+    setAchados(prev => prev.filter(f => f.id !== id));
+    setEntrevistas(prev => prev.map(ent => ({
+      ...ent,
+      achadosGeradosIds: ent.achadosGeradosIds.filter(fId => fId !== id)
+    })));
+    setOcorrenciasDores(prev => prev.map(occ => ({
+      ...occ,
+      achadosIds: occ.achadosIds.filter(fId => fId !== id)
+    })));
+    setDoresConsolidadas(prev => prev.map(p => ({
+      ...p,
+      evidenciasFavoraveisIds: p.evidenciasFavoraveisIds.filter(fId => fId !== id),
+      evidenciasContrariasIds: p.evidenciasContrariasIds.filter(fId => fId !== id),
+      evidenciasNeutrasIds: p.evidenciasNeutrasIds.filter(fId => fId !== id)
+    })));
   };
 
   const addPainOccurrence = (occ: Omit<PainOccurrence, 'id'>) => {
@@ -394,7 +400,7 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       categoria,
       escopo: targetScope,
       verticalId: (targetScope === 'vertical' || targetScope === 'subvertical' || targetScope === 'organizacao')
-        ? (contextData?.verticalId || selectedVerticalId)
+        ? contextData?.verticalId
         : undefined,
       subverticalId: targetScope === 'subvertical' ? contextData?.subverticalId : undefined,
       organizacaoId: targetScope === 'organizacao' ? contextData?.organizacaoId : undefined,
@@ -428,52 +434,10 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setFontes(INITIAL_FONTES);
     setConcorrentes(INITIAL_CONCORRENTES);
     setCurrentJourneyStep(1);
-    setActiveView('dashboard');
   };
 
   const jumpToJourneyStep = (step: number) => {
     setCurrentJourneyStep(step);
-    switch (step) {
-      case 1:
-        setActiveView('dashboard');
-        break;
-      case 2:
-      case 13:
-      case 14:
-        setSelectedVerticalId('VERT-CONT');
-        setActiveView('vertical-detail');
-        break;
-      case 3:
-        setActiveView('organizacoes');
-        break;
-      case 4:
-      case 5:
-      case 6:
-      case 12:
-        setSelectedOrgId('ORG-CONT-001');
-        setActiveView('organizacao-detail');
-        break;
-      case 7:
-      case 8:
-      case 9:
-      case 10:
-      case 11:
-        const interview = entrevistas.find(e => e.id === 'INT-002') || entrevistas[0];
-        setActiveInterviewToConduct(interview);
-        setActiveView('entrevistas');
-        break;
-      case 15:
-      case 16:
-      case 17:
-        setSelectedOpportunityId('OP-CONT-001');
-        setActiveView('oportunidade-detail');
-        break;
-      case 18:
-        setActiveView('ranking');
-        break;
-      default:
-        setActiveView('dashboard');
-    }
   };
 
   return (
@@ -489,23 +453,12 @@ export const RadarProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       fontes,
       concorrentes,
       crossVertical,
-      activeView,
-      setActiveView,
-      selectedVerticalId,
-      setSelectedVerticalId,
-      selectedOrgId,
-      setSelectedOrgId,
-      selectedPainId,
-      setSelectedPainId,
-      selectedOpportunityId,
-      setSelectedOpportunityId,
-      activeInterviewToConduct,
-      setActiveInterviewToConduct,
       currentJourneyStep,
       setCurrentJourneyStep,
       jumpToJourneyStep,
       addFinding,
       updateFinding,
+      deleteFinding,
       addPainOccurrence,
       updatePainScore,
       addOrganization,

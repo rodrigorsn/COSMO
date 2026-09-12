@@ -57,6 +57,13 @@ const entrevistasRoute = createRoute({
   component: RadarAppContent,
 });
 
+// 4b. Entrevista (Condução/Detalhe dinâmico da Etapa 2E.2)
+const interviewDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/entrevistas/$interviewId',
+  component: RadarAppContent,
+});
+
 // 5. Dores Consolidadas
 const doresRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -75,6 +82,13 @@ const painDetailRoute = createRoute({
 const oportunidadesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/oportunidades',
+  component: RadarAppContent,
+});
+
+// 6b. Oportunidade (Detalhe dinâmico)
+const oportunidadeDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/oportunidades/$opportunityId',
   component: RadarAppContent,
 });
 
@@ -121,9 +135,11 @@ const routeTree = rootRoute.addChildren([
   organizacoesRoute,
   organizacaoDetailRoute,
   entrevistasRoute,
+  interviewDetailRoute,
   doresRoute,
   painDetailRoute,
   oportunidadesRoute,
+  oportunidadeDetailRoute,
   rankingRoute,
   perguntasRoute,
   fontesRoute,

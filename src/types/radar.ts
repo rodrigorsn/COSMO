@@ -148,21 +148,26 @@ export interface InterviewQuestionInstance {
   isEmergente?: boolean;
 }
 
+export type FindingReviewStatus = 'pendente' | 'revisado' | 'descartado';
+
 export interface Finding {
   id: string;
   titulo: string;
   descricao: string;
   origem: 'Entrevista' | 'Processo' | 'Observação direta' | 'Fonte externa';
   tipoEvidencia: EvidenceType;
-  natureza: EvidenceNature; // favoravel | contraria | neutra
+  natureza?: EvidenceNature; // favoravel | contraria | neutra (opcional quando reviewStatus === 'pendente' ou 'descartado')
+  reviewStatus?: FindingReviewStatus; // 'pendente' | 'revisado' | 'descartado' (default 'revisado' para dados legados)
   organizacaoId?: string; // Obrigatório em Entrevista/Processo/Observação, opcional em Fonte externa (PRD)
   fonteId?: string; // Rastreabilidade de fonte secundária quando aplicável
   entrevistadoId?: string;
   entrevistaId?: string;
   processoId?: string;
   categoria: string;
-  fraseOriginal: string; // Preservação da fala original ou citação da fonte (Seção 26)
+  fraseOriginal: string; // Preservação da fala original imutável (Seção 26)
+  fraseRevisada?: string; // Versão corrigida opcional de transcrição/grafia
   interpretacao: string; // Interpretação analítica separada
+  motivoDescarte?: string; // Motivo de descarte quando reviewStatus === 'descartado'
   tags: string[];
   dorConsolidadaId?: string;
   dataRegistro: string;

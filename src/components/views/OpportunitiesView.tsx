@@ -1,11 +1,12 @@
 import React from 'react';
+import { Link } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
 import { SimulacaoTag } from '../common/SimulacaoBadge';
 import { EvidenceLevelBadge } from '../common/Badge';
 import { Sparkles, ArrowRight, ShieldAlert, CheckCircle2, TrendingUp, Cpu } from 'lucide-react';
 
 export const OpportunitiesView: React.FC = () => {
-  const { oportunidades, setSelectedOpportunityId, setActiveView } = useRadar();
+  const { oportunidades } = useRadar();
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
@@ -28,13 +29,11 @@ export const OpportunitiesView: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {oportunidades.map(opp => {
           return (
-            <div
+            <Link
               key={opp.id}
-              onClick={() => {
-                setSelectedOpportunityId(opp.id);
-                setActiveView('oportunidade-detail');
-              }}
-              className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer flex flex-col justify-between"
+              to="/oportunidades/$opportunityId"
+              params={{ opportunityId: opp.id }}
+              className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs hover:border-blue-300 hover:shadow-sm transition-all flex flex-col justify-between"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -85,7 +84,7 @@ export const OpportunitiesView: React.FC = () => {
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>
