@@ -1,0 +1,164 @@
+{
+  "versao": "1.0",
+  "descricao": "Dump do estado canônico do Radar de Oportunidades & Validação Empírica (Framework COSMO)",
+  "verticais": [
+    {
+      "id": "VERT-CONT",
+      "nome": "Mercado Contábil e Serviços Financeiros para PMEs",
+      "descricao": "Escritórios de contabilidade, BPO Financeiro e consultorias tributárias atendendo PMEs brasileiras.",
+      "icone": "Calculator",
+      "tamanhoMercadoBrasil": "Mais de 80.000 escritórios contábeis ativos no Brasil (CFC/2025), atendendo ~5 milhões de PMEs.",
+      "subverticais": [
+        {
+          "id": "SUB-GEN",
+          "nome": "Escritórios Contábeis Generalistas (Serviços/Comércio)",
+          "descricao": "Escritórios de médio porte com carteiras de 100 a 500 PMEs variadas.",
+          "focoOperacional": "Fechamento mensal, conciliação fiscal/contábil e folha."
+        },
+        {
+          "id": "SUB-DP",
+          "nome": "Departamento Pessoal & BPO de Folha de Pagamento",
+          "descricao": "Especializados ou setores dedicados a admissão, rescisão e benefícios com alto giro de funcionários.",
+          "focoOperacional": "Admissões urgentes, eSocial, guias trabalhistas e ASO."
+        }
+      ]
+    }
+  ],
+  "organizacoes": [
+    {
+      "id": "ORG-CONT-001",
+      "verticalId": "VERT-CONT",
+      "nome": "Escritório Contábil Modelo Ltda",
+      "porte": "medio",
+      "subverticalId": "SUB-GEN",
+      "localizacao": "São Paulo, SP",
+      "clientesAtivosCount": 320,
+      "colaboradoresCount": 15,
+      "softwarePrincipal": "ERP Domínio / Atlas",
+      "ferramentasComplementares": ["WhatsApp Web", "Google Drive", "Planilhas Google"],
+      "processosForaSoftware": ["Cobrança de extratos bancários via WhatsApp", "Conferência de pendências fiscais em planilhas manuais"],
+      "maturityOnboardingLevel": 3
+    },
+    {
+      "id": "ORG-CONT-002",
+      "verticalId": "VERT-CONT",
+      "nome": "Soluções Contábeis Alfa",
+      "porte": "pequeno",
+      "subverticalId": "SUB-GEN",
+      "localizacao": "Campinas, SP",
+      "clientesAtivosCount": 65,
+      "colaboradoresCount": 4,
+      "softwarePrincipal": "Alterdata",
+      "ferramentasComplementares": ["WhatsApp", "E-mail"],
+      "processosForaSoftware": ["Envio de guias por e-mail", "Solicitação manual de documentos no início do mês"],
+      "maturityOnboardingLevel": 2
+    },
+    {
+      "id": "ORG-CONT-003",
+      "verticalId": "VERT-CONT",
+      "nome": "Grupo Contábil Vanguard",
+      "porte": "grande",
+      "subverticalId": "SUB-DP",
+      "localizacao": "Curitiba, PR",
+      "clientesAtivosCount": 480,
+      "colaboradoresCount": 22,
+      "softwarePrincipal": "Fortes Tecnologia",
+      "ferramentasComplementares": ["WhatsApp Oficial", "Tareffa", "Excel"],
+      "processosForaSoftware": ["Admissões urgentes via foto de celular no WhatsApp", "Conferência manual de atestados e ASO"],
+      "maturityOnboardingLevel": 4
+    }
+  ],
+  "entrevistas": [
+    {
+      "id": "ENTR-001",
+      "organizacaoId": "ORG-CONT-001",
+      "entrevistadoNome": "Carlos Eduardo",
+      "entrevistadoCargo": "Sócio-Diretor Operacional",
+      "data": "2026-08-20",
+      "duracaoMinutos": 45,
+      "status": "concluida",
+      "resumoExecutivo": "Entrevista focada no gargalo de fechamento contábil mensal. O sócio reporta que o maior atrito da operação é a coleta de documentos e extratos dos clientes PMEs via WhatsApp."
+    },
+    {
+      "id": "ENTR-002",
+      "organizacaoId": "ORG-CONT-002",
+      "entrevistadoNome": "Mariana Souza",
+      "entrevistadoCargo": "Gerente de Operações",
+      "data": "2026-08-22",
+      "duracaoMinutos": 35,
+      "status": "concluida",
+      "resumoExecutivo": "A operação atende poucas PMEs menores e relata que, embora haja atraso na entrega de extratos, o volume menor é contornável com cobranças esporádicas no WhatsApp sem contratar ferramenta específica."
+    },
+    {
+      "id": "ENTR-003",
+      "organizacaoId": "ORG-CONT-003",
+      "entrevistadoNome": "Juliana Mendes",
+      "entrevistadoCargo": "Coordenadora de DP",
+      "data": "2026-08-25",
+      "duracaoMinutos": 50,
+      "status": "concluida",
+      "resumoExecutivo": "Foco total na dor de admissões de última hora. Clientes do comércio e restaurantes enviam fotos ilegíveis de RG/CPF no domingo à noite exigindo admissão na segunda de manhã."
+    }
+  ],
+  "doresConsolidadas": [
+    {
+      "id": "DOR-CONT-001",
+      "verticalId": "VERT-CONT",
+      "titulo": "Gargalo Crônico na Coleta e Conciliação de Extratos e Documentos Fiscais de PMEs",
+      "categoria": "Operacional / Relacionamento com Cliente",
+      "descricao": "Clientes PMEs não enviam extratos bancários (PDF/OFX) e comprovantes de pagamento nos prazos estipulados, forçando analistas a fazerem cobranças manuais diárias via WhatsApp e e-mail.",
+      "incidenciaPercentual": 67,
+      "organizacoesConfirmadasCount": 2,
+      "organizacoesTotalPesquisadas": 3,
+      "painScoreMedio": 24,
+      "evidenciaNivel": "H3",
+      "amostraLimitada": false,
+      "amostraTamanho": 3,
+      "amostraRecomendadaMinima": 3
+    },
+    {
+      "id": "DOR-CONT-002",
+      "verticalId": "VERT-CONT",
+      "titulo": "Admissão Trabalhista Urgente com Documentação Incompleta e Risco eSocial",
+      "categoria": "Trabalhista / DP",
+      "descricao": "Clientes enviam solicitações de admissão com menos de 24 horas de antecedência pelo WhatsApp, com fotos cortadas ou ilegíveis de documentos, gerando risco de multas no eSocial.",
+      "incidenciaPercentual": 33,
+      "organizacoesConfirmadasCount": 1,
+      "organizacoesTotalPesquisadas": 3,
+      "painScoreMedio": 25,
+      "evidenciaNivel": "H2",
+      "amostraLimitada": true,
+      "amostraTamanho": 1,
+      "amostraRecomendadaMinima": 3
+    }
+  ],
+  "oportunidades": [
+    {
+      "id": "OP-CONT-001",
+      "verticalId": "VERT-CONT",
+      "subverticalId": "SUB-GEN",
+      "nome": "Customer Operations Layer para Pendências e Fechamento Contábil",
+      "icpHipotetico": "Escritórios contábeis generalistas com 150 a 600 clientes PMEs de serviços e comércio.",
+      "problema": "A equipe técnica perde até 25% das horas úteis do mês solicitando, cobrando e conferindo documentos bancários e fiscais em múltiplos canais informais.",
+      "jobToBeDone": "Garantir que 100% dos documentos necessários para o fechamento fiscal e contábil cheguem conferidos e validados aos analistas antes do prazo legal.",
+      "processoAtual": "ERP Atlas/Domínio → Planilha Google Sheets → WhatsApp individual do analista → Cliente cobra sócio da PME → Cliente manda foto no zap → Analista baixa no Drive.",
+      "solucaoHipotetica": "Camada de automação de operações de clientes (COG) conectada ao WhatsApp oficial com inteligência de extração.",
+      "doresRelacionadasIds": ["DOR-CONT-001", "DOR-CONT-002"],
+      "concorrentesMapeados": ["Portais tradicionais de ERP (ex: Atlas Web)", "Acessórias", "Tareffa"],
+      "diferenciacao": "Enquanto portais tradicionais exigem que o cliente da PME entre num site com login e senha (onde apenas 20% entram), o VOR atua no canal que o cliente já usa (WhatsApp).",
+      "integracoesNecessarias": ["WhatsApp Cloud API oficial", "APIs de exportação de extratos Open Finance", "Webhooks de ERPs contábeis"],
+      "monetizacaoHipotetica": "R$ 490 a R$ 1.290 / mês por escritório contábil, baseado no volume de clientes ativos na carteira.",
+      "evidenceLevel": "H4",
+      "confidenceScore": 78,
+      "opportunityScore": {
+        "mercado": 17,
+        "dor": 23,
+        "operationsGap": 24,
+        "economia": 16,
+        "gtm": 8,
+        "total": 88
+      },
+      "status": "Testar"
+    }
+  ]
+}
