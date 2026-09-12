@@ -88,8 +88,13 @@ export const RankingView: React.FC = () => {
         <div className="space-y-4">
           <div className="bg-blue-50/60 border border-blue-200 p-3.5 rounded-xl text-xs text-blue-900 flex items-start gap-2.5">
             <BarChart3 className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-            <div>
-              <strong>Critério de Ranqueamento de Oportunidades:</strong> Pontuação total do Opportunity Score (0-100) composto por: Tamanho de Mercado (20), Intensidade da Dor (20), Operations Gap / OGS (20), Economia Gerada (20) e Viabilidade de GTM (20), ponderado pelo nível de evidência e confiança.
+            <div className="space-y-1">
+              <div>
+                <strong>Critério de Ranqueamento de Oportunidades:</strong> Ordenado pelo Opportunity Score registrado (0–100), composto pelas 5 dimensões do framework COSMO: Mercado (20), Dor (25), Operations Gap (25), Economia (20) e GTM (10). Em caso de empate, utiliza a confiança atribuída como critério secundário.
+              </div>
+              <div className="text-[11px] text-blue-800/90 pt-1 border-t border-blue-200/60">
+                <em>Nota Metodológica:</em> O Evidence Level (H0–H5) é apresentado como contexto de maturidade da evidência e não altera automaticamente a ordenação matemática do Ranking nesta etapa.
+              </div>
             </div>
           </div>
 
@@ -130,18 +135,27 @@ export const RankingView: React.FC = () => {
                 </div>
 
                 <div className="flex items-center justify-between md:justify-end gap-6 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 shrink-0">
-                  <div className="grid grid-cols-3 gap-3 text-center">
+                  <div className="grid grid-cols-3 gap-2.5 text-center">
                     <div className="p-2 rounded-lg bg-slate-50 border border-slate-100">
                       <span className="text-[10px] text-slate-400 block uppercase font-mono">Opp Score</span>
                       <span className="font-mono font-bold text-blue-700 text-sm">{opp.opportunityScore.total}/100</span>
+                      <span className="text-[8.5px] font-mono text-slate-500 bg-slate-200/60 px-1 py-0.2 rounded block mt-0.5">
+                        Atribuído
+                      </span>
                     </div>
                     <div className="p-2 rounded-lg bg-slate-50 border border-slate-100">
                       <span className="text-[10px] text-slate-400 block uppercase font-mono">Confiança</span>
                       <span className="font-mono font-bold text-emerald-700 text-sm">{opp.confidenceScore}%</span>
+                      <span className="text-[8.5px] font-mono text-slate-500 bg-slate-200/60 px-1 py-0.2 rounded block mt-0.5">
+                        Atribuída
+                      </span>
                     </div>
                     <div className="p-2 rounded-lg bg-slate-50 border border-slate-100">
                       <span className="text-[10px] text-slate-400 block uppercase font-mono">AI Leverage</span>
                       <span className="font-mono font-bold text-purple-700 text-sm">{opp.aiLeverage.total}/30</span>
+                      <span className="text-[8.5px] font-mono text-slate-500 bg-purple-100/60 px-1 py-0.2 rounded block mt-0.5">
+                        Potencial
+                      </span>
                     </div>
                   </div>
 
