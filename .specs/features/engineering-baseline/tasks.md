@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/engineering-baseline/design.md`
-**Status**: Draft
+**Status**: In Progress
 
 ---
 
@@ -32,7 +32,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 | Gate Level | When to Use | Command |
 | ---------- | ----------- | ------- |
-| Foundation | Before the first test suite exists | `npm run typecheck && npm run audit:prod && npm run build` |
+| Foundation | Before the lockfile and first test suite exist | `npm run typecheck && npm run build` |
 | Quick | While authoring one isolated suite | `npm test -- <test-file>` |
 | Full | After any test suite is added | `npm test` |
 | Build | After phase completion and for CI/docs | `npm run check` |
@@ -88,7 +88,7 @@ T12 → T13 → T14
 - [ ] Foundation gate passes after installing the declared tree without generating a lockfile.
 
 **Tests**: none — manifest/config layer
-**Gate**: Foundation — `npm run typecheck && npm run audit:prod && npm run build`
+**Gate**: Foundation — `npm run typecheck && npm run build`
 **Commit**: `build(deps): modernize package manifest`
 
 ---
@@ -112,7 +112,7 @@ T12 → T13 → T14
 - [ ] Foundation gate passes with the supported local runtime.
 
 **Tests**: none — config layer
-**Gate**: Foundation — `npm run typecheck && npm run audit:prod && npm run build`
+**Gate**: Foundation — `npm run typecheck && npm run build`
 **Commit**: `build(npm): enforce supported engines`
 
 ---
@@ -136,7 +136,7 @@ T12 → T13 → T14
 - [ ] Foundation gate passes.
 
 **Tests**: none — config layer
-**Gate**: Foundation — `npm run typecheck && npm run audit:prod && npm run build`
+**Gate**: Foundation — `npm run typecheck && npm run build`
 **Commit**: `build(node): pin supported major`
 
 ---
@@ -163,7 +163,7 @@ T12 → T13 → T14
 - [ ] Foundation gate passes after the clean install.
 
 **Tests**: none — lockfile/config layer
-**Gate**: Foundation — `npm run typecheck && npm run audit:prod && npm run build`
+**Gate**: Foundation — `npm run typecheck && npm run build`
 **Commit**: `build(deps): add canonical npm lockfile`
 
 ---
@@ -188,7 +188,7 @@ T12 → T13 → T14
 - [ ] Foundation gate passes.
 
 **Tests**: none — lockfile/config layer
-**Gate**: Foundation — `npm run typecheck && npm run audit:prod && npm run build`
+**Gate**: Foundation — `npm run typecheck && npm run build`
 **Commit**: `build(deps): remove obsolete bun lockfile`
 
 ---
@@ -214,7 +214,7 @@ T12 → T13 → T14
 - [ ] Foundation gate passes before any suite is introduced.
 
 **Tests**: none — test config layer
-**Gate**: Foundation — `npm run typecheck && npm run audit:prod && npm run build`
+**Gate**: Foundation — `npm run typecheck && npm run build`
 **Commit**: `test(config): configure vitest environment`
 
 ---
@@ -240,7 +240,7 @@ T12 → T13 → T14
 - [ ] Foundation gate passes.
 
 **Tests**: none — test infrastructure layer
-**Gate**: Foundation — `npm run typecheck && npm run audit:prod && npm run build`
+**Gate**: Foundation — `npm run typecheck && npm run build`
 **Commit**: `test(config): isolate browser test state`
 
 ---
