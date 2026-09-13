@@ -573,13 +573,14 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Five builders prove canonical paths and URI encoding.
-- [ ] Five matchers prove valid paths, missing IDs, extra segments and unrelated paths.
-- [ ] Exactly 25 route tests pass and 55 total tests pass.
+- [x] Five builders prove canonical paths and URI encoding.
+- [x] Five matchers prove valid paths, missing IDs, extra segments and unrelated paths.
+- [x] Exactly 25 route tests pass and 55 total tests pass.
 
 **Tests**: unit — 25 new tests, 55 cumulative
 **Gate**: Full — `npm test`
 **Commit**: `test(routes): protect canonical paths`
+**Status**: Complete
 
 ---
 
