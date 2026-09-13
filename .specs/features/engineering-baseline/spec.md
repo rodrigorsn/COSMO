@@ -92,7 +92,7 @@ O COSMO já funciona como protótipo exploratório, mas ainda não possui instal
 5. WHEN a finding remains `pendente` THEN the `RadarContext` integration suite SHALL prove it does not create or alter a pain occurrence. `[BASE-13]`
 6. WHEN a pending finding becomes `revisado` with the required links THEN the `RadarContext` integration suite SHALL prove the corresponding occurrence is created or updated exactly once. `[BASE-14]`
 7. WHEN a reviewed finding becomes `descartado` THEN the `RadarContext` integration suite SHALL prove its prior contribution is removed without deleting unrelated evidence. `[BASE-15]`
-8. WHEN demo state is reset THEN the `RadarContext` integration suite SHALL prove all COSMO storage keys are cleared and canonical demo data is restored. `[BASE-16]`
+8. WHEN demo state is reset THEN the `RadarContext` integration suite SHALL prove all ten COSMO storage keys receive a remove operation and the exposed state returns to canonical demo data before persistence effects write the canonical state again. `[BASE-16]`
 9. WHEN the application shell is rendered at `/` THEN the smoke suite SHALL expose the heading `Painel Executivo de Investigação B2B` without an uncaught error. `[BASE-17]`
 10. WHEN an unknown path is rendered THEN the smoke suite SHALL expose the heading `Rota não reconhecida` without an uncaught error. `[BASE-18]`
 11. WHILE tests execute, the test harness SHALL isolate `localStorage`, DOM state, mocks and router history between cases. `[BASE-19]`
