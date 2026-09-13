@@ -403,6 +403,7 @@ T12 → T13 → T14
 **Depends on**: T2
 **Reuses**: Node major from `package.json`
 **Requirement**: BASE-01
+**Status**: Complete
 
 **Tools**:
 
@@ -411,8 +412,8 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] File contains only the approved Node major, `24`.
-- [ ] Foundation gate passes.
+- [x] File contains only the approved Node major, `24`.
+- [x] Foundation gate passes.
 
 **Tests**: none — config layer
 **Gate**: Foundation — `npm run typecheck && npm run build`
