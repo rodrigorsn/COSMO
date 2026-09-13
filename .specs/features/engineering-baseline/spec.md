@@ -167,42 +167,42 @@ O COSMO já funciona como protótipo exploratório, mas ainda não possui instal
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| BASE-01 | P1: Instalação reproduzível | Design | Pending |
-| BASE-02 | P1: Instalação reproduzível | Design | Pending |
-| BASE-03 | P1: Instalação reproduzível | Design | Pending |
-| BASE-04 | P1: Instalação reproduzível | Design | Pending |
-| BASE-05 | P1: Dependências mínimas | Design | Pending |
-| BASE-06 | P1: Dependências mínimas | Design | Pending |
-| BASE-07 | P1: Dependências mínimas | Design | Pending |
-| BASE-08 | P1: Dependências mínimas | Design | Pending |
-| BASE-09 | P1: Harness de testes | Design | Pending |
-| BASE-10 | P1: Harness de testes | Design | Pending |
-| BASE-11 | P1: Harness de testes | Design | Pending |
-| BASE-12 | P1: Harness de testes | Design | Pending |
-| BASE-13 | P1: Harness de testes | Design | Pending |
-| BASE-14 | P1: Harness de testes | Design | Pending |
-| BASE-15 | P1: Harness de testes | Design | Pending |
-| BASE-16 | P1: Harness de testes | Design | Pending |
-| BASE-17 | P1: Harness de testes | Design | Pending |
-| BASE-18 | P1: Harness de testes | Design | Pending |
-| BASE-19 | P1: Harness de testes | Design | Pending |
-| BASE-20 | P1: Gates no GitHub | Design | Pending |
-| BASE-21 | P1: Gates no GitHub | Design | Pending |
-| BASE-22 | P1: Gates no GitHub | Design | Pending |
-| BASE-23 | P1: Gates no GitHub | Design | Pending |
-| BASE-24 | P1: Gates no GitHub | Design | Pending |
-| BASE-25 | P1: Documentação e marco | Design | Pending |
-| BASE-26 | P1: Documentação e marco | Design | Pending |
-| BASE-27 | P1: Documentação e marco | Design | Pending |
-| BASE-28 | P1: Documentação e marco | Design | Pending |
-| BASE-29 | P1: Documentação e marco | Design | Pending |
-| BASE-30 | Edge cases transversais | Design | Pending |
-| BASE-31 | Edge cases transversais | Design | Pending |
-| BASE-32 | Edge cases transversais | Design | Pending |
-| BASE-33 | Edge cases transversais | Design | Pending |
-| BASE-34 | Edge cases transversais | Design | Pending |
+| BASE-01 | P1: Instalação reproduzível | Tasks | In Tasks |
+| BASE-02 | P1: Instalação reproduzível | Tasks | In Tasks |
+| BASE-03 | P1: Instalação reproduzível | Tasks | In Tasks |
+| BASE-04 | P1: Instalação reproduzível | Tasks | In Tasks |
+| BASE-05 | P1: Dependências mínimas | Tasks | In Tasks |
+| BASE-06 | P1: Dependências mínimas | Tasks | In Tasks |
+| BASE-07 | P1: Dependências mínimas | Tasks | In Tasks |
+| BASE-08 | P1: Dependências mínimas | Tasks | In Tasks |
+| BASE-09 | P1: Harness de testes | Tasks | In Tasks |
+| BASE-10 | P1: Harness de testes | Tasks | In Tasks |
+| BASE-11 | P1: Harness de testes | Tasks | In Tasks |
+| BASE-12 | P1: Harness de testes | Tasks | In Tasks |
+| BASE-13 | P1: Harness de testes | Tasks | In Tasks |
+| BASE-14 | P1: Harness de testes | Tasks | In Tasks |
+| BASE-15 | P1: Harness de testes | Tasks | In Tasks |
+| BASE-16 | P1: Harness de testes | Tasks | In Tasks |
+| BASE-17 | P1: Harness de testes | Tasks | In Tasks |
+| BASE-18 | P1: Harness de testes | Tasks | In Tasks |
+| BASE-19 | P1: Harness de testes | Tasks | In Tasks |
+| BASE-20 | P1: Gates no GitHub | Tasks | In Tasks |
+| BASE-21 | P1: Gates no GitHub | Tasks | In Tasks |
+| BASE-22 | P1: Gates no GitHub | Tasks | In Tasks |
+| BASE-23 | P1: Gates no GitHub | Tasks | In Tasks |
+| BASE-24 | P1: Gates no GitHub | Tasks | In Tasks |
+| BASE-25 | P1: Documentação e marco | Tasks | In Tasks |
+| BASE-26 | P1: Documentação e marco | Tasks | In Tasks |
+| BASE-27 | P1: Documentação e marco | Tasks | In Tasks |
+| BASE-28 | P1: Documentação e marco | Tasks | In Tasks |
+| BASE-29 | P1: Documentação e marco | Tasks | In Tasks |
+| BASE-30 | Edge cases transversais | Tasks | In Tasks |
+| BASE-31 | Edge cases transversais | Tasks | In Tasks |
+| BASE-32 | Edge cases transversais | Tasks | In Tasks |
+| BASE-33 | Edge cases transversais | Tasks | In Tasks |
+| BASE-34 | Edge cases transversais | Tasks | In Tasks |
 
-**Coverage:** 34 total, 0 mapped to tasks, 34 unmapped pending design.
+**Coverage:** 34 total, 34 mapped to tasks, 0 unmapped.
 
 ---
 
