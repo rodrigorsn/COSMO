@@ -37,12 +37,12 @@ export const FontesEMercadoView: React.FC<{ defaultTab?: 'fontes' | 'concorrente
   // Competitors tab state
   const [showCompModal, setShowCompModal] = useState(false);
   const [compNome, setCompNome] = useState('');
-  const [compModelo, setCompModelo] = useState('SaaS B2B Mensal');
+  const [compModelo, setCompModelo] = useState<'SaaS' | 'Sob consulta' | 'Por usuário' | 'Freemium'>('SaaS');
   const [compPreco, setCompPreco] = useState('');
   const [compProposta, setCompProposta] = useState('');
   const [compGap, setCompGap] = useState('');
   const [compPontosFortes, setCompPontosFortes] = useState('');
-  const [compPontosFracos, setCompPontosFracos] = useState('');
+  const [compLimitacoes, setCompLimitacoes] = useState('');
 
   const filteredSources = fontes.filter(f => {
     if (filterCategory !== 'all' && f.categoria !== filterCategory) return false;
@@ -74,19 +74,24 @@ export const FontesEMercadoView: React.FC<{ defaultTab?: 'fontes' | 'concorrente
     addCompetitor({
       verticalId: 'VERT-CONT',
       nome: compNome.trim(),
-      modelo: compModelo.trim(),
+      site: '',
+      publico: '',
+      modelo: compModelo,
       precoEstimado: compPreco.trim() || 'R$ 800 - R$ 2.500 / mês',
       proposta: compProposta.trim(),
+      funcionalidadesPrincipais: [],
+      integracoes: [],
+      iaPresente: false,
       operationsGapObservado: compGap.trim(),
       pontosFortes: compPontosFortes.split('\n').filter(Boolean),
-      pontosFracos: compPontosFracos.split('\n').filter(Boolean)
+      limitacoes: compLimitacoes.split('\n').filter(Boolean)
     });
     setCompNome('');
     setCompPreco('');
     setCompProposta('');
     setCompGap('');
     setCompPontosFortes('');
-    setCompPontosFracos('');
+    setCompLimitacoes('');
     setShowCompModal(false);
   };
 
@@ -274,7 +279,7 @@ export const FontesEMercadoView: React.FC<{ defaultTab?: 'fontes' | 'concorrente
                       Limitações e Pontos Fracos:
                     </span>
                     <ul className="list-disc list-inside text-slate-600 space-y-0.5">
-                      {comp.pontosFracos.map((pfr, idx) => (
+                      {comp.limitacoes.map((pfr, idx) => (
                         <li key={idx}>{pfr}</li>
                       ))}
                     </ul>
@@ -410,12 +415,21 @@ export const FontesEMercadoView: React.FC<{ defaultTab?: 'fontes' | 'concorrente
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="font-semibold text-slate-700 block mb-1">Modelo de Preço:</label>
-                <input
-                  type="text"
+                <select
                   value={compModelo}
-                  onChange={(e) => setCompModelo(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === 'SaaS' || value === 'Sob consulta' || value === 'Por usuário' || value === 'Freemium') {
+                      setCompModelo(value);
+                    }
+                  }}
                   className="w-full p-2 border border-slate-200 rounded text-xs"
-                />
+                >
+                  <option value="SaaS">SaaS</option>
+                  <option value="Sob consulta">Sob consulta</option>
+                  <option value="Por usuário">Por usuário</option>
+                  <option value="Freemium">Freemium</option>
+                </select>
               </div>
 
               <div>
@@ -464,11 +478,11 @@ export const FontesEMercadoView: React.FC<{ defaultTab?: 'fontes' | 'concorrente
               </div>
 
               <div>
-                <label className="font-semibold text-slate-700 block mb-1">Pontos Fracos (um por linha):</label>
+                <label className="font-semibold text-slate-700 block mb-1">Limitações (uma por linha):</label>
                 <textarea
                   rows={2}
-                  value={compPontosFracos}
-                  onChange={(e) => setCompPontosFracos(e.target.value)}
+                  value={compLimitacoes}
+                  onChange={(e) => setCompLimitacoes(e.target.value)}
                   className="w-full p-2 border border-slate-200 rounded text-xs"
                 />
               </div>

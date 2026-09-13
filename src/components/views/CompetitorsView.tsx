@@ -8,24 +8,29 @@ export const CompetitorsView: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
 
   const [nome, setNome] = useState('');
-  const [modelo, setModelo] = useState('SaaS B2B Mensal');
+  const [modelo, setModelo] = useState<'SaaS' | 'Sob consulta' | 'Por usuário' | 'Freemium'>('SaaS');
   const [preco, setPreco] = useState('');
   const [proposta, setProposta] = useState('');
   const [gap, setGap] = useState('');
   const [pontosFortes, setPontosFortes] = useState('');
-  const [pontosFracos, setPontosFracos] = useState('');
+  const [limitacoes, setLimitacoes] = useState('');
 
   const handleCreate = () => {
     if (!nome.trim()) return;
     addCompetitor({
       verticalId: 'VERT-CONT',
       nome: nome.trim(),
-      modelo: modelo.trim(),
+      site: '',
+      publico: '',
+      modelo,
       precoEstimado: preco.trim() || 'R$ 800 - R$ 2.500 / mês',
       proposta: proposta.trim(),
+      funcionalidadesPrincipais: [],
+      integracoes: [],
+      iaPresente: false,
       operationsGapObservado: gap.trim(),
       pontosFortes: pontosFortes.split('\n').filter(Boolean),
-      pontosFracos: pontosFracos.split('\n').filter(Boolean)
+      limitacoes: limitacoes.split('\n').filter(Boolean)
     });
     setNome('');
     setShowModal(false);
@@ -107,7 +112,7 @@ export const CompetitorsView: React.FC = () => {
                   Pontos Fracos:
                 </span>
                 <ul className="list-disc list-inside text-slate-600 space-y-0.5">
-                  {comp.pontosFracos.map((pf, idx) => (
+                  {comp.limitacoes.map((pf, idx) => (
                     <li key={idx}>{pf}</li>
                   ))}
                 </ul>
@@ -140,12 +145,21 @@ export const CompetitorsView: React.FC = () => {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="font-semibold text-slate-700 block mb-1">Modelo de Negócio:</label>
-                <input
-                  type="text"
+                <select
                   value={modelo}
-                  onChange={(e) => setModelo(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === 'SaaS' || value === 'Sob consulta' || value === 'Por usuário' || value === 'Freemium') {
+                      setModelo(value);
+                    }
+                  }}
                   className="w-full p-2 border border-slate-200 rounded-lg text-xs"
-                />
+                >
+                  <option value="SaaS">SaaS</option>
+                  <option value="Sob consulta">Sob consulta</option>
+                  <option value="Por usuário">Por usuário</option>
+                  <option value="Freemium">Freemium</option>
+                </select>
               </div>
 
               <div>

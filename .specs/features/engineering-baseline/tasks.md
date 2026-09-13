@@ -206,6 +206,7 @@ T12 → T13 → T14
 **Depends on**: T17
 **Reuses**: `Competitor`, `INITIAL_CONCORRENTES` and `RadarContext.addCompetitor`
 **Requirement**: BASE-38
+**Status**: Complete
 
 **Tools**:
 
@@ -214,12 +215,12 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Model state and submitted values use only `SaaS`, `Sob consulta`, `Por usuário` or `Freemium`.
-- [ ] Both payloads include canonical `site`, `publico`, `funcionalidadesPrincipais`, `integracoes`, `iaPresente`, `pontosFortes`, `limitacoes` and `operationsGapObservado` fields.
-- [ ] Both lists render `limitacoes`; no consumer reads or writes `pontosFracos`.
-- [ ] State and handlers introduce no `as`, `any` or another cast and do not change `src/types/radar.ts`.
-- [ ] Bootstrap gate passes: `npm run build`.
-- [ ] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/CompetitorsView.tsx` or `src/components/views/FontesEMercadoView.tsx`; unrelated diagnostics remain visible for subsequent tasks.
+- [x] Model state and submitted values use only `SaaS`, `Sob consulta`, `Por usuário` or `Freemium`.
+- [x] Both payloads include canonical `site`, `publico`, `funcionalidadesPrincipais`, `integracoes`, `iaPresente`, `pontosFortes`, `limitacoes` and `operationsGapObservado` fields.
+- [x] Both lists render `limitacoes`; no consumer reads or writes `pontosFracos`.
+- [x] State and handlers introduce no `as`, `any` or another cast and do not change `src/types/radar.ts`.
+- [x] Bootstrap gate passes: `npm run build`.
+- [x] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/CompetitorsView.tsx` or `src/components/views/FontesEMercadoView.tsx`; unrelated diagnostics remain visible for subsequent tasks.
 
 **Tests**: none — legacy React consumer contract layer
 **Gate**: Bootstrap — `npm run build`
