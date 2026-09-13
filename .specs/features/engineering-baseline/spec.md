@@ -198,7 +198,7 @@ O COSMO já funciona como protótipo exploratório, mas ainda não possui instal
 | BASE-05 | P1: Dependências mínimas | Execute | Implemented (T1) |
 | BASE-06 | P1: Dependências mínimas | Execute | Implemented (T1) |
 | BASE-07 | P1: Dependências mínimas | Tasks | In Tasks |
-| BASE-08 | P1: Dependências mínimas | Execute | In Progress (T1 complete; validation continues through T23) |
+| BASE-08 | P1: Dependências mínimas | Execute | Implemented (T1, T15–T23) |
 | BASE-09 | P1: Harness de testes | Execute | In Progress (T1 complete) |
 | BASE-10 | P1: Harness de testes | Tasks | In Tasks |
 | BASE-11 | P1: Harness de testes | Tasks | In Tasks |
@@ -233,7 +233,7 @@ O COSMO já funciona como protótipo exploratório, mas ainda não possui instal
 | BASE-40 | P1: Contratos TypeScript canônicos | Execute | Implemented (T20) |
 | BASE-41 | P1: Contratos TypeScript canônicos | Execute | Implemented (T21) |
 | BASE-42 | P1: Contratos TypeScript canônicos | Execute | Implemented (T22) |
-| BASE-43 | P1: Contratos TypeScript canônicos | Tasks | In Tasks |
+| BASE-43 | P1: Contratos TypeScript canônicos | Execute | Implemented (T23) |
 
 **Coverage:** 43 total, 43 mapped to tasks, 0 unmapped.
 

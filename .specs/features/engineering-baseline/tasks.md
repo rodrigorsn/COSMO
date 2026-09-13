@@ -349,6 +349,7 @@ T12 → T13 → T14
 **Depends on**: T22
 **Reuses**: `calculatePainConsolidation`, `evaluateEvidenceLevel`, `PainDetailView` evidence derivation and RadarContext collections
 **Requirement**: BASE-43
+**Status**: Complete
 
 **Tools**:
 
@@ -357,12 +358,12 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Each pain is paired with `calculatePainConsolidation` output using its vertical organizations, occurrences, findings and interviews.
-- [ ] Each row derives Evidence Level from reviewed findings using the same organization, external-source, economic-spending and commercial-commitment signals as `PainDetailView`.
-- [ ] Rows sort by `incidenciaPercent` descending and then `media` descending.
-- [ ] The UI renders canonical `orgsComDor`, `totalAmostraInvestigada`, `amostraLimitada`, `media` and derived Evidence Level values; no undeclared `PainConsolidated` metric is read.
-- [ ] The remediation introduces no `as`, `any` or another cast and does not change `src/types/radar.ts`.
-- [ ] Foundation gate passes: `npm run typecheck && npm run build`.
+- [x] Each pain is paired with `calculatePainConsolidation` output using its vertical organizations, occurrences, findings and interviews.
+- [x] Each row derives Evidence Level from reviewed findings using the same organization, external-source, economic-spending and commercial-commitment signals as `PainDetailView`.
+- [x] Rows sort by `incidenciaPercent` descending and then `media` descending.
+- [x] The UI renders canonical `orgsComDor`, `totalAmostraInvestigada`, `amostraLimitada`, `media` and derived Evidence Level values; no undeclared `PainConsolidated` metric is read.
+- [x] The remediation introduces no `as`, `any` or another cast and does not change `src/types/radar.ts`.
+- [x] Foundation gate passes: `npm run typecheck && npm run build`.
 
 **Tests**: none — legacy React consumer contract layer
 **Gate**: Foundation — `npm run typecheck && npm run build`

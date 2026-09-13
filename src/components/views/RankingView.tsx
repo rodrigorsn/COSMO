@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router';
 import { useRadar } from '../../context/RadarContext';
 import { SimulacaoTag } from '../common/SimulacaoBadge';
 import { EvidenceLevelBadge } from '../common/Badge';
+import { calculatePainConsolidation, evaluateEvidenceLevel } from '../../utils/calculations';
 import { 
   Trophy, 
   Flame, 
@@ -19,7 +20,11 @@ import {
 export const RankingView: React.FC = () => {
   const { 
     oportunidades, 
-    doresConsolidadas
+    doresConsolidadas,
+    ocorrenciasDores,
+    organizacoes,
+    entrevistas,
+    achados
   } = useRadar();
 
   const [activeTab, setActiveTab] = useState<'oportunidades' | 'dores'>('oportunidades');
@@ -33,11 +38,52 @@ export const RankingView: React.FC = () => {
   });
 
   // Sorted Pains by Incidência DESC, then Pain Score Médio DESC
-  const sortedPains = [...doresConsolidadas].sort((a, b) => {
-    if (b.incidenciaPercentual !== a.incidenciaPercentual) {
-      return b.incidenciaPercentual - a.incidenciaPercentual;
+  const sortedPains = doresConsolidadas.map(pain => {
+    const verticalOrgs = organizacoes.filter(org => org.verticalId === pain.verticalId);
+    const stats = calculatePainConsolidation(
+      pain.id,
+      ocorrenciasDores,
+      verticalOrgs.length,
+      achados,
+      entrevistas,
+      verticalOrgs
+    );
+    const reviewedFindings = achados.filter(finding =>
+      finding.dorConsolidadaId === pain.id &&
+      (finding.reviewStatus === 'revisado' || finding.reviewStatus === undefined) &&
+      Boolean(finding.natureza)
+    );
+    const independentOrgsCount = new Set(
+      reviewedFindings
+        .map(finding => finding.organizacaoId)
+        .filter((id): id is string => Boolean(id))
+    ).size;
+    const hasExternalSource = reviewedFindings.some(finding =>
+      finding.origem === 'Fonte externa' || finding.tipoEvidencia === 'evidencia_observada'
+    );
+    const hasEconomicSpendingEvidence = reviewedFindings.some(finding =>
+      finding.tipoEvidencia === 'fato' ||
+      finding.tags.some(tag => tag.includes('custo') || tag.includes('horas') || tag.includes('padrao_h3'))
+    );
+    const hasCommercialCommitment = reviewedFindings.some(
+      finding => finding.tipoEvidencia === 'evidencia_comercial'
+    );
+
+    return {
+      pain,
+      stats,
+      evidenceLevel: evaluateEvidenceLevel(
+        independentOrgsCount,
+        hasExternalSource,
+        hasEconomicSpendingEvidence,
+        hasCommercialCommitment
+      )
+    };
+  }).sort((a, b) => {
+    if (b.stats.incidenciaPercent !== a.stats.incidenciaPercent) {
+      return b.stats.incidenciaPercent - a.stats.incidenciaPercent;
     }
-    return b.painScoreMedio - a.painScoreMedio;
+    return b.stats.media - a.stats.media;
   });
 
   return (
@@ -182,7 +228,7 @@ export const RankingView: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            {sortedPains.map((pain, idx) => (
+            {sortedPains.map(({ pain, stats, evidenceLevel }, idx) => (
               <div 
                 key={pain.id}
                 className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs hover:border-amber-300 transition-all text-xs flex flex-col md:flex-row md:items-center justify-between gap-4"
@@ -201,13 +247,13 @@ export const RankingView: React.FC = () => {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-mono font-bold text-amber-800">{pain.id}</span>
-                      <EvidenceLevelBadge level={pain.evidenciaNivel} />
+                      <EvidenceLevelBadge level={evidenceLevel} />
                       <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">
                         {pain.categoria}
                       </span>
-                      {pain.amostraLimitada && (
+                      {stats.amostraLimitada && (
                         <span className="px-1.5 py-0.2 rounded text-[10px] font-semibold bg-amber-100 text-amber-800 border border-amber-300">
-                          Amostra limitada ({pain.amostraTamanho}/{pain.amostraRecomendadaMinima})
+                          Amostra limitada ({stats.orgsComDor}/{stats.totalAmostraInvestigada})
                         </span>
                       )}
                     </div>
@@ -224,12 +270,15 @@ export const RankingView: React.FC = () => {
                     <div className="p-2 rounded-lg bg-slate-50 border border-slate-100">
                       <span className="text-[10px] text-slate-400 block uppercase font-mono">Incidência</span>
                       <span className="font-mono font-bold text-amber-800 text-sm">
-                        {pain.incidenciaPercentual}% ({pain.organizacoesConfirmadasCount}/{pain.organizacoesTotalPesquisadas})
+                        {stats.incidenciaPercent}% ({stats.orgsComDor}/{stats.totalAmostraInvestigada})
                       </span>
                     </div>
                     <div className="p-2 rounded-lg bg-slate-50 border border-slate-100">
                       <span className="text-[10px] text-slate-400 block uppercase font-mono">Pain Score Médio</span>
-                      <span className="font-mono font-bold text-slate-900 text-sm">{pain.painScoreMedio}/25</span>
+                      <span className="font-mono font-bold text-slate-900 text-sm">{stats.media}/25</span>
+                      <span className="text-[9px] text-slate-400 block">
+                        {stats.ocorrenciasMensuradasCount} ocorrência(ões) mensurada(s)
+                      </span>
                     </div>
                   </div>
 
