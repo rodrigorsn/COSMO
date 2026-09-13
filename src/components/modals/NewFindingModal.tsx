@@ -6,7 +6,7 @@ export const NewFindingModal: React.FC<{ isOpen: boolean; onClose: () => void }>
   const { organizacoes, doresConsolidadas, addFinding } = useRadar();
 
   const [orgId, setOrgId] = useState<string>(organizacoes[0]?.id || '');
-  const [origem, setOrigem] = useState<'Entrevista' | 'Fonte Secundária' | 'Observação de Campo' | 'Outro'>('Entrevista');
+  const [origem, setOrigem] = useState<'Entrevista' | 'Processo' | 'Fonte externa' | 'Observação direta'>('Entrevista');
   const [titulo, setTitulo] = useState('');
   const [fraseOriginal, setFraseOriginal] = useState('');
   const [interpretacao, setInterpretacao] = useState('');
@@ -79,13 +79,18 @@ export const NewFindingModal: React.FC<{ isOpen: boolean; onClose: () => void }>
               <label className="font-semibold text-slate-700 block mb-1">Origem:</label>
               <select
                 value={origem}
-                onChange={(e) => setOrigem(e.target.value as any)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === 'Entrevista' || value === 'Processo' || value === 'Fonte externa' || value === 'Observação direta') {
+                    setOrigem(value);
+                  }
+                }}
                 className="w-full p-2 border border-slate-200 rounded-lg text-xs"
               >
                 <option value="Entrevista">Entrevista</option>
-                <option value="Fonte Secundária">Fonte Secundária</option>
-                <option value="Observação de Campo">Observação de Campo</option>
-                <option value="Outro">Outro</option>
+                <option value="Processo">Processo</option>
+                <option value="Fonte externa">Fonte externa</option>
+                <option value="Observação direta">Observação direta</option>
               </select>
             </div>
 
@@ -107,7 +112,12 @@ export const NewFindingModal: React.FC<{ isOpen: boolean; onClose: () => void }>
               <label className="font-semibold text-slate-700 block mb-1">Natureza da Evidência:</label>
               <select
                 value={natureza}
-                onChange={(e) => setNatureza(e.target.value as any)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === 'favoravel' || value === 'contraria' || value === 'neutra') {
+                    setNatureza(value);
+                  }
+                }}
                 className="w-full p-2 border border-slate-200 rounded-lg text-xs"
               >
                 <option value="favoravel">Favorável à dor (+)</option>

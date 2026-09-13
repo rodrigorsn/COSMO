@@ -122,6 +122,7 @@ T12 → T13 → T14
 **Depends on**: T1
 **Reuses**: `Finding.origem` and `RadarContext.addFinding`
 **Requirement**: BASE-35
+**Status**: Complete
 
 **Tools**:
 
@@ -130,10 +131,10 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Origin state and every select option use only `Entrevista`, `Processo`, `Fonte externa` or `Observação direta`.
-- [ ] The change handler narrows input to the canonical union without `as`, `any` or another cast.
-- [ ] Bootstrap gate passes: `npm run build`.
-- [ ] The complete `npm run typecheck` output contains no diagnostic for `src/components/modals/NewFindingModal.tsx`; unrelated diagnostics remain visible for subsequent tasks.
+- [x] Origin state and every select option use only `Entrevista`, `Processo`, `Fonte externa` or `Observação direta`.
+- [x] The change handler narrows input to the canonical union without `as`, `any` or another cast.
+- [x] Bootstrap gate passes: `npm run build`.
+- [x] The complete `npm run typecheck` output contains no diagnostic for `src/components/modals/NewFindingModal.tsx`; unrelated diagnostics remain visible for subsequent tasks.
 
 **Tests**: none — legacy React consumer contract layer
 **Gate**: Bootstrap — `npm run build`
