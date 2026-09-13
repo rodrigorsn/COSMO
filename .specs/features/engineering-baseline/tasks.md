@@ -544,16 +544,17 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Score functions prove nominal totals and lower/upper clamps.
-- [ ] Pain measurement proves explicit false, missing score, valid score and legacy measured behavior.
-- [ ] Consolidation proves empty, fallback denominator, investigated sample, evidence filtering, unique organizations, even/odd median and sufficiency branches.
-- [ ] Organization maturity proves not-started, partial and complete thresholds.
-- [ ] Evidence level proves exact H0 through H5 precedence.
-- [ ] Exactly 30 calculation tests pass.
+- [x] Score functions prove nominal totals and lower/upper clamps.
+- [x] Pain measurement proves explicit false, missing score, valid score and legacy measured behavior.
+- [x] Consolidation proves empty, fallback denominator, investigated sample, evidence filtering, unique organizations, even/odd median and sufficiency branches.
+- [x] Organization maturity proves not-started, partial and complete thresholds.
+- [x] Evidence level proves exact H0 through H5 precedence.
+- [x] Exactly 30 calculation tests pass.
 
 **Tests**: unit — 30 tests
 **Gate**: Quick — `npm test -- src/utils/calculations.test.ts`
 **Commit**: `test(domain): protect calculation contracts`
+**Status**: Complete
 
 ---
 
