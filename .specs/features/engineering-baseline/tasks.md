@@ -655,15 +655,16 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Workflow triggers on pull requests targeting `main` and pushes to `main`.
-- [ ] Workflow uses Node 24, npm cache, `npm ci` and separately named typecheck, test, production audit and build steps.
-- [ ] Workflow declares `contents: read`, a 10-minute timeout and PR-safe concurrency cancellation.
-- [ ] YAML parses and every command matches a script or valid npm command.
-- [ ] Build gate passes locally.
+- [x] Workflow triggers on pull requests targeting `main` and pushes to `main`.
+- [x] Workflow uses Node 24, npm cache, `npm ci` and separately named typecheck, test, production audit and build steps.
+- [x] Workflow declares `contents: read`, a 10-minute timeout and PR-safe concurrency cancellation.
+- [x] YAML parses and every command matches a script or valid npm command.
+- [x] Build gate passes locally.
 
 **Tests**: none — automation config layer
 **Gate**: Build — `npm run check`
 **Commit**: `ci: add engineering baseline gates`
+**Status**: Complete
 
 ---
 
