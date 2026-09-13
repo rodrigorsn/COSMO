@@ -8,7 +8,10 @@ Este arquivo contém as regras de arquitetura, metodologias, convenções de Fro
 
 * **Nome do App**: Radar de Oportunidades & Validação Empírica (Framework COSMO).
 * **Stack Tecnológica**:
-  * **Framework**: React 18 + Vite + TypeScript
+  * **Framework**: React 19 + Vite 8 + TypeScript
+  * **Runtime**: Node 24 / npm 11 (`.nvmrc`, `engines` em `package.json`, lockfile único `package-lock.json`)
+  * **Testes**: Vitest 5 + Testing Library, 61 testes cobrindo cálculos, rotas, `RadarContext` e smoke da aplicação
+  * **CI**: `.github/workflows/ci.yml` roda `npm run check` em PRs para `main` e pushes a `main`
   * **Roteamento**: `@tanstack/react-router`
   * **Estilização**: Tailwind CSS v4 (`@import "tailwindcss";` no `src/index.css`)
   * **Ícones**: Exclusivamente `lucide-react`
@@ -74,11 +77,10 @@ Este arquivo contém as regras de arquitetura, metodologias, convenções de Fro
 ├── components/
 │   ├── common/             # Badges, Tags de Simulação, Contêineres
 │   ├── radar/              # Componentes específicos do Radar (Evidence Chain, Score Breakdowns)
-│   └── views/              # Visões principais da aplicação
+│   └── views/              # Visões principais da aplicação (ver inventário completo em docs/STATUS.md)
 │       ├── OpportunityDetailView.tsx  # Dossiê da Oportunidade (PRD Seção 43, 5B)
 │       ├── PainDetailView.tsx         # Dossiê da Dor
 │       ├── RankingView.tsx            # Ranking Comparativo
-│       ├── EvidenceMatrixView.tsx     # Matriz de Evidências
 │       └── DashboardView.tsx          # Visão Geral
 ├── context/
 │   └── RadarContext.tsx    # Provedor de contexto global
@@ -99,21 +101,28 @@ Este arquivo contém as regras de arquitetura, metodologias, convenções de Fro
 * **Etapa 5B.4**: Transparência metodológica do Opportunity Score e Confidence Score na `OpportunityDetailView`.
 * **Etapa 5B.4.1**: Consistência metodológica da escala `H0–H5` e transparência do Ranking na `RankingView`.
 * **Etapa 5B.5**: Auditoria final de UX, hierarquia e coerência do Dossiê da Oportunidade.
+* **Feature `engineering-baseline`** (`.specs/features/engineering-baseline/`): migração para npm 11/Node 24 com lockfile único, remoção de ~10 violações de contrato de tipos em consumidores React legados, suíte Vitest (61 testes), gate de CI e documentação (`README.md`, `docs/STATUS.md`) alinhada ao código real. Verificado PASS pelo Verifier do `tlc-spec-driven` (`.specs/features/engineering-baseline/validation.md`).
 
 ---
 
 ## 6. Comandos de Desenvolvimento
 
 ```bash
-# Instalar dependências
-npm install
+# Instalar dependências (instalação congelada, respeita o lockfile)
+npm ci
 
-# Rodar servidor de desenvolvimento
+# Rodar servidor de desenvolvimento (http://localhost:3000)
 npm run dev
 
 # Checagem de tipos TypeScript
-npx tsc --noEmit
+npm run typecheck
+
+# Suíte de testes (Vitest)
+npm test
 
 # Compilação de produção
 npm run build
+
+# Gate completo (typecheck + test + auditoria de produção + build) — o mesmo que roda no CI
+npm run check
 ```
