@@ -10,7 +10,7 @@ export const SourcesView: React.FC = () => {
 
   const [newTitle, setNewTitle] = useState('');
   const [newInst, setNewInst] = useState('');
-  const [newCat, setNewCat] = useState<'regulamentacao' | 'mercado' | 'censo' | 'tecnologia'>('mercado');
+  const [newCat, setNewCat] = useState<'regulação' | 'tamanho' | 'empresas' | 'tecnologia'>('tamanho');
   const [newExtracted, setNewExtracted] = useState('');
   const [newSummary, setNewSummary] = useState('');
   const [newUrl, setNewUrl] = useState('https://');
@@ -29,7 +29,7 @@ export const SourcesView: React.FC = () => {
       data: new Date().toISOString().split('T')[0],
       url: newUrl,
       categoria: newCat,
-      confiabilidade: 'alta',
+      confiabilidade: 'Alta',
       informacaoExtraida: newExtracted.trim(),
       resumo: newSummary.trim()
     });
@@ -66,7 +66,7 @@ export const SourcesView: React.FC = () => {
       <div className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs flex items-center gap-2 text-xs">
         <span className="font-semibold text-slate-500">Filtrar Categoria:</span>
         <div className="flex items-center gap-1">
-          {['all', 'regulamentacao', 'mercado', 'censo', 'tecnologia'].map(cat => (
+          {['all', 'regulação', 'tamanho', 'empresas', 'tecnologia'].map(cat => (
             <button
               key={cat}
               onClick={() => setFilterCategory(cat)}
@@ -159,12 +159,17 @@ export const SourcesView: React.FC = () => {
                 <label className="font-semibold text-slate-700 block mb-1">Categoria:</label>
                 <select
                   value={newCat}
-                  onChange={(e) => setNewCat(e.target.value as any)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === 'regulação' || value === 'tamanho' || value === 'empresas' || value === 'tecnologia') {
+                      setNewCat(value);
+                    }
+                  }}
                   className="w-full p-2 border border-slate-200 rounded-lg text-xs"
                 >
-                  <option value="mercado">Mercado</option>
-                  <option value="censo">Censo</option>
-                  <option value="regulamentacao">Regulamentação</option>
+                  <option value="tamanho">Mercado</option>
+                  <option value="empresas">Censo</option>
+                  <option value="regulação">Regulamentação</option>
                   <option value="tecnologia">Tecnologia</option>
                 </select>
               </div>

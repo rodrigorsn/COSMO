@@ -178,6 +178,7 @@ T12 → T13 → T14
 **Depends on**: T16
 **Reuses**: `MarketSource.categoria`, `MarketSource.confiabilidade` and `RadarContext.addSource`
 **Requirement**: BASE-37
+**Status**: Complete
 
 **Tools**:
 
@@ -186,11 +187,11 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Both views submit only categories declared by `MarketSource`, using `regulação` instead of the legacy `regulamentacao` and canonical values instead of `mercado` or `censo`.
-- [ ] Both views submit title-cased reliability, including `Alta` instead of `alta`.
-- [ ] State and handlers use canonical unions without `as`, `any` or another cast.
-- [ ] Bootstrap gate passes: `npm run build`.
-- [ ] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/FontesEMercadoView.tsx` or `src/components/views/SourcesView.tsx`; T18 retains ownership of the canonical competitor contract across both competitor surfaces.
+- [x] Both views submit only categories declared by `MarketSource`, using `regulação` instead of the legacy `regulamentacao` and canonical values instead of `mercado` or `censo`.
+- [x] Both views submit title-cased reliability, including `Alta` instead of `alta`.
+- [x] State and handlers use canonical unions without `as`, `any` or another cast.
+- [x] Bootstrap gate passes: `npm run build`.
+- [x] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/FontesEMercadoView.tsx` or `src/components/views/SourcesView.tsx`; T18 retains ownership of the canonical competitor contract across both competitor surfaces.
 
 **Tests**: none — legacy React consumer contract layer
 **Gate**: Bootstrap — `npm run build`

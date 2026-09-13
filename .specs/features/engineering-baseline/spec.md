@@ -227,7 +227,7 @@ O COSMO já funciona como protótipo exploratório, mas ainda não possui instal
 | BASE-34 | Edge cases transversais | Tasks | In Tasks |
 | BASE-35 | P1: Contratos TypeScript canônicos | Execute | Implemented (T15) |
 | BASE-36 | P1: Contratos TypeScript canônicos | Execute | Implemented (T16) |
-| BASE-37 | P1: Contratos TypeScript canônicos | Tasks | In Tasks |
+| BASE-37 | P1: Contratos TypeScript canônicos | Execute | Implemented (T17) |
 | BASE-38 | P1: Contratos TypeScript canônicos | Tasks | In Tasks |
 | BASE-39 | P1: Contratos TypeScript canônicos | Tasks | In Tasks |
 | BASE-40 | P1: Contratos TypeScript canônicos | Tasks | In Tasks |
