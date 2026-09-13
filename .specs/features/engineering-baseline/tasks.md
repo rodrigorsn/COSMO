@@ -490,14 +490,15 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Environment is jsdom and setup points to `src/test/setup.ts`.
-- [ ] Mocks are cleared and restored between tests.
-- [ ] Focused tests are rejected when `CI` is set.
-- [ ] Foundation gate passes before any suite is introduced.
+- [x] Environment is jsdom and setup points to `src/test/setup.ts`.
+- [x] Mocks are cleared and restored between tests.
+- [x] Focused tests are rejected when `CI` is set.
+- [x] Foundation gate passes before any suite is introduced.
 
 **Tests**: none — test config layer
 **Gate**: Foundation — `npm run typecheck && npm run build`
 **Commit**: `test(config): configure vitest environment`
+**Status**: Complete
 
 ---
 
