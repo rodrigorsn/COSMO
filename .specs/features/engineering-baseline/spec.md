@@ -191,10 +191,10 @@ O COSMO já funciona como protótipo exploratório, mas ainda não possui instal
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| BASE-01 | P1: Instalação reproduzível | Execute | In Progress (T1 complete) |
+| BASE-01 | P1: Instalação reproduzível | Execute | In Progress (T1, T2 complete) |
 | BASE-02 | P1: Instalação reproduzível | Tasks | In Tasks |
 | BASE-03 | P1: Instalação reproduzível | Tasks | In Tasks |
-| BASE-04 | P1: Instalação reproduzível | Tasks | In Tasks |
+| BASE-04 | P1: Instalação reproduzível | Execute | In Progress (T2 complete; lockfile validation remains in T4) |
 | BASE-05 | P1: Dependências mínimas | Execute | Implemented (T1) |
 | BASE-06 | P1: Dependências mínimas | Execute | Implemented (T1) |
 | BASE-07 | P1: Dependências mínimas | Tasks | In Tasks |

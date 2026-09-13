@@ -378,6 +378,7 @@ T12 → T13 → T14
 **Depends on**: T23
 **Reuses**: `engines` declared by T1
 **Requirement**: BASE-01, BASE-04
+**Status**: Complete
 
 **Tools**:
 
@@ -386,8 +387,8 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Project configuration sets `engine-strict=true` and contains no registry credentials.
-- [ ] Foundation gate passes with the supported local runtime.
+- [x] Project configuration sets `engine-strict=true` and contains no registry credentials.
+- [x] Foundation gate passes with the supported local runtime.
 
 **Tests**: none — config layer
 **Gate**: Foundation — `npm run typecheck && npm run build`
