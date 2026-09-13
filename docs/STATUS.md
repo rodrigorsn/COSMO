@@ -4,71 +4,50 @@
 
 ## 1. Visão Geral do Status Atual
 
-O **Radar de Oportunidades & Validação Empírica** está com sua arquitetura frontend totalmente funcional e alinhada às regras metodológicas do **Framework COSMO**.
+O **Radar de Oportunidades & Validação Empírica** roda em **React 19 + Vite 8 + TypeScript + Tailwind CSS v4**, com `@tanstack/react-router` para roteamento e `RadarContext` para gerenciamento de estado persistente via `localStorage`.
 
-A aplicação roda em **React 18 + Vite + TypeScript + Tailwind CSS v4**, utilizando `@tanstack/react-router` para roteamento e `RadarContext` para gerenciamento de estado persistente via `localStorage`.
+Após a baseline de engenharia (typecheck limpo, suíte de testes automatizada e gate de CI), o projeto está pronto para **teste exploratório**, não para produção. Não há backend, autenticação ou persistência fora do navegador do usuário.
 
----
+## 2. Gate de Qualidade
 
-## 2. Etapas de Desenvolvimento Concluídas (Marco 5B)
+`npm run check` executa typecheck, a suíte Vitest, auditoria de dependências de produção e build, nessa ordem. O mesmo gate roda em `.github/workflows/ci.yml` em pull requests para `main` e pushes para `main`.
 
-* **Etapa 5B.2 — Resgate de Dados Omitidos na OpportunityDetailView**:
-  * Resgatados e exibidos no Dossiê da Oportunidade: `subverticalId`, `monetizacaoHipotetica`, `concorrentesMapeados`, `diferenciacao` e `integracoesNecessarias`.
+* **Testes**: exatamente **61 testes** passando, distribuídos em 4 arquivos (cálculos, rotas, `RadarContext` e smoke de aplicação).
+* **Auditoria de produção**: `npm audit --omit=dev --audit-level=moderate` retorna zero vulnerabilidades.
+* **Build**: `vite build` conclui sem erros.
 
-* **Etapa 5B.3 — Conexão com Dores Consolidadas, Evidence Levels e Contraprovas**:
-  * Integração direta com as dores que sustentam a oportunidade (`DOR-CONT-001`, `DOR-CONT-002`).
-  * Exibição de amostras investigadas, percentuais de sustentação e intensidade observada.
-  * Painel de Contraprovas & Limites da Hipótese (`ACH-005`), exibindo fala original imutável, fala revisada e interpretação analítica.
+## 3. Inventário de Rotas e Visões Comitadas
 
-* **Etapa 5B.3.1 — Auditoria e Harmonização Factual entre Telas**:
-  * Harmonização dos dados de organizações (`ORG-CONT-001`, `ORG-CONT-002`, `ORG-CONT-003`).
-  * Garantida a regra: `Mesma Organização + Mesma Dor` gera exatamente os mesmos dados na `PainDetailView` e na `OpportunityDetailView`.
+Toda rota é servida por `RadarAppContent` (`src/App.tsx`), que seleciona a visão ativa a partir do path corrente.
 
-* **Etapa 5B.4 — Transparência Metodológica do Opportunity Score e Confidence Score**:
-  * Adição de rótulos explícitos `Avaliação atribuída` e `Confiança atribuída`.
-  * Inclusão de caixas metodológicas esclarecendo que o Opportunity Score (0–100) é uma avaliação registrada e não um cálculo automático em tempo real, e que o Nível de Confiança (%) não é uma probabilidade estatística.
-
-* **Etapa 5B.4.1 — Consistência Metodológica e Transparência no Ranking**:
-  * Correção textual da escala de Evidence Level para `H0–H5`.
-  * Atualização da nota do topo da `RankingView` esclarecendo o critério real de ordenação (`Opportunity Score` DESC, `Confidence Score` DESC) e que o Evidence Level serve como contexto de maturidade sem alterar matematicamente a posição.
-
-* **Etapa 5B.5 — Auditoria Final de UX, Hierarquia e Coerência**:
-  * Mapeamento completo dos 11 blocos do Dossiê da Oportunidade.
-  * Proposta de arquitetura visual refinada em 6 macroblocos para fases futuras.
-
----
-
-## 3. Inventário de Componentes e Visões Principais
-
-| Visão | Rota / Arquivo | Função Principal |
+| Rota | Visão | Arquivo |
 | :--- | :--- | :--- |
-| **Dossiê da Oportunidade** | `/oportunidades/$opportunityId`<br>`src/components/views/OpportunityDetailView.tsx` | Tese estratégica, conexão com dores, contraprovas, scores e validações. |
-| **Dossiê da Dor** | `/dores/$painId`<br>`src/components/views/PainDetailView.tsx` | Fonte canônica para Pain Score, ocorrências por organização e mitigação. |
-| **Ranking Comparativo** | `/ranking`<br>`src/components/views/RankingView.tsx` | Ordenação de oportunidades e dores consolidadas com transparência. |
-| **Matriz de Evidências** | `/evidencias`<br>`src/components/views/EvidenceMatrixView.tsx` | Cruzamento de dores x organizações e rastreabilidade atômica. |
-| **Dashboard Executivo** | `/`<br>`src/components/views/DashboardView.tsx` | Resumo executivo, KPIs do radar e recomendações de investigações. |
-| **Dossiê da Organização** | `/organizacoes/$organizationId`<br>`src/components/views/OrganizationDetailView.tsx` | Perfil da empresa, stack, processos e ocorrências locais. |
-| **Condução de Entrevistas** | `/entrevistas/conduzir`<br>`src/components/views/InterviewsView.tsx` | Roteiro de perguntas, captura rápida e extração de achados. |
-| **Jornada Guiada** | `/jornada`<br>`src/components/views/GuidedJourneyView.tsx` | Navegação estruturada nos 18 passos metodológicos do PRD. |
+| `/` | Dashboard Executivo | `src/components/views/DashboardView.tsx` |
+| `/verticais` | Lista de Verticais | `src/components/views/VerticalsView.tsx` |
+| `/verticais/$verticalId` | Detalhe de Vertical | `src/components/views/VerticalDetailView.tsx` |
+| `/organizacoes` | Lista de Organizações | `src/components/views/OrganizationsView.tsx` |
+| `/organizacoes/$orgId` | Detalhe de Organização | `src/components/views/OrganizationDetailView.tsx` |
+| `/entrevistas`, `/entrevistas/$interviewId` | Condução de Entrevistas | `src/components/views/InterviewsView.tsx` |
+| `/dores` | Lista de Dores | `src/components/views/PainsView.tsx` |
+| `/dores/$painId` | Dossiê da Dor | `src/components/views/PainDetailView.tsx` |
+| `/oportunidades` | Lista de Oportunidades | `src/components/views/OpportunitiesView.tsx` |
+| `/oportunidades/$opportunityId` | Dossiê da Oportunidade | `src/components/views/OpportunityDetailView.tsx` |
+| `/ranking` | Ranking Comparativo | `src/components/views/RankingView.tsx` |
+| `/perguntas` | Biblioteca de Perguntas | `src/components/views/QuestionsView.tsx` |
+| `/fontes` | Fontes & Mercado | `src/components/views/FontesEMercadoView.tsx` |
+| `/cross-vertical` | Matriz Cross-Vertical | `src/components/views/CrossVerticalView.tsx` |
+| qualquer path não reconhecido | Fallback | `src/components/common/UnknownRouteFallback.tsx` |
 
----
+Nenhuma Matriz de Evidências (`/evidencias`) ou Jornada Guiada (`/jornada`) existe no código-fonte comitado; ambas foram removidas deste inventário por não corresponderem a nenhum arquivo ou rota do repositório.
 
-## 4. Estado Factual do Benchmark Demo (`OP-CONT-001`)
+## 4. Riscos Conhecidos
 
-* **Opportunity Score Total**: `88/100` (Mercado 17/20, Dor 23/25, Operations Gap 24/25, Economia 16/20, GTM 8/10).
-* **Confidence Score**: `78%` (Confiança atribuída).
-* **Evidence Level da Oportunidade**: `H4` (Evidência econômica do problema comprovada nas organizações 001 e 003).
-* **Dores Vinculadas**:
-  * `DOR-CONT-001`: Pain Score Mediano `23/25`, Amostra `3 orgs`, 100% favorável, Evidence Level `H3`.
-  * `DOR-CONT-002`: Pain Score Mediano `0/25` (não mensurada), Amostra `3 orgs`, 33% contrária/atenuante (`ACH-005`), Evidence Level `H2`.
+| Risco | Detalhe | Mitigação |
+| :--- | :--- | :--- |
+| **Sem backend nem autenticação** | Todo o estado vive em `localStorage` no navegador do usuário; não há servidor, banco de dados ou controle de acesso. | Fora do escopo desta baseline; qualquer uso multiusuário ou com dados sensíveis exige uma feature dedicada de backend/auth antes de produção. |
+| **Bundle principal acima de 500 kB** | O build de produção emite um chunk JS único acima do limite de aviso do Vite. | Registrado como débito técnico; code splitting fica para uma feature de performance separada. |
+| **`JSON.parse` de storage sem tratamento de conteúdo inválido** | Storage corrompido pode impedir o boot do app. | Fora do escopo da baseline de engenharia; hardening de storage é um follow-up. |
 
----
+## 5. Leitura
 
-## 5. Próximos Passos de Refinamento do Frontend
-
-1. **Reorganização do Dossiê da Oportunidade em 6 Macroblocos**:
-   * Posicionar a Tese Estratégica & Hipótese de Produto logo abaixo do Hero para leitura fluida antes das evidências de campo.
-2. **Unificação da Área de Validação**:
-   * Agrupar Próxima Evidência, Kill Criteria e Experimentos em uma seção dedicada de governança de testes.
-3. **Condensação da Evidence Chain**:
-   * Compactar o explorador atômico de achados no final do dossiê.
+Consulte o [`README.md`](../README.md) para instalação, comandos e URL de desenvolvimento.

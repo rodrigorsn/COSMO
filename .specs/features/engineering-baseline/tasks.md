@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/engineering-baseline/design.md`
-**Status**: In Progress
+**Status**: All tasks complete — pending Verifier
 
 ---
 
@@ -711,15 +711,16 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Status reports React 19 and only committed route/view pairs.
-- [ ] Nonexistent Evidence Matrix and Guided Journey views/routes are removed from the inventory.
-- [ ] Status declares exploratory-test readiness after green gates, not production readiness.
-- [ ] Bundle-size warning and absence of backend/auth remain explicit risks.
-- [ ] Build gate passes with exactly 61 tests.
+- [x] Status reports React 19 and only committed route/view pairs.
+- [x] Nonexistent Evidence Matrix and Guided Journey views/routes are removed from the inventory.
+- [x] Status declares exploratory-test readiness after green gates, not production readiness.
+- [x] Bundle-size warning and absence of backend/auth remain explicit risks.
+- [x] Build gate passes with exactly 61 tests.
 
 **Tests**: none — documentation layer
 **Gate**: Build — `npm run check`
 **Commit**: `docs(status): align report with codebase`
+**Status**: Complete
 
 ---
 
