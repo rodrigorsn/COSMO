@@ -599,16 +599,17 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] A pending finding changes neither existing occurrences nor consolidated evidence references.
-- [ ] Promoting that finding creates or updates one matching occurrence and never duplicates its ID.
-- [ ] Discarding reviewed evidence removes only its contribution from occurrences and consolidated evidence arrays.
-- [ ] Reset calls `removeItem` for all ten COSMO keys, restores canonical arrays and permits effects to persist canonical state.
-- [ ] Fixed system time makes generated IDs and dates deterministic.
-- [ ] Exactly 4 context tests pass and 59 total tests pass.
+- [x] A pending finding changes neither existing occurrences nor consolidated evidence references.
+- [x] Promoting that finding creates or updates one matching occurrence and never duplicates its ID.
+- [x] Discarding reviewed evidence removes only its contribution from occurrences and consolidated evidence arrays.
+- [x] Reset calls `removeItem` for all ten COSMO keys, restores canonical arrays and permits effects to persist canonical state.
+- [x] Fixed system time makes generated IDs and dates deterministic.
+- [x] Exactly 4 context tests pass and 59 total tests pass.
 
 **Tests**: integration — 4 new tests, 59 cumulative
 **Gate**: Full — `npm test`
 **Commit**: `test(state): protect finding lifecycle`
+**Status**: Complete
 
 ---
 
