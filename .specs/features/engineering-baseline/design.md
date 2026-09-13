@@ -12,7 +12,9 @@ A baseline será uma camada de qualidade ao redor do produto existente. O códig
 ```mermaid
 flowchart LR
     Manifest[package.json + package-lock.json] --> Install[npm ci]
-    Install --> Typecheck[npm run typecheck]
+    Install --> ReactTypes[@types/react bootstrap]
+    ReactTypes --> Remediation[Canonical consumer contracts]
+    Remediation --> Typecheck[npm run typecheck]
     Install --> Unit[Vitest: cálculos e rotas]
     Install --> Integration[Vitest + RTL + jsdom]
     Integration --> Provider[RadarProvider / useRadar]
@@ -29,6 +31,8 @@ flowchart LR
 
 **Baseline moderna com testes caixa-preta.** O toolchain migra para Vite 8 e Vitest 5. Os testes de estado usam somente `RadarProvider` e `useRadar`; não extraem reducer, storage adapter ou serviço de domínio nesta entrega.
 
+O bootstrap de tipagem executa primeiro o build que introduz `@types/react`. Em seguida, nove remediações sequenciais alinham os consumidores aos contratos já definidos em `src/types/radar.ts`, aos dados de `initialData.ts` e às derivações de `calculations.ts`. Nenhuma remediação amplia o modelo global ou usa casts para encobrir incompatibilidades.
+
 ### Rejected Alternatives
 
 | Alternative | Why Rejected |
@@ -43,6 +47,7 @@ flowchart LR
 - jsdom 30 exige Node 24.15 ou superior, acima do Node 24.14 instalado localmente. A baseline usará jsdom 29.1, compatível com Node 24 desde a primeira release, sem bloquear a execução local.
 - `npm ci` exige lockfile sincronizado e não modifica manifests. Isso sustenta o gate de reprodutibilidade.
 - O GitHub recomenda `actions/setup-node` e `npm ci` para workflows Node reproduzíveis.
+- A introdução de `@types/react` revelou 49 diagnósticos TypeScript latentes em 10 arquivos. Os erros se concentram em unions de escrita divergentes, objetos incompletos, aliases de leitura inexistentes e nullability não tratada.
 
 Fontes: documentação oficial do [Vitest](https://vitest.dev/guide/), [Vite](https://vite.dev/guide/), [npm ci](https://docs.npmjs.com/cli/commands/npm-ci/) e [GitHub Actions para Node.js](https://docs.github.com/en/actions/tutorials/build-and-test-code/nodejs).
 
@@ -61,6 +66,9 @@ Fontes: documentação oficial do [Vitest](https://vitest.dev/guide/), [Vite](ht
 | Mapa de rotas | `src/navigation/routeMap.ts` | Testar builders e matchers diretamente sem reproduzir padrões de URL. |
 | Router real | `src/router.tsx` | Renderizar `AppRouter` nos dois smoke tests, usando as rotas reais. |
 | Fallback existente | `src/components/common/UnknownRouteFallback.tsx` | Confirmar o heading observável definido na spec. |
+| Contratos de domínio canônicos | `src/types/radar.ts` | Tipar valores e objetos nas views sem adicionar campos ou aliases. |
+| Derivações de dor | `src/utils/calculations.ts` | Reusar `isPainScoreMeasured`, `calculatePainConsolidation` e `evaluateEvidenceLevel` nas views de leitura. |
+| Fixtures canônicas | `src/data/initialData.ts` | Espelhar os campos obrigatórios de organizações, fontes, concorrentes, oportunidades e experimentos. |
 
 ### Integration Points
 
@@ -90,6 +98,25 @@ Fontes: documentação oficial do [Vitest](https://vitest.dev/guide/), [Vite](ht
 - **Reuses**: Scripts `dev`, `build` e `preview` existentes.
 
 `package.json` manterá como dependências de runtime apenas bibliotecas importadas pelo produto. Vite, seus plugins, Tailwind e ferramentas de teste ficarão em `devDependencies`. `packageManager` registrará a versão npm usada para gerar o lockfile; `engines` limitará Node e npm aos majors aprovados; `.npmrc` ativará `engine-strict=true`.
+
+### Canonical Consumer Contract Remediation
+
+- **Purpose**: Fechar os 49 diagnósticos revelados pelo bootstrap sem alterar o domínio.
+- **Locations**: Os 10 consumidores diagnosticados em `src/components/modals` e `src/components/views`.
+- **Interfaces**:
+  - `NewFindingModal` usa a union `Finding.origem` sem labels legados.
+  - `NewOrganizationModal` monta `Organization` completo. Os filhos seguem `TechStackItem`, `ProcessMap` e `Interviewee`.
+  - `FontesEMercadoView` e `SourcesView` usam as unions de `MarketSource`.
+  - `CompetitorsView` e `FontesEMercadoView` usam `Competitor.modelo`, todos os campos obrigatórios e `limitacoes`.
+  - `InterviewsView` usa `entrevista` em `QuestionScope`, restringe chamadas de promoção a `QuestionTargetScope` e protege a revisão contra `activeInterview === null`.
+  - `OpportunityDetailView` substitui aliases legados pelos campos declarados de `Opportunity`, `OpportunityScoreBreakdown`, `AILeverageBreakdown`, `KillCriterion` e `Experiment`.
+  - `OrganizationsView` filtra ocorrências com `isPainScoreMeasured` antes de acessar `painScore.total`.
+  - `PainDetailView` respeita a assinatura de `EvidenceLevelBadge`.
+  - `RankingView` cria um view model local a partir de `calculatePainConsolidation` e `evaluateEvidenceLevel`.
+- **Dependencies**: `src/types/radar.ts`, `src/data/initialData.ts`, `src/utils/calculations.ts` e APIs públicas do `RadarContext`.
+- **Reuses**: Mapeamentos e regras já usados por `PainDetailView` e `OpportunityDetailView`.
+
+As correções de escrita precedem as correções de leitura. Cada etapa executa `npm run build` e verifica o output completo do typecheck para eliminar diagnósticos do arquivo em escopo. A última etapa executa `npm run typecheck && npm run build` e prova o fechamento global.
 
 ### Vitest Configuration
 
@@ -175,7 +202,7 @@ O workflow terá `permissions: contents: read`, `timeout-minutes: 10` e concorr�
 
 ## Data Models
 
-Nenhum modelo de produção será criado ou alterado. Fixtures de teste usarão os tipos existentes de `src/types/radar.ts` e os dados canônicos de `src/data/initialData.ts`.
+Nenhum modelo de produção será criado ou alterado. `src/types/radar.ts` permanece intacto. Fixtures de teste e consumidores usarão os tipos existentes e os dados canônicos de `src/data/initialData.ts`.
 
 ---
 
@@ -189,6 +216,7 @@ Nenhum modelo de produção será criado ou alterado. Fixtures de teste usarão 
 | Teste falha ou existe `.only` na CI | Vitest encerra com status não zero. | Step `Test` fica vermelho e identifica o gate. |
 | npm audit indisponível ou encontra vulnerabilidade moderada+ de produção | O comando retorna não zero sem fallback permissivo. | Step `Production dependency audit` bloqueia o workflow. |
 | Build Vite 8 quebra o plugin local de mídia | Gate de build e smoke manual do dev server falham. | A baseline não é declarada testável até correção. |
+| Um consumidor usa campo, union ou prop inexistente | O bootstrap registra o diagnóstico; o arquivo é alinhado ao contrato canônico e validado sem casts. | O débito fica explícito e o typecheck volta a ser um gate confiável. |
 
 ---
 
@@ -204,6 +232,7 @@ Nenhum modelo de produção será criado ou alterado. Fixtures de teste usarão 
 | Vite aparece em dependencies e devDependencies com a mesma faixa. | `package.json:24` | Resolução e ownership do toolchain ficam ambíguos. | Manter uma única declaração em `devDependencies`. |
 | O plugin de mídia veio do template AI Studio. | `vite.config.ts:8` | Uma major de Vite pode alterar tipos ou hooks usados pelo plugin. | Preservar o plugin, usar imports type-only e validar build + servidor local após a migração. |
 | Não há nenhum teste ou workflow hoje. | `package.json:6` | Regressões não são detectadas fora da máquina do autor. | Introduzir as quatro suítes e o workflow definidos neste design. |
+| `@types/react` revela 49 diagnósticos em 10 consumidores. | output de `npm run typecheck` após T1 | A Foundation não pode iniciar enquanto o débito tipado estiver aberto. | Executar T15–T23 após T1; usar somente contratos canônicos e fechar com typecheck e build verdes. |
 | Bundle principal excede 500 kB. | build atual | Tempo de carregamento pode degradar conforme o produto cresce. | Registrar no status e tratar code splitting em feature de performance separada. |
 
 ---
@@ -219,6 +248,7 @@ Nenhum modelo de produção será criado ou alterado. Fixtures de teste usarão 
 | Test location | Co-locada ao módulo testado | Reduz distância entre contrato e implementação e facilita ownership futuro. |
 | App smoke | Router e provider reais em jsdom | Confirma composição sem adicionar browser automation e binários nesta baseline. |
 | Cobertura | Sem percentual global inicial | Um número global sobre views legadas produziria um sinal enganoso; a cobertura obrigatória é definida por AC e camada. |
+| Estratégia de reparo tipado | Corrigir consumidores, não o domínio | Os tipos e dados canônicos já representam o modelo vigente; aliases ou casts perpetuariam a divergência. |
 
 ---
 
@@ -234,3 +264,5 @@ Nenhum modelo de produção será criado ou alterado. Fixtures de teste usarão 
 | Application Smoke Suite | BASE-17, BASE-18 |
 | Continuous Integration Workflow | BASE-20–BASE-24, BASE-31 |
 | Factual Project Documentation | BASE-25–BASE-29 |
+| Canonical Write/Input Contracts | BASE-35–BASE-39 |
+| Canonical Read/Derived Contracts | BASE-40–BASE-43 |

@@ -24,6 +24,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 | Route utilities | unit | Every builder and matcher; valid, encoded, missing, extra-segment and unrelated paths | `src/navigation/*.test.ts` | `npm test -- src/navigation/routeMap.test.ts` |
 | Radar state provider | integration | Pending, reviewed, discarded and reset transitions mapped 1:1 to BASE-13 through BASE-16 | `src/context/*.test.tsx` | `npm test -- src/context/RadarContext.test.tsx` |
 | Application router/shell | integration | Dashboard boot and unknown-route fallback with real provider and route tree | `src/*.test.tsx` | `npm test -- src/router.test.tsx` |
+| Legacy React consumer contracts | none | Every diagnosed consumer conforms to existing canonical types without casts or changes to `src/types/radar.ts`; build gate only | `src/components/{modals,views}/*.tsx` | Bootstrap or Foundation gate |
 | CI and documentation | none | Workflow syntax plus full local gate; commands and inventory match the repository | `.github/workflows/*.yml`, `README.md`, `docs/*.md` | Build gate |
 
 ## Gate Check Commands
@@ -32,6 +33,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 | Gate Level | When to Use | Command |
 | ---------- | ----------- | ------- |
+| Bootstrap | While T1 introduces React typings and T15–T22 remove file-scoped latent diagnostics | `npm run build` |
 | Foundation | Before the lockfile and first test suite exist | `npm run typecheck && npm run build` |
 | Quick | While authoring one isolated suite | `npm test -- <test-file>` |
 | Full | After any test suite is added | `npm test` |
@@ -43,19 +45,37 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 
 Phases execute sequentially. Every task completes its gate and atomic commit before the next task starts.
 
-### Phase 1: Reproducible Toolchain
+### Phase 1: Typed Bootstrap
 
 ```
-T1 → T2 → T3 → T4 → T5
+T1
 ```
 
-### Phase 2: Behavioral Safety Net
+### Phase 2: Canonical Write and Input Contracts
+
+```
+T15 → T16 → T17 → T18 → T19
+```
+
+### Phase 3: Canonical Read and Derived Contracts
+
+```
+T20 → T21 → T22 → T23
+```
+
+### Phase 4: Reproducible Toolchain
+
+```
+T2 → T3 → T4 → T5
+```
+
+### Phase 5: Behavioral Safety Net
 
 ```
 T6 → T7 → T8 → T9 → T10 → T11
 ```
 
-### Phase 3: Automation and Handoff
+### Phase 6: Automation and Handoff
 
 ```
 T12 → T13 → T14
@@ -85,11 +105,259 @@ T12 → T13 → T14
 - [ ] `typecheck`, `test`, `test:watch`, `audit:prod` and `check` scripts match the approved design.
 - [ ] Vite 8, plugin React 6, Vitest 5, jsdom 29.1 and Testing Library dependencies are declared as dev dependencies.
 - [ ] All packages named by BASE-05 and BASE-06 are absent; Vite exists only in dev dependencies.
-- [ ] Foundation gate passes after installing the declared tree without generating a lockfile.
+- [ ] Bootstrap build introduces the React typings and records the resulting 49 latent TypeScript diagnostics across 10 consumer files for T15–T23.
+- [ ] Bootstrap gate passes: `npm run build`.
 
 **Tests**: none — manifest/config layer
-**Gate**: Foundation — `npm run typecheck && npm run build`
+**Gate**: Bootstrap — `npm run build`
 **Commit**: `build(deps): modernize package manifest`
+
+---
+
+### T15: Align NewFindingModal with the Finding contract
+
+**What**: Replace legacy origin values with the canonical `Finding.origem` union and keep submission type-safe without casts.
+**Where**: `src/components/modals/NewFindingModal.tsx`
+**Depends on**: T1
+**Reuses**: `Finding.origem` and `RadarContext.addFinding`
+**Requirement**: BASE-35
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`
+
+**Done when**:
+
+- [ ] Origin state and every select option use only `Entrevista`, `Processo`, `Fonte externa` or `Observação direta`.
+- [ ] The change handler narrows input to the canonical union without `as`, `any` or another cast.
+- [ ] Bootstrap gate passes: `npm run build`.
+- [ ] The complete `npm run typecheck` output contains no diagnostic for `src/components/modals/NewFindingModal.tsx`; unrelated diagnostics remain visible for subsequent tasks.
+
+**Tests**: none — legacy React consumer contract layer
+**Gate**: Bootstrap — `npm run build`
+**Commit**: `fix(types): align finding origin contract`
+
+---
+
+### T16: Build a canonical Organization payload
+
+**What**: Complete the organization payload and its nested records with the existing canonical field names, unions and ownership IDs.
+**Where**: `src/components/modals/NewOrganizationModal.tsx`
+**Depends on**: T15
+**Reuses**: `Organization`, `TechStackItem`, `ProcessMap`, `Interviewee` and `INITIAL_ORGANIZACOES` shapes
+**Requirement**: BASE-36
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`
+
+**Done when**:
+
+- [ ] The submitted organization includes canonical `id`, `dataInclusao`, `quantidadeUnidades`, a valid `statusPesquisa` and a complete `operationsGapScore`.
+- [ ] The stack item includes `finalidade`; the process includes `organizacaoId`, `inicioProcesso`, `resultadoEsperado`, `volumeEstimado`, `clientesAfetados`, `ferramentas`, `dependenciasExternas` and `observacoes`.
+- [ ] The interviewee includes the same `organizacaoId`, a valid `HierarchyProfile` and `tempoFuncao`.
+- [ ] Payload construction introduces no `as`, `any` or other cast and does not change `src/types/radar.ts`.
+- [ ] Bootstrap gate passes: `npm run build`.
+- [ ] The complete `npm run typecheck` output contains no diagnostic for `src/components/modals/NewOrganizationModal.tsx`; unrelated diagnostics remain visible for subsequent tasks.
+
+**Tests**: none — legacy React consumer contract layer
+**Gate**: Bootstrap — `npm run build`
+**Commit**: `fix(types): complete organization payload`
+
+---
+
+### T17: Align market-source inputs with canonical unions
+
+**What**: Use the existing market-source category and reliability values in both source-creation surfaces.
+**Where**: `src/components/views/{FontesEMercadoView,SourcesView}.tsx`
+**Depends on**: T16
+**Reuses**: `MarketSource.categoria`, `MarketSource.confiabilidade` and `RadarContext.addSource`
+**Requirement**: BASE-37
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`
+
+**Done when**:
+
+- [ ] Both views submit only categories declared by `MarketSource`, using `regulação` instead of the legacy `regulamentacao` and canonical values instead of `mercado` or `censo`.
+- [ ] Both views submit title-cased reliability, including `Alta` instead of `alta`.
+- [ ] State and handlers use canonical unions without `as`, `any` or another cast.
+- [ ] Bootstrap gate passes: `npm run build`.
+- [ ] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/FontesEMercadoView.tsx` or `src/components/views/SourcesView.tsx`; T18 retains ownership of the canonical competitor contract across both competitor surfaces.
+
+**Tests**: none — legacy React consumer contract layer
+**Gate**: Bootstrap — `npm run build`
+**Commit**: `fix(types): align market source contracts`
+
+---
+
+### T18: Align competitor inputs and rendering
+
+**What**: Complete competitor payloads and replace the legacy `pontosFracos` alias with canonical `limitacoes` in both competitor surfaces.
+**Where**: `src/components/views/{CompetitorsView,FontesEMercadoView}.tsx`
+**Depends on**: T17
+**Reuses**: `Competitor`, `INITIAL_CONCORRENTES` and `RadarContext.addCompetitor`
+**Requirement**: BASE-38
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`
+
+**Done when**:
+
+- [ ] Model state and submitted values use only `SaaS`, `Sob consulta`, `Por usuário` or `Freemium`.
+- [ ] Both payloads include canonical `site`, `publico`, `funcionalidadesPrincipais`, `integracoes`, `iaPresente`, `pontosFortes`, `limitacoes` and `operationsGapObservado` fields.
+- [ ] Both lists render `limitacoes`; no consumer reads or writes `pontosFracos`.
+- [ ] State and handlers introduce no `as`, `any` or another cast and do not change `src/types/radar.ts`.
+- [ ] Bootstrap gate passes: `npm run build`.
+- [ ] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/CompetitorsView.tsx` or `src/components/views/FontesEMercadoView.tsx`; unrelated diagnostics remain visible for subsequent tasks.
+
+**Tests**: none — legacy React consumer contract layer
+**Gate**: Bootstrap — `npm run build`
+**Commit**: `fix(types): align competitor contracts`
+
+---
+
+### T19: Restore interview scope and nullability contracts
+
+**What**: Use the canonical interview scope and prevent review-modal dereferences when no active interview exists.
+**Where**: `src/components/views/InterviewsView.tsx`
+**Depends on**: T18
+**Reuses**: `QuestionScope`, `QuestionTargetScope`, `activeInterview` and `promoteQuestion`
+**Requirement**: BASE-39
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`
+
+**Done when**:
+
+- [ ] Interview-local emergent questions use the canonical `entrevista` scope.
+- [ ] `promoteQuestion` is called only for `organizacao`, `subvertical`, `vertical` or `global` targets.
+- [ ] The review modal renders only with a non-null active interview, and every dereference is protected by that narrowing.
+- [ ] Scope handling introduces no `as`, `any` or another cast and does not change `src/types/radar.ts`.
+- [ ] Bootstrap gate passes: `npm run build`.
+- [ ] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/InterviewsView.tsx`; unrelated diagnostics remain visible for subsequent tasks.
+
+**Tests**: none — legacy React consumer contract layer
+**Gate**: Bootstrap — `npm run build`
+**Commit**: `fix(types): restore interview contracts`
+
+---
+
+### T20: Read canonical opportunity fields
+
+**What**: Replace every legacy opportunity alias with the existing canonical fields and remove the unsupported creation-date display.
+**Where**: `src/components/views/OpportunityDetailView.tsx`
+**Depends on**: T19
+**Reuses**: `Opportunity`, `OpportunityScoreBreakdown`, `AILeverageBreakdown`, `KillCriterion`, `Experiment` and `INITIAL_OPPORTUNITIES`
+**Requirement**: BASE-40
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`
+
+**Done when**:
+
+- [ ] The view reads `jobToBeDone`, `solucaoHipotetica`, `riscos` and `opportunityScore.operationsGap`; it does not read `dataCriacao`, `jtbd`, `hipoteseSolucao`, `riscosPrincipais` or `gap`.
+- [ ] AI leverage reads `classificacao`, `extracao`, `comparacao`, `geracao` and `revisaoHumanaDisponivel` alongside `leituraNaoEstruturada`.
+- [ ] Kill criteria render `observacao`; experiments render only canonical `tipo`, `hipotese`, `resultadoObservado`, `conclusao` and `data` content.
+- [ ] The remediation introduces no fallback aliases, `as`, `any` or another cast and does not change `src/types/radar.ts`.
+- [ ] Bootstrap gate passes: `npm run build`.
+- [ ] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/OpportunityDetailView.tsx`; unrelated diagnostics remain visible for subsequent tasks.
+
+**Tests**: none — legacy React consumer contract layer
+**Gate**: Bootstrap — `npm run build`
+**Commit**: `fix(types): use canonical opportunity fields`
+
+---
+
+### T21: Handle unmeasured organization pain scores
+
+**What**: Derive the organization maximum only from consciously measured pain occurrences.
+**Where**: `src/components/views/OrganizationsView.tsx`
+**Depends on**: T20
+**Reuses**: `isPainScoreMeasured` and `PainOccurrence.painScore`
+**Requirement**: BASE-41
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`
+
+**Done when**:
+
+- [ ] Occurrences are narrowed with `isPainScoreMeasured` before `painScore.total` is read.
+- [ ] An organization with no measured occurrence receives maximum Pain Score zero.
+- [ ] Nullability handling introduces no non-null assertion, `as`, `any` or another cast.
+- [ ] Bootstrap gate passes: `npm run build`.
+- [ ] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/OrganizationsView.tsx`; unrelated diagnostics remain visible for subsequent tasks.
+
+**Tests**: none — legacy React consumer contract layer
+**Gate**: Bootstrap — `npm run build`
+**Commit**: `fix(types): handle unmeasured pain scores`
+
+---
+
+### T22: Respect the EvidenceLevelBadge prop contract
+
+**What**: Remove the unsupported badge prop while preserving the evidence level rendered in the pain detail.
+**Where**: `src/components/views/PainDetailView.tsx`
+**Depends on**: T21
+**Reuses**: `EvidenceLevelBadge` public props
+**Requirement**: BASE-42
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`
+
+**Done when**:
+
+- [ ] `EvidenceLevelBadge` receives only its declared `level` and optional `tooltip` props.
+- [ ] The derived `evidenceLevel` remains displayed in the evidence-gap summary.
+- [ ] The remediation introduces no `as`, `any` or another cast and does not change the badge component contract.
+- [ ] Bootstrap gate passes: `npm run build`.
+- [ ] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/PainDetailView.tsx`; Ranking diagnostics remain visible for T23.
+
+**Tests**: none — legacy React consumer contract layer
+**Gate**: Bootstrap — `npm run build`
+**Commit**: `fix(types): respect evidence badge props`
+
+---
+
+### T23: Derive canonical pain ranking metrics
+
+**What**: Build the pain ranking from canonical consolidation and evidence derivations instead of undeclared `PainConsolidated` properties.
+**Where**: `src/components/views/RankingView.tsx`
+**Depends on**: T22
+**Reuses**: `calculatePainConsolidation`, `evaluateEvidenceLevel`, `PainDetailView` evidence derivation and RadarContext collections
+**Requirement**: BASE-43
+
+**Tools**:
+
+- MCP: NONE
+- Skill: `tlc-spec-driven`
+
+**Done when**:
+
+- [ ] Each pain is paired with `calculatePainConsolidation` output using its vertical organizations, occurrences, findings and interviews.
+- [ ] Each row derives Evidence Level from reviewed findings using the same organization, external-source, economic-spending and commercial-commitment signals as `PainDetailView`.
+- [ ] Rows sort by `incidenciaPercent` descending and then `media` descending.
+- [ ] The UI renders canonical `orgsComDor`, `totalAmostraInvestigada`, `amostraLimitada`, `media` and derived Evidence Level values; no undeclared `PainConsolidated` metric is read.
+- [ ] The remediation introduces no `as`, `any` or another cast and does not change `src/types/radar.ts`.
+- [ ] Foundation gate passes: `npm run typecheck && npm run build`.
+
+**Tests**: none — legacy React consumer contract layer
+**Gate**: Foundation — `npm run typecheck && npm run build`
+**Commit**: `fix(types): derive canonical pain ranking`
 
 ---
 
@@ -97,7 +365,7 @@ T12 → T13 → T14
 
 **What**: Configure npm to reject unsupported Node/npm engines.
 **Where**: `.npmrc`
-**Depends on**: T1
+**Depends on**: T23
 **Reuses**: `engines` declared by T1
 **Requirement**: BASE-01, BASE-04
 
@@ -436,10 +704,10 @@ T12 → T13 → T14
 ## Phase Execution Map
 
 ```text
-T1 → T2 → T3 → T4 → T5 → T6 → T7 → T8 → T9 → T10 → T11 → T12 → T13 → T14
+T1 → T15 → T16 → T17 → T18 → T19 → T20 → T21 → T22 → T23 → T2 → T3 → T4 → T5 → T6 → T7 → T8 → T9 → T10 → T11 → T12 → T13 → T14
 ```
 
-Execution is strictly sequential. Dependencies cross phase boundaries only from T5 to T6 and from T11 to T12.
+Execution is strictly sequential. Dependencies cross phase boundaries from T1 to T15, T19 to T20, T23 to T2, T5 to T6 and T11 to T12.
 
 ---
 
@@ -448,6 +716,15 @@ Execution is strictly sequential. Dependencies cross phase boundaries only from 
 | Task | Scope | Status |
 | ---- | ----- | ------ |
 | T1 | One manifest file | ✅ Granular |
+| T15 | One finding modal | ✅ Granular |
+| T16 | One organization modal | ✅ Granular |
+| T17 | One cohesive market-source contract across two equivalent creation surfaces | ✅ Granular |
+| T18 | One cohesive competitor contract across two equivalent creation/rendering surfaces | ✅ Granular |
+| T19 | One interview view | ✅ Granular |
+| T20 | One opportunity detail view | ✅ Granular |
+| T21 | One organizations view | ✅ Granular |
+| T22 | One pain detail view | ✅ Granular |
+| T23 | One ranking view | ✅ Granular |
 | T2 | One npm config file | ✅ Granular |
 | T3 | One runtime pin file | ✅ Granular |
 | T4 | One generated lockfile | ✅ Granular |
@@ -469,7 +746,16 @@ Execution is strictly sequential. Dependencies cross phase boundaries only from 
 | Task | Depends On | Diagram Shows | Status |
 | ---- | ---------- | ------------- | ------ |
 | T1 | None | Chain start | ✅ Match |
-| T2 | T1 | T1 → T2 | ✅ Match |
+| T15 | T1 | T1 → T15 | ✅ Match |
+| T16 | T15 | T15 → T16 | ✅ Match |
+| T17 | T16 | T16 → T17 | ✅ Match |
+| T18 | T17 | T17 → T18 | ✅ Match |
+| T19 | T18 | T18 → T19 | ✅ Match |
+| T20 | T19 | T19 → T20 | ✅ Match |
+| T21 | T20 | T20 → T21 | ✅ Match |
+| T22 | T21 | T21 → T22 | ✅ Match |
+| T23 | T22 | T22 → T23 | ✅ Match |
+| T2 | T23 | T23 → T2 | ✅ Match |
 | T3 | T2 | T2 → T3 | ✅ Match |
 | T4 | T3 | T3 → T4 | ✅ Match |
 | T5 | T4 | T4 → T5 | ✅ Match |
@@ -490,6 +776,15 @@ Execution is strictly sequential. Dependencies cross phase boundaries only from 
 | Task | Code Layer Created/Modified | Matrix Requires | Task Says | Status |
 | ---- | --------------------------- | --------------- | --------- | ------ |
 | T1 | Manifest | none | none | ✅ OK |
+| T15 | Legacy finding modal contract | none | none | ✅ OK |
+| T16 | Legacy organization modal contract | none | none | ✅ OK |
+| T17 | Legacy market-source view contracts | none | none | ✅ OK |
+| T18 | Legacy competitor view contracts | none | none | ✅ OK |
+| T19 | Legacy interview view contract | none | none | ✅ OK |
+| T20 | Legacy opportunity detail contract | none | none | ✅ OK |
+| T21 | Legacy organization-list nullability | none | none | ✅ OK |
+| T22 | Legacy pain-detail prop contract | none | none | ✅ OK |
+| T23 | Legacy pain-ranking derivation | none | none | ✅ OK |
 | T2 | npm config | none | none | ✅ OK |
 | T3 | Runtime config | none | none | ✅ OK |
 | T4 | Lockfile | none | none | ✅ OK |
@@ -521,5 +816,14 @@ Execution is strictly sequential. Dependencies cross phase boundaries only from 
 | BASE-25–BASE-26 | T13 | Mapped |
 | BASE-27–BASE-29 | T13, T14 | Mapped |
 | BASE-30, BASE-32 | T4, T7 | Mapped |
+| BASE-35 | T15 | Mapped |
+| BASE-36 | T16 | Mapped |
+| BASE-37 | T17 | Mapped |
+| BASE-38 | T18 | Mapped |
+| BASE-39 | T19 | Mapped |
+| BASE-40 | T20 | Mapped |
+| BASE-41 | T21 | Mapped |
+| BASE-42 | T22 | Mapped |
+| BASE-43 | T23 | Mapped |
 
-**Coverage:** 34 total, 34 mapped, 0 unmapped.
+**Coverage:** 43 total, 43 mapped, 0 unmapped.

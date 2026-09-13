@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-O COSMO já funciona como protótipo exploratório, mas ainda não possui instalação reproduzível, testes automatizados ou integração contínua. O repositório também mantém dependências sem uso, um lockfile incompatível com o runtime instalado e documentação divergente do código. A baseline transforma o protótipo atual em uma base de engenharia segura para evolução e em um produto testável por terceiros.
+O COSMO já funciona como protótipo exploratório, mas ainda não possui instalação reproduzível, testes automatizados ou integração contínua. O repositório também mantém dependências sem uso, um lockfile incompatível com o runtime instalado e documentação divergente do código. Ao introduzir `@types/react`, o bootstrap da baseline revelou 49 diagnósticos TypeScript latentes em 10 arquivos consumidores. A baseline transforma o protótipo atual em uma base de engenharia segura para evolução e em um produto testável por terceiros.
 
 ## Goals
 
@@ -11,6 +11,7 @@ O COSMO já funciona como protótipo exploratório, mas ainda não possui instal
 - [ ] Bloquear regressões em pull requests por meio de CI com typecheck, testes, build e auditoria de dependências.
 - [ ] Eliminar dependências diretas comprovadamente sem uso e vulnerabilidades conhecidas de produção com severidade moderada ou superior.
 - [ ] Documentar com precisão como instalar, executar, validar e testar o produto localmente.
+- [ ] Restaurar os contratos tipados canônicos revelados pelo bootstrap sem ampliar `src/types/radar.ts`, criar aliases legados ou usar casts para silenciar incompatibilidades.
 
 ## Out of Scope
 
@@ -22,6 +23,7 @@ O COSMO já funciona como protótipo exploratório, mas ainda não possui instal
 | Code splitting e redução do bundle principal | O aviso atual será registrado como risco e tratado em uma feature de performance isolada. |
 | Cobertura exaustiva de todas as 16 views | Esta entrega estabelece o harness e cobre invariantes críticos; expansão por feature será incremental. |
 | Alteração das regras metodológicas COSMO ou dos dados demo | A baseline não muda comportamento de produto nem conteúdo canônico. |
+| Ampliação de `src/types/radar.ts` para acomodar propriedades legadas das views | Os contratos globais e os dados canônicos já definem os nomes e unions corretos; os consumidores serão alinhados a eles. |
 
 ---
 
@@ -101,6 +103,28 @@ O COSMO já funciona como protótipo exploratório, mas ainda não possui instal
 
 ---
 
+### P1: Contratos TypeScript canônicos ⭐ MVP
+
+**User Story**: As a maintainer, I want every legacy view to consume the canonical domain contracts so that enabling React typings produces a trustworthy typecheck instead of hidden structural drift.
+
+**Why P1**: `@types/react` exposed 49 latent diagnostics across 10 files. The baseline cannot establish a meaningful type gate while views submit invalid unions, omit required fields or read properties that do not exist.
+
+**Acceptance Criteria**:
+
+1. WHEN `NewFindingModal` submits a finding THEN its origin SHALL be one of `Entrevista`, `Processo`, `Fonte externa` or `Observação direta`, with no cast and no legacy origin label stored. `[BASE-35]`
+2. WHEN `NewOrganizationModal` submits an organization THEN the object and its nested stack, process and interview records SHALL satisfy the existing `Organization`, `TechStackItem`, `ProcessMap` and `Interviewee` contracts with canonical statuses, field names and required ownership IDs, without changing `src/types/radar.ts` or using casts. `[BASE-36]`
+3. WHEN `FontesEMercadoView` or `SourcesView` creates a market source THEN category and reliability SHALL use the existing `MarketSource` unions, including `regulação` and title-cased reliability, without casts. `[BASE-37]`
+4. WHEN `CompetitorsView` or `FontesEMercadoView` creates or renders a competitor THEN it SHALL use the existing `Competitor` contract: canonical `modelo`, all required fields and `limitacoes` in place of the legacy `pontosFracos`, without casts. `[BASE-38]`
+5. WHEN `InterviewsView` creates an interview-scoped emergent question THEN it SHALL use `entrevista`; promotion SHALL remain restricted to `QuestionTargetScope`; and the review modal SHALL dereference an interview only after a non-null guard, without casts. `[BASE-39]`
+6. The opportunity detail SHALL read only canonical `Opportunity` fields: `jobToBeDone`, `solucaoHipotetica`, `riscos`, `opportunityScore.operationsGap`, the six declared `aiLeverage` dimensions, `KillCriterion.observacao`, and `Experiment` fields `tipo`, `hipotese`, `resultadoObservado` and `conclusao`; it SHALL not fabricate a creation date or read legacy aliases. `[BASE-40]`
+7. WHEN `OrganizationsView` calculates the maximum Pain Score THEN it SHALL include only occurrences accepted by `isPainScoreMeasured` and SHALL return zero when no measured occurrence exists. `[BASE-41]`
+8. WHEN `PainDetailView` renders `EvidenceLevelBadge` THEN it SHALL pass only props declared by the component contract and preserve the evidence level shown. `[BASE-42]`
+9. WHEN `RankingView` ranks pains THEN it SHALL derive `PainConsolidationStats` with `calculatePainConsolidation`, derive the Evidence Level with `evaluateEvidenceLevel`, sort by canonical `incidenciaPercent` then `media`, and render canonical sample and occurrence counts without extending `PainConsolidated`. `[BASE-43]`
+
+**Independent Test**: Após T1 introduzir as tipagens React, executar o bootstrap após cada reparo e confirmar que o output completo não contém diagnósticos do arquivo em escopo; ao final, `npm run typecheck && npm run build` deve passar sem casts novos e sem alteração de `src/types/radar.ts`.
+
+---
+
 ### P1: Gates automáticos no GitHub ⭐ MVP
 
 **User Story**: As a repository owner, I want every proposed change validated automatically so that `main` has an objective quality signal.
@@ -151,7 +175,7 @@ O COSMO já funciona como protótipo exploratório, mas ainda não possui instal
 
 | Dimension | Resolution |
 | --------- | ---------- |
-| Input validation & bounds | Requirements BASE-11, BASE-12, BASE-33 and BASE-34 cover calculation and route boundaries in scope. |
+| Input validation & bounds | Requirements BASE-11, BASE-12, BASE-33 through BASE-39 and BASE-41 cover calculation, route and typed-input boundaries in scope. |
 | Failure / partial-failure states | Requirements BASE-04, BASE-08, BASE-22, BASE-30 and BASE-31 require explicit hard failures. |
 | Idempotency / retry / duplicate handling | Requirements BASE-03, BASE-14 and the repeatability test require deterministic installs and exactly-once state contribution. |
 | Auth boundaries & rate limits | N/A because this baseline adds no backend, authenticated operation or externally callable API. |
@@ -159,7 +183,7 @@ O COSMO já funciona como protótipo exploratório, mas ainda não possui instal
 | Data lifecycle / expiry | Requirements BASE-16, BASE-19 and BASE-32 define cleanup for demo and test state; persistent business-data expiry is N/A because storage behavior is unchanged. |
 | Observability | Requirements BASE-22 and BASE-31 require named, visible CI failures; production telemetry is N/A because no deployed runtime is introduced. |
 | External-dependency failure | Requirements BASE-30 and BASE-31 cover npm registry/audit failure without false success. |
-| State-transition integrity | Requirements BASE-13 through BASE-16 protect pending, reviewed, discarded and reset transitions. |
+| State-transition integrity | Requirements BASE-13 through BASE-16 and BASE-39 protect pending, reviewed, discarded, reset and question-promotion transitions. |
 
 ---
 
@@ -201,8 +225,17 @@ O COSMO já funciona como protótipo exploratório, mas ainda não possui instal
 | BASE-32 | Edge cases transversais | Tasks | In Tasks |
 | BASE-33 | Edge cases transversais | Tasks | In Tasks |
 | BASE-34 | Edge cases transversais | Tasks | In Tasks |
+| BASE-35 | P1: Contratos TypeScript canônicos | Tasks | In Tasks |
+| BASE-36 | P1: Contratos TypeScript canônicos | Tasks | In Tasks |
+| BASE-37 | P1: Contratos TypeScript canônicos | Tasks | In Tasks |
+| BASE-38 | P1: Contratos TypeScript canônicos | Tasks | In Tasks |
+| BASE-39 | P1: Contratos TypeScript canônicos | Tasks | In Tasks |
+| BASE-40 | P1: Contratos TypeScript canônicos | Tasks | In Tasks |
+| BASE-41 | P1: Contratos TypeScript canônicos | Tasks | In Tasks |
+| BASE-42 | P1: Contratos TypeScript canônicos | Tasks | In Tasks |
+| BASE-43 | P1: Contratos TypeScript canônicos | Tasks | In Tasks |
 
-**Coverage:** 34 total, 34 mapped to tasks, 0 unmapped.
+**Coverage:** 43 total, 43 mapped to tasks, 0 unmapped.
 
 ---
 
@@ -214,3 +247,5 @@ O COSMO já funciona como protótipo exploratório, mas ainda não possui instal
 - [ ] O PR da baseline recebe sinal verde do GitHub Actions em Node.js 24.
 - [ ] Um tester consegue abrir e explorar o produto em `http://localhost:3000` seguindo apenas o README.
 - [ ] A entrega é declarada pronta para teste exploratório e explicitamente não pronta para produção.
+- [ ] `npm run typecheck` encerra sem diagnósticos após os 49 erros latentes dos 10 arquivos consumidores serem corrigidos contra os contratos canônicos existentes.
+- [ ] `src/types/radar.ts` permanece inalterado e nenhum cast é introduzido para contornar os contratos.
