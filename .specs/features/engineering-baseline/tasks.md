@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/engineering-baseline/design.md`
-**Status**: All tasks complete — pending Verifier
+**Status**: Complete — Verified PASS (`.specs/features/engineering-baseline/validation.md`)
 
 ---
 

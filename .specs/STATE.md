@@ -19,3 +19,12 @@
 - **Status**: active
 
 ## Handoff
+
+- **Feature**: engineering-baseline (`.specs/features/engineering-baseline/`)
+- **Phase / Task**: Done — all 23 tasks (T1, T15–T23, T2–T14) complete, Verifier PASS
+- **Completed**: T1, T15, T16, T17, T18, T19, T20, T21, T22, T23, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14
+- **In-progress** (file:line): none
+- **Next step**: Feature is closed. Open items: two spec-precision-gap lessons (L-001, L-002 in `.specs/LESSONS.md`) flag BASE-04/BASE-08 as never exercised by this diff — no action required unless a future feature touches those paths. Next work is whatever the user requests (no queued feature).
+- **Blockers**: none
+- **Uncommitted files**: none — working tree clean on `chore/engineering-baseline-spec`
+- **Branch**: `chore/engineering-baseline-spec` (not yet merged into `main`; merge/PR decision is the user's call)
