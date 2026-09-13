@@ -92,6 +92,7 @@ T12 → T13 → T14
 **Depends on**: None
 **Reuses**: Existing `dev`, `build` and `preview` scripts
 **Requirement**: BASE-01, BASE-05, BASE-06, BASE-08, BASE-09
+**Status**: Complete
 
 **Tools**:
 
@@ -100,13 +101,13 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] `packageManager` declares the npm 11 version used to resolve the lockfile.
-- [ ] `engines` restricts Node to major 24 and npm to major 11.
-- [ ] `typecheck`, `test`, `test:watch`, `audit:prod` and `check` scripts match the approved design.
-- [ ] Vite 8, plugin React 6, Vitest 5, jsdom 29.1 and Testing Library dependencies are declared as dev dependencies.
-- [ ] All packages named by BASE-05 and BASE-06 are absent; Vite exists only in dev dependencies.
-- [ ] Bootstrap build introduces the React typings and records the resulting 49 latent TypeScript diagnostics across 10 consumer files for T15–T23.
-- [ ] Bootstrap gate passes: `npm run build`.
+- [x] `packageManager` declares the npm 11 version used to resolve the lockfile.
+- [x] `engines` restricts Node to major 24 and npm to major 11.
+- [x] `typecheck`, `test`, `test:watch`, `audit:prod` and `check` scripts match the approved design.
+- [x] Vite 8, plugin React 6, Vitest 5, jsdom 29.1 and Testing Library dependencies are declared as dev dependencies.
+- [x] All packages named by BASE-05 and BASE-06 are absent; Vite exists only in dev dependencies.
+- [x] Bootstrap build introduces the React typings and records the resulting 49 latent TypeScript diagnostics across 10 consumer files for T15–T23.
+- [x] Bootstrap gate passes: `npm run build`.
 
 **Tests**: none — manifest/config layer
 **Gate**: Bootstrap — `npm run build`

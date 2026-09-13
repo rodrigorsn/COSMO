@@ -191,15 +191,15 @@ O COSMO já funciona como protótipo exploratório, mas ainda não possui instal
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| BASE-01 | P1: Instalação reproduzível | Tasks | In Tasks |
+| BASE-01 | P1: Instalação reproduzível | Execute | In Progress (T1 complete) |
 | BASE-02 | P1: Instalação reproduzível | Tasks | In Tasks |
 | BASE-03 | P1: Instalação reproduzível | Tasks | In Tasks |
 | BASE-04 | P1: Instalação reproduzível | Tasks | In Tasks |
-| BASE-05 | P1: Dependências mínimas | Tasks | In Tasks |
-| BASE-06 | P1: Dependências mínimas | Tasks | In Tasks |
+| BASE-05 | P1: Dependências mínimas | Execute | Implemented (T1) |
+| BASE-06 | P1: Dependências mínimas | Execute | Implemented (T1) |
 | BASE-07 | P1: Dependências mínimas | Tasks | In Tasks |
-| BASE-08 | P1: Dependências mínimas | Tasks | In Tasks |
-| BASE-09 | P1: Harness de testes | Tasks | In Tasks |
+| BASE-08 | P1: Dependências mínimas | Execute | In Progress (T1 complete; validation continues through T23) |
+| BASE-09 | P1: Harness de testes | Execute | In Progress (T1 complete) |
 | BASE-10 | P1: Harness de testes | Tasks | In Tasks |
 | BASE-11 | P1: Harness de testes | Tasks | In Tasks |
 | BASE-12 | P1: Harness de testes | Tasks | In Tasks |
