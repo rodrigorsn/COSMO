@@ -1,20 +1,43 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# COSMO
 
-# Run and deploy your AI Studio app
+Radar de Oportunidades & Validação Empírica — a React 19 + TypeScript + Vite single-page application implementing the COSMO methodology.
 
-This contains everything you need to run your app locally.
+**Status**: exploratory testing, not production-ready. See [`docs/STATUS.md`](docs/STATUS.md) for the current inventory, known risks and gate results.
 
-View your app in AI Studio: https://ai.studio/apps/76e2cf53-a605-4a65-9fb6-b312981064d8
+## Prerequisites
 
-## Run Locally
+- Node.js 24 (major `24`)
+- npm 11 (major `11`)
 
-**Prerequisites:**  Node.js
+The repository pins these with `.nvmrc`, `engines` in `package.json` and `engine-strict=true` in `.npmrc`; an unsupported runtime is rejected before install.
 
+## Install
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+```
+npm ci
+```
+
+`npm ci` installs strictly from the committed `package-lock.json` and never mutates the manifest. It is the only supported install path.
+
+## Run locally
+
+```
+npm run dev
+```
+
+The dev server serves the app at `http://localhost:3000`.
+
+## Quality gates
+
+| Command | What it runs |
+| ------- | ------------- |
+| `npm run typecheck` | TypeScript, no emit |
+| `npm test` | Vitest test suite |
+| `npm run build` | Production Vite build |
+| `npm run check` | Full local gate: typecheck, test, production dependency audit, build |
+
+`npm run check` is the same gate enforced in CI (`.github/workflows/ci.yml`) on every pull request targeting `main` and every push to `main`.
+
+## Data and persistence
+
+The app persists its state to browser `localStorage`. There is no backend and no authentication layer; all data lives client-side in the browser running it.

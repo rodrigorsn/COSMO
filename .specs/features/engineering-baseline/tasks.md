@@ -683,15 +683,16 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] README names COSMO and the supported Node/npm majors.
-- [ ] README documents `npm ci`, dev URL, typecheck, test, build and full check commands.
-- [ ] README contains no unused Gemini key or environment-secret instruction.
-- [ ] README labels the build ready for exploratory testing and not production-ready.
-- [ ] Build gate passes.
+- [x] README names COSMO and the supported Node/npm majors.
+- [x] README documents `npm ci`, dev URL, typecheck, test, build and full check commands.
+- [x] README contains no unused Gemini key or environment-secret instruction.
+- [x] README labels the build ready for exploratory testing and not production-ready.
+- [x] Build gate passes.
 
 **Tests**: none — documentation layer
 **Gate**: Build — `npm run check`
 **Commit**: `docs: document reproducible local workflow`
+**Status**: Complete
 
 ---
 
