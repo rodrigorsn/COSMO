@@ -456,6 +456,7 @@ T12 → T13 → T14
 **Depends on**: T4
 **Reuses**: Canonical `package-lock.json` from T4
 **Requirement**: BASE-02
+**Status**: Complete
 
 **Tools**:
 
@@ -464,9 +465,9 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] `bun.lock` is absent and `package-lock.json` is the only tracked top-level dependency lockfile.
-- [ ] `npm ci` remains successful.
-- [ ] Foundation gate passes.
+- [x] `bun.lock` is absent and `package-lock.json` is the only tracked top-level dependency lockfile.
+- [x] `npm ci` remains successful.
+- [x] Foundation gate passes.
 
 **Tests**: none — lockfile/config layer
 **Gate**: Foundation — `npm run typecheck && npm run build`
