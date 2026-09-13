@@ -428,6 +428,7 @@ T12 → T13 → T14
 **Depends on**: T3
 **Reuses**: `package.json` and `.npmrc`
 **Requirement**: BASE-02, BASE-03, BASE-04, BASE-07, BASE-30
+**Status**: Complete
 
 **Tools**:
 
@@ -436,11 +437,11 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] `npm install --package-lock-only` creates a synchronized lockfile without override flags.
-- [ ] `npm ci` succeeds from the committed manifest and generated lockfile.
-- [ ] A second `npm ci` leaves `package.json` and `package-lock.json` unchanged.
-- [ ] Production audit exits zero at moderate severity.
-- [ ] Foundation gate passes after the clean install.
+- [x] `npm install --package-lock-only` creates a synchronized lockfile without override flags.
+- [x] `npm ci` succeeds from the committed manifest and generated lockfile.
+- [x] A second `npm ci` leaves `package.json` and `package-lock.json` unchanged.
+- [x] Production audit exits zero at moderate severity.
+- [x] Foundation gate passes after the clean install.
 
 **Tests**: none — lockfile/config layer
 **Gate**: Foundation — `npm run typecheck && npm run build`
