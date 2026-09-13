@@ -235,6 +235,7 @@ T12 → T13 → T14
 **Depends on**: T18
 **Reuses**: `QuestionScope`, `QuestionTargetScope`, `activeInterview` and `promoteQuestion`
 **Requirement**: BASE-39
+**Status**: Complete
 
 **Tools**:
 
@@ -243,12 +244,12 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Interview-local emergent questions use the canonical `entrevista` scope.
-- [ ] `promoteQuestion` is called only for `organizacao`, `subvertical`, `vertical` or `global` targets.
-- [ ] The review modal renders only with a non-null active interview, and every dereference is protected by that narrowing.
-- [ ] Scope handling introduces no `as`, `any` or another cast and does not change `src/types/radar.ts`.
-- [ ] Bootstrap gate passes: `npm run build`.
-- [ ] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/InterviewsView.tsx`; unrelated diagnostics remain visible for subsequent tasks.
+- [x] Interview-local emergent questions use the canonical `entrevista` scope.
+- [x] `promoteQuestion` is called only for `organizacao`, `subvertical`, `vertical` or `global` targets.
+- [x] The review modal renders only with a non-null active interview, and every dereference is protected by that narrowing.
+- [x] Scope handling introduces no `as`, `any` or another cast and does not change `src/types/radar.ts`.
+- [x] Bootstrap gate passes: `npm run build`.
+- [x] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/InterviewsView.tsx`; unrelated diagnostics remain visible for subsequent tasks.
 
 **Tests**: none — legacy React consumer contract layer
 **Gate**: Bootstrap — `npm run build`

@@ -95,7 +95,7 @@ export const InterviewsView: React.FC<{ onNewInterviewClick?: () => void }> = ({
   const [showEmergentQuestionModal, setShowEmergentQuestionModal] = useState(false);
   const [emergentText, setEmergentText] = useState('');
   const [emergentCategory, setEmergentCategory] = useState('Processo / Foco');
-  const [promoteTo, setPromoteTo] = useState<'interview' | 'organizacao' | 'subvertical' | 'vertical' | 'global'>('vertical');
+  const [promoteTo, setPromoteTo] = useState<'entrevista' | 'organizacao' | 'subvertical' | 'vertical' | 'global'>('vertical');
 
   // Finding Extraction state
   const [extractingForQuestionId, setExtractingForQuestionId] = useState<string | null>(null);
@@ -256,7 +256,7 @@ export const InterviewsView: React.FC<{ onNewInterviewClick?: () => void }> = ({
     setActiveInterview(updated);
     saveInterview(updated);
 
-    if (promoteTo !== 'interview') {
+    if (promoteTo === 'organizacao' || promoteTo === 'subvertical' || promoteTo === 'vertical' || promoteTo === 'global') {
       promoteQuestion(
         emergentText.trim(),
         emergentCategory,
@@ -1138,8 +1138,8 @@ export const InterviewsView: React.FC<{ onNewInterviewClick?: () => void }> = ({
                   <input
                     type="radio"
                     name="promote"
-                    checked={promoteTo === 'interview'}
-                    onChange={() => setPromoteTo('interview')}
+                    checked={promoteTo === 'entrevista'}
+                    onChange={() => setPromoteTo('entrevista')}
                   />
                   <span>Manter somente nesta entrevista (Escopo: Entrevista)</span>
                 </label>
@@ -1201,7 +1201,7 @@ export const InterviewsView: React.FC<{ onNewInterviewClick?: () => void }> = ({
       )}
 
       {/* Modal 2: Finalização da Entrevista & Revisão de Achados (PRD Seção 60) */}
-      {showReviewModal && (
+      {showReviewModal && activeInterview && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-5 space-y-4 text-xs border border-slate-200">
             <div className="flex items-center justify-between border-b border-slate-100 pb-2">
