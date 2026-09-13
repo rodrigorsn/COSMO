@@ -628,14 +628,15 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] `/` renders `Painel Executivo de Investigação B2B` without an uncaught error.
-- [ ] An unknown path renders `Rota não reconhecida` without an uncaught error.
-- [ ] Router history does not leak between the two cases.
-- [ ] Exactly 2 smoke tests pass and 61 total tests pass.
+- [x] `/` renders `Painel Executivo de Investigação B2B` without an uncaught error.
+- [x] An unknown path renders `Rota não reconhecida` without an uncaught error.
+- [x] Router history does not leak between the two cases.
+- [x] Exactly 2 smoke tests pass and 61 total tests pass.
 
 **Tests**: integration — 2 new tests, 61 cumulative
 **Gate**: Build — `npm run check`
 **Commit**: `test(app): add router smoke coverage`
+**Status**: Complete
 
 ---
 
