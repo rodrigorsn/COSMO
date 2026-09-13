@@ -175,7 +175,7 @@ export const OpportunityDetailView: React.FC = () => {
                 {opp.nome}
               </h1>
               <p className="text-xs text-slate-500 mt-0.5">
-                Vertical: <strong className="text-slate-700">{currentVertical?.nome || opp.verticalId}</strong> • Subvertical: <strong className="text-slate-700">{subverticalName}</strong> • Criado em {opp.dataCriacao} • Status: <strong className="text-slate-800">{opp.status}</strong>
+                Vertical: <strong className="text-slate-700">{currentVertical?.nome || opp.verticalId}</strong> • Subvertical: <strong className="text-slate-700">{subverticalName}</strong> • Status: <strong className="text-slate-800">{opp.status}</strong>
               </p>
             </div>
           </div>
@@ -700,7 +700,7 @@ export const OpportunityDetailView: React.FC = () => {
             <div>
               <span className="font-semibold text-slate-500 block">Job-to-be-done (JTBD):</span>
               <p className="text-slate-700 mt-0.5 leading-relaxed bg-slate-50 p-2.5 rounded border border-slate-100">
-                "{opp.jtbd}"
+                "{opp.jobToBeDone}"
               </p>
             </div>
 
@@ -713,7 +713,7 @@ export const OpportunityDetailView: React.FC = () => {
 
             <div>
               <span className="font-semibold text-slate-500 block">Hipótese de Solução:</span>
-              <p className="text-slate-700 mt-0.5 leading-relaxed">{opp.hipoteseSolucao}</p>
+              <p className="text-slate-700 mt-0.5 leading-relaxed">{opp.solucaoHipotetica}</p>
             </div>
 
             {/* Integrações Necessárias */}
@@ -810,7 +810,7 @@ export const OpportunityDetailView: React.FC = () => {
             <div>
               <span className="font-semibold text-slate-500 block">Riscos Principais Identificados:</span>
               <ul className="list-disc list-inside text-slate-600 mt-1 space-y-0.5">
-                {opp.riscosPrincipais.map((r, i) => (
+                {opp.riscos.map((r, i) => (
                   <li key={i}>{r}</li>
                 ))}
               </ul>
@@ -872,10 +872,10 @@ export const OpportunityDetailView: React.FC = () => {
               <div>
                 <div className="flex justify-between text-[11px] mb-1">
                   <span>Customer Operations Gap (Falta de solução no ERP):</span>
-                  <span className="font-mono font-bold">{opp.opportunityScore.gap}/25</span>
+                  <span className="font-mono font-bold">{opp.opportunityScore.operationsGap}/25</span>
                 </div>
                 <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-blue-600 h-full rounded-full" style={{ width: `${(opp.opportunityScore.gap / 25) * 100}%` }} />
+                  <div className="bg-blue-600 h-full rounded-full" style={{ width: `${(opp.opportunityScore.operationsGap / 25) * 100}%` }} />
                 </div>
               </div>
 
@@ -986,23 +986,23 @@ export const OpportunityDetailView: React.FC = () => {
               </div>
               <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
                 <span className="text-slate-500 block text-[10px]">2. Classificação</span>
-                <span className="font-bold text-purple-900">{opp.aiLeverage.classificacaoTriagem}/5</span>
+                <span className="font-bold text-purple-900">{opp.aiLeverage.classificacao}/5</span>
               </div>
               <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
                 <span className="text-slate-500 block text-[10px]">3. Extração Dados</span>
-                <span className="font-bold text-purple-900">{opp.aiLeverage.extracaoDados}/5</span>
+                <span className="font-bold text-purple-900">{opp.aiLeverage.extracao}/5</span>
               </div>
               <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
                 <span className="text-slate-500 block text-[10px]">4. Comparação</span>
-                <span className="font-bold text-purple-900">{opp.aiLeverage.comparacaoConciliacao}/5</span>
+                <span className="font-bold text-purple-900">{opp.aiLeverage.comparacao}/5</span>
               </div>
               <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
                 <span className="text-slate-500 block text-[10px]">5. Geração</span>
-                <span className="font-bold text-purple-900">{opp.aiLeverage.geracaoPrimeiraVersao}/5</span>
+                <span className="font-bold text-purple-900">{opp.aiLeverage.geracao}/5</span>
               </div>
               <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
                 <span className="text-slate-500 block text-[10px]">6. Revisão Humana</span>
-                <span className="font-bold text-purple-900">{opp.aiLeverage.reducaoEsforcoHumano}/5</span>
+                <span className="font-bold text-purple-900">{opp.aiLeverage.revisaoHumanaDisponivel}/5</span>
               </div>
             </div>
           </div>
@@ -1037,7 +1037,7 @@ export const OpportunityDetailView: React.FC = () => {
                   Limiar de corte: <span className="font-mono text-slate-700 font-semibold">{kc.limiar}</span>
                 </div>
                 <div className="text-[11px] text-slate-600">
-                  Condição atual observada: {kc.condicaoAtual}
+                  Condição atual observada: {kc.observacao}
                 </div>
               </div>
             ))}
@@ -1058,16 +1058,16 @@ export const OpportunityDetailView: React.FC = () => {
             {opp.experimentos.map(exp => (
               <div key={exp.id} className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-slate-900">{exp.nome}</span>
+                  <span className="font-bold text-slate-900">{exp.tipo}</span>
                   <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-semibold">
-                    {exp.tipo} • {exp.resultado}
+                    {exp.conclusao}
                   </span>
                 </div>
                 <div className="text-slate-600 text-[11px]">
                   <strong>Hipótese:</strong> {exp.hipotese}
                 </div>
                 <div className="text-slate-500 text-[11px]">
-                  <strong>Aprendizado:</strong> {exp.aprendizado}
+                  <strong>Resultado observado:</strong> {exp.resultadoObservado}
                 </div>
                 <div className="text-[10px] text-slate-400 pt-1">
                   Data: {exp.data}

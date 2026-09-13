@@ -264,6 +264,7 @@ T12 → T13 → T14
 **Depends on**: T19
 **Reuses**: `Opportunity`, `OpportunityScoreBreakdown`, `AILeverageBreakdown`, `KillCriterion`, `Experiment` and `INITIAL_OPPORTUNITIES`
 **Requirement**: BASE-40
+**Status**: Complete
 
 **Tools**:
 
@@ -272,12 +273,12 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] The view reads `jobToBeDone`, `solucaoHipotetica`, `riscos` and `opportunityScore.operationsGap`; it does not read `dataCriacao`, `jtbd`, `hipoteseSolucao`, `riscosPrincipais` or `gap`.
-- [ ] AI leverage reads `classificacao`, `extracao`, `comparacao`, `geracao` and `revisaoHumanaDisponivel` alongside `leituraNaoEstruturada`.
-- [ ] Kill criteria render `observacao`; experiments render only canonical `tipo`, `hipotese`, `resultadoObservado`, `conclusao` and `data` content.
-- [ ] The remediation introduces no fallback aliases, `as`, `any` or another cast and does not change `src/types/radar.ts`.
-- [ ] Bootstrap gate passes: `npm run build`.
-- [ ] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/OpportunityDetailView.tsx`; unrelated diagnostics remain visible for subsequent tasks.
+- [x] The view reads `jobToBeDone`, `solucaoHipotetica`, `riscos` and `opportunityScore.operationsGap`; it does not read `dataCriacao`, `jtbd`, `hipoteseSolucao`, `riscosPrincipais` or `gap`.
+- [x] AI leverage reads `classificacao`, `extracao`, `comparacao`, `geracao` and `revisaoHumanaDisponivel` alongside `leituraNaoEstruturada`.
+- [x] Kill criteria render `observacao`; experiments render only canonical `tipo`, `hipotese`, `resultadoObservado`, `conclusao` and `data` content.
+- [x] The remediation introduces no fallback aliases, `as`, `any` or another cast and does not change `src/types/radar.ts`.
+- [x] Bootstrap gate passes: `npm run build`.
+- [x] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/OpportunityDetailView.tsx`; unrelated diagnostics remain visible for subsequent tasks.
 
 **Tests**: none — legacy React consumer contract layer
 **Gate**: Bootstrap — `npm run build`
