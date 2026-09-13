@@ -1,7 +1,7 @@
 # Engineering Baseline Design
 
 **Spec**: `.specs/features/engineering-baseline/spec.md`
-**Status**: Draft
+**Status**: Approved
 
 ---
 
