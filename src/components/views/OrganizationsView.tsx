@@ -4,6 +4,7 @@ import { useRadar } from '../../context/RadarContext';
 import { SimulacaoTag } from '../common/SimulacaoBadge';
 import { Building2, Plus, Filter, Users, Layers, Search, ArrowRight, ExternalLink } from 'lucide-react';
 import { Organization } from '../../types/radar';
+import { isPainScoreMeasured } from '../../utils/calculations';
 
 export const OrganizationsView: React.FC<{ onNewOrgClick?: () => void }> = ({ onNewOrgClick }) => {
   const { organizacoes, verticais, entrevistas, ocorrenciasDores } = useRadar();
@@ -120,8 +121,13 @@ export const OrganizationsView: React.FC<{ onNewOrgClick?: () => void }> = ({ on
               {filteredOrgs.map((org) => {
                 const orgInterviews = entrevistas.filter(e => e.organizacaoId === org.id);
                 const orgOccurrences = ocorrenciasDores.filter(o => o.organizacaoId === org.id);
-                const maxPain = orgOccurrences.length > 0 
-                  ? Math.max(...orgOccurrences.map(o => o.painScore.total)) 
+                const measuredScores = orgOccurrences.flatMap(occurrence =>
+                  isPainScoreMeasured(occurrence) && occurrence.painScore
+                    ? [occurrence.painScore.total]
+                    : []
+                );
+                const maxPain = measuredScores.length > 0
+                  ? Math.max(...measuredScores)
                   : 0;
 
                 return (

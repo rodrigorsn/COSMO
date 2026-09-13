@@ -293,6 +293,7 @@ T12 → T13 → T14
 **Depends on**: T20
 **Reuses**: `isPainScoreMeasured` and `PainOccurrence.painScore`
 **Requirement**: BASE-41
+**Status**: Complete
 
 **Tools**:
 
@@ -301,11 +302,11 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] Occurrences are narrowed with `isPainScoreMeasured` before `painScore.total` is read.
-- [ ] An organization with no measured occurrence receives maximum Pain Score zero.
-- [ ] Nullability handling introduces no non-null assertion, `as`, `any` or another cast.
-- [ ] Bootstrap gate passes: `npm run build`.
-- [ ] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/OrganizationsView.tsx`; unrelated diagnostics remain visible for subsequent tasks.
+- [x] Occurrences are narrowed with `isPainScoreMeasured` before `painScore.total` is read.
+- [x] An organization with no measured occurrence receives maximum Pain Score zero.
+- [x] Nullability handling introduces no non-null assertion, `as`, `any` or another cast.
+- [x] Bootstrap gate passes: `npm run build`.
+- [x] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/OrganizationsView.tsx`; unrelated diagnostics remain visible for subsequent tasks.
 
 **Tests**: none — legacy React consumer contract layer
 **Gate**: Bootstrap — `npm run build`
