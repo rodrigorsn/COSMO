@@ -517,14 +517,15 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] jest-dom matchers are registered for Vitest.
-- [ ] Every test teardown cleans the React tree, restores real timers and clears mocks.
-- [ ] Every test teardown clears localStorage and restores history to `/`.
-- [ ] Foundation gate passes.
+- [x] jest-dom matchers are registered for Vitest.
+- [x] Every test teardown cleans the React tree, restores real timers and clears mocks.
+- [x] Every test teardown clears localStorage and restores history to `/`.
+- [x] Foundation gate passes.
 
 **Tests**: none — test infrastructure layer
 **Gate**: Foundation — `npm run typecheck && npm run build`
 **Commit**: `test(config): isolate browser test state`
+**Status**: Complete
 
 ---
 
