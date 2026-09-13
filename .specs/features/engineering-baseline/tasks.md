@@ -149,6 +149,7 @@ T12 → T13 → T14
 **Depends on**: T15
 **Reuses**: `Organization`, `TechStackItem`, `ProcessMap`, `Interviewee` and `INITIAL_ORGANIZACOES` shapes
 **Requirement**: BASE-36
+**Status**: Complete
 
 **Tools**:
 
@@ -157,12 +158,12 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] The submitted organization includes canonical `id`, `dataInclusao`, `quantidadeUnidades`, a valid `statusPesquisa` and a complete `operationsGapScore`.
-- [ ] The stack item includes `finalidade`; the process includes `organizacaoId`, `inicioProcesso`, `resultadoEsperado`, `volumeEstimado`, `clientesAfetados`, `ferramentas`, `dependenciasExternas` and `observacoes`.
-- [ ] The interviewee includes the same `organizacaoId`, a valid `HierarchyProfile` and `tempoFuncao`.
-- [ ] Payload construction introduces no `as`, `any` or other cast and does not change `src/types/radar.ts`.
-- [ ] Bootstrap gate passes: `npm run build`.
-- [ ] The complete `npm run typecheck` output contains no diagnostic for `src/components/modals/NewOrganizationModal.tsx`; unrelated diagnostics remain visible for subsequent tasks.
+- [x] The submitted organization includes canonical `id`, `dataInclusao`, `quantidadeUnidades`, a valid `statusPesquisa` and a complete `operationsGapScore`.
+- [x] The stack item includes `finalidade`; the process includes `organizacaoId`, `inicioProcesso`, `resultadoEsperado`, `volumeEstimado`, `clientesAfetados`, `ferramentas`, `dependenciasExternas` and `observacoes`.
+- [x] The interviewee includes the same `organizacaoId`, a valid `HierarchyProfile` and `tempoFuncao`.
+- [x] Payload construction introduces no `as`, `any` or other cast and does not change `src/types/radar.ts`.
+- [x] Bootstrap gate passes: `npm run build`.
+- [x] The complete `npm run typecheck` output contains no diagnostic for `src/components/modals/NewOrganizationModal.tsx`; unrelated diagnostics remain visible for subsequent tasks.
 
 **Tests**: none — legacy React consumer contract layer
 **Gate**: Bootstrap — `npm run build`

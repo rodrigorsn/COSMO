@@ -28,7 +28,10 @@ export const NewOrganizationModal: React.FC<{ isOpen: boolean; onClose: () => vo
     e.preventDefault();
     if (!nome.trim()) return;
 
-    addOrganization({
+    const idSuffix = Date.now().toString().slice(-4);
+    const organizationId = `ORG-${idSuffix}`;
+    const organization: Organization = {
+      id: organizationId,
       nome: nome.trim(),
       verticalId,
       subverticalId: selectedSub?.id || 'SUB-GEN',
@@ -43,14 +46,17 @@ export const NewOrganizationModal: React.FC<{ isOpen: boolean; onClose: () => vo
       anosOperacao: Number(anosOperacao),
       faixaFaturamento: 'R$ 80k - R$ 150k / mês',
       ticketMedioServico: 'R$ 1.100 / cliente',
+      quantidadeUnidades: 1,
       estruturaEquipe,
       observacoes: 'Cadastrada para validação em campo.',
-      statusPesquisa: 'Em andamento',
+      dataInclusao: new Date().toISOString().split('T')[0],
+      statusPesquisa: 'Pesquisando',
       stackTecnologico: [
         {
-          id: `STK-${Date.now().toString().slice(-4)}`,
+          id: `STK-${idSuffix}`,
           nome: 'ERP Fiscal / Contábil',
           categoria: 'ERP',
+          finalidade: 'Escrituração fiscal, contábil e folha de pagamento',
           quemUtiliza: 'Toda a equipe',
           frequencia: 'Diária',
           processosAtendidos: ['Escrituração', 'Folha'],
@@ -61,34 +67,56 @@ export const NewOrganizationModal: React.FC<{ isOpen: boolean; onClose: () => vo
       ],
       processos: [
         {
-          id: `PROC-${Date.now().toString().slice(-4)}`,
+          id: `PROC-${idSuffix}`,
+          organizacaoId: organizationId,
           nome: 'Fechamento Fiscal Mensal',
           area: 'Fiscal',
           descricao: 'Coleta de notas e apuração dos tributos',
+          inicioProcesso: 'Primeiro dia útil do mês',
+          resultadoEsperado: 'Documentos conferidos e tributos apurados no prazo',
           frequencia: 'Mensal',
+          volumeEstimado: `${numClientes} clientes por mês`,
           pessoasEnvolvidas: 3,
+          clientesAfetados: Number(numClientes),
           tempoEstimadoHorasMes: 60,
+          ferramentas: ['WhatsApp', 'E-mail', 'Planilha Excel', 'ERP'],
           etapas: [
             { id: '1', ordem: 1, ator: 'Cliente', acao: 'Envia notas', ferramenta: 'WhatsApp / E-mail' },
             { id: '2', ordem: 2, ator: 'Analista', acao: 'Baixa arquivos e confere em planilha', ferramenta: 'Planilha Excel', gargaloOuErro: 'Arquivos corrompidos ou incompletos' },
             { id: '3', ordem: 3, ator: 'Analista', acao: 'Importa para o ERP', ferramenta: 'ERP' }
           ],
           gargalos: 'Atraso crônico no recebimento de comprovantes.',
-          errosERetrabalho: 'Necessidade de refazer guias com multas.'
+          errosERetrabalho: 'Necessidade de refazer guias com multas.',
+          dependenciasExternas: 'Envio pontual e correto dos documentos pelos clientes.',
+          observacoes: 'Processo inicial cadastrado para investigação em campo.'
         }
       ],
       entrevistados: [
         {
-          id: `ENTV-${Date.now().toString().slice(-4)}`,
+          id: `ENTV-${idSuffix}`,
+          organizacaoId: organizationId,
           nome: 'Responsável Operacional',
           cargo: 'Gerente Operacional',
-          perfil: 'gestor_operacao',
+          perfil: 'Gestor',
           area: 'Operação',
-          tempoNaFuncao: '5 anos',
+          tempoFuncao: '5 anos',
           observacoes: 'Contato direto com a equipe e gargalos diários.'
         }
-      ]
-    });
+      ],
+      operationsGapScore: {
+        interacaoCliente: 0,
+        trocaDocumentos: 0,
+        pendencias: 0,
+        prazos: 0,
+        aprovacoes: 0,
+        comunicacaoExterna: 0,
+        trabalhoForaSoftware: 0,
+        multiplicadorClientes: 0,
+        total: 0
+      }
+    };
+
+    addOrganization(organization);
 
     onClose();
   };
