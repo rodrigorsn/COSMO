@@ -1496,7 +1496,7 @@ export const PainDetailView: React.FC<PainDetailViewProps> = ({ painId: propPain
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
               1. Estado Atual da Hipótese (Resumo Factual)
             </h3>
-            <EvidenceLevelBadge level={evidenceLevel} size="sm" />
+            <EvidenceLevelBadge level={evidenceLevel} />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">

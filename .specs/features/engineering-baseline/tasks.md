@@ -321,6 +321,7 @@ T12 → T13 → T14
 **Depends on**: T21
 **Reuses**: `EvidenceLevelBadge` public props
 **Requirement**: BASE-42
+**Status**: Complete
 
 **Tools**:
 
@@ -329,11 +330,11 @@ T12 → T13 → T14
 
 **Done when**:
 
-- [ ] `EvidenceLevelBadge` receives only its declared `level` and optional `tooltip` props.
-- [ ] The derived `evidenceLevel` remains displayed in the evidence-gap summary.
-- [ ] The remediation introduces no `as`, `any` or another cast and does not change the badge component contract.
-- [ ] Bootstrap gate passes: `npm run build`.
-- [ ] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/PainDetailView.tsx`; Ranking diagnostics remain visible for T23.
+- [x] `EvidenceLevelBadge` receives only its declared `level` and optional `tooltip` props.
+- [x] The derived `evidenceLevel` remains displayed in the evidence-gap summary.
+- [x] The remediation introduces no `as`, `any` or another cast and does not change the badge component contract.
+- [x] Bootstrap gate passes: `npm run build`.
+- [x] The complete `npm run typecheck` output contains no diagnostic for `src/components/views/PainDetailView.tsx`; Ranking diagnostics remain visible for T23.
 
 **Tests**: none — legacy React consumer contract layer
 **Gate**: Bootstrap — `npm run build`
