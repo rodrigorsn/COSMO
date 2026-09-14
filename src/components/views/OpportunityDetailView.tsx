@@ -155,7 +155,7 @@ export const OpportunityDetailView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Top Header */}
-      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
+      <section aria-labelledby="opportunity-hero-title" className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <Link
@@ -171,7 +171,7 @@ export const OpportunityDetailView: React.FC = () => {
                 <EvidenceLevelBadge level={opp.evidenceLevel} />
                 <SimulacaoTag compact />
               </div>
-              <h1 className="text-xl font-bold text-slate-900 tracking-tight mt-0.5">
+              <h1 id="opportunity-hero-title" className="text-xl font-bold text-slate-900 tracking-tight mt-0.5">
                 {opp.nome}
               </h1>
               <p className="text-xs text-slate-500 mt-0.5">
@@ -212,8 +212,146 @@ export const OpportunityDetailView: React.FC = () => {
             Regra do PRD Seção 43
           </span>
         </div>
-      </div>
+      </section>
 
+      {/* Strategic Thesis (PRD Seção 40) */}
+      <section aria-labelledby="opportunity-thesis-title" className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4 text-xs">
+        <h3 id="opportunity-thesis-title" className="text-sm font-bold text-slate-900">Definição Estratégica do Opportunity Card</h3>
+
+        <div className="space-y-3">
+          <div>
+            <span className="font-semibold text-slate-500 block">ICP Hipotético (Ideal Customer Profile):</span>
+            <p className="text-slate-900 font-medium mt-0.5">{opp.icpHipotetico}</p>
+          </div>
+
+          <div>
+            <span className="font-semibold text-slate-500 block">Problema Resolvido:</span>
+            <p className="text-slate-700 mt-0.5 leading-relaxed">{opp.problema}</p>
+          </div>
+
+          <div>
+            <span className="font-semibold text-slate-500 block">Job-to-be-done (JTBD):</span>
+            <p className="text-slate-700 mt-0.5 leading-relaxed bg-slate-50 p-2.5 rounded border border-slate-100">
+              "{opp.jobToBeDone}"
+            </p>
+          </div>
+
+          <div>
+            <span className="font-semibold text-slate-500 block">Processo Atual (Onde Ocorre o Customer Operations Gap):</span>
+            <p className="text-slate-700 mt-0.5 leading-relaxed bg-amber-50/50 p-2.5 rounded border border-amber-200">
+              {opp.processoAtual}
+            </p>
+          </div>
+
+          <div>
+            <span className="font-semibold text-slate-500 block">Hipótese de Solução:</span>
+            <p className="text-slate-700 mt-0.5 leading-relaxed">{opp.solucaoHipotetica}</p>
+          </div>
+
+          {/* Integrações Necessárias */}
+          <div>
+            <span className="font-semibold text-slate-700 block flex items-center gap-1.5 mb-1">
+              <Boxes className="w-3.5 h-3.5 text-blue-600" />
+              Integrações Necessárias:
+            </span>
+            <p className="text-[10px] text-slate-500 mb-1.5">
+              Integrações atualmente consideradas necessárias para testar a hipótese de solução.
+            </p>
+            {opp.integracoesNecessarias && opp.integracoesNecessarias.length > 0 ? (
+              <div className="flex flex-wrap gap-1.5">
+                {opp.integracoesNecessarias.map((integ, idx) => (
+                  <span key={idx} className="font-mono text-[11px] px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 border border-slate-200 font-medium">
+                    {integ}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="text-slate-400 italic text-[11px] bg-slate-50 p-2 rounded border border-slate-100">
+                Nenhuma integração necessária registrada.
+              </p>
+            )}
+          </div>
+
+          {/* Monetização Hipotética */}
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <span className="font-semibold text-slate-700 block flex items-center gap-1.5">
+                <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
+                Monetização Hipotética:
+              </span>
+              <span className="text-[10px] font-mono text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-semibold">
+                Estimativa a Validar
+              </span>
+            </div>
+            {opp.monetizacaoHipotetica ? (
+              <div className="bg-emerald-50/40 p-2.5 rounded border border-emerald-200/80 space-y-1">
+                <p className="text-emerald-950 font-bold font-mono text-xs">{opp.monetizacaoHipotetica}</p>
+                <p className="text-[10px] text-slate-500 italic">
+                  Estimativa ainda sujeita a validação comercial.
+                </p>
+              </div>
+            ) : (
+              <p className="text-slate-400 italic text-[11px] bg-slate-50 p-2 rounded border border-slate-100">
+                Hipótese de monetização ainda não registrada.
+              </p>
+            )}
+          </div>
+
+          {/* Alternativas, Concorrentes & Diferenciação */}
+          <div className="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 space-y-3">
+            <div>
+              <span className="font-semibold text-slate-800 block flex items-center gap-1.5 mb-1">
+                <Swords className="w-3.5 h-3.5 text-slate-700" />
+                Alternativas & Concorrentes Mapeados:
+              </span>
+              <p className="text-[10px] text-slate-500 mb-1.5">
+                Alternativas atuais, concorrentes percebidos e soluções substitutas consideradas no contexto do cliente.
+              </p>
+              {opp.concorrentesMapeados && opp.concorrentesMapeados.length > 0 ? (
+                <div className="flex flex-wrap gap-1.5">
+                  {opp.concorrentesMapeados.map((conc, idx) => (
+                    <span key={idx} className="text-[11px] px-2.5 py-1 rounded bg-white text-slate-800 border border-slate-200 font-medium shadow-2xs">
+                      {conc}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-slate-400 italic text-[11px] bg-white p-2 rounded border border-slate-100">
+                  Nenhuma alternativa ou concorrente mapeado até o momento.
+                </p>
+              )}
+            </div>
+
+            <div className="pt-2 border-t border-slate-200">
+              <span className="font-semibold text-slate-800 block flex items-center gap-1.5 mb-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                Hipótese de Diferenciação:
+              </span>
+              {opp.diferenciacao ? (
+                <p className="text-slate-700 leading-relaxed text-[11px] bg-white p-2.5 rounded border border-slate-200">
+                  {opp.diferenciacao}
+                </p>
+              ) : (
+                <p className="text-slate-400 italic text-[11px] bg-white p-2 rounded border border-slate-100">
+                  Hipótese de diferenciação ainda não registrada.
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <span className="font-semibold text-slate-500 block">Riscos Principais Identificados:</span>
+            <ul className="list-disc list-inside text-slate-600 mt-1 space-y-0.5">
+              {opp.riscos.map((r, i) => (
+                <li key={i}>{r}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Sustentação Empírica & Contraprovas */}
+      <section aria-label="Sustentação Empírica & Contraprovas" className="space-y-6">
       {/* SEÇÃO METODOLÓGICA 1: Dores que Sustentam esta Oportunidade (Etapa 5B.3) */}
       <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -534,6 +672,267 @@ export const OpportunityDetailView: React.FC = () => {
           </div>
         </div>
       </div>
+      </section>
+
+      {/* Scores & Viabilidade */}
+      <section aria-label="Scores & Viabilidade" className="space-y-4">
+        {/* Opportunity Score Breakdown (PRD Seção 41) */}
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3 text-xs">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                Opportunity Score Breakdown (0–100)
+                <span className="text-[10px] font-mono text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 font-semibold">
+                  Avaliação atribuída
+                </span>
+              </h3>
+            </div>
+            <span className="font-mono font-bold text-base text-blue-700">{opp.opportunityScore.total}/100</span>
+          </div>
+
+          {/* Explicativo de Transparência Metodológica do Opportunity Score */}
+          <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 text-[11px] space-y-1.5 leading-relaxed">
+            <div className="font-semibold text-slate-800 flex items-center gap-1.5">
+              <AlertCircle className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+              Transparência Metodológica do Opportunity Score:
+            </div>
+            <p>
+              O score representa uma avaliação estruturada registrada para esta oportunidade. Ele não é recalculado automaticamente a partir das evidências de campo.
+            </p>
+            <p className="text-slate-500 italic pt-1 border-t border-slate-200/60 text-[10.5px]">
+              Os valores abaixo são avaliações atribuídas segundo o framework COSMO e devem ser revisados conforme novas evidências sejam coletadas.
+            </p>
+          </div>
+
+          <div className="space-y-2 pt-1">
+            <div>
+              <div className="flex justify-between text-[11px] mb-1">
+                <span>Mercado (Tamanho e multiplicador B2B):</span>
+                <span className="font-mono font-bold">{opp.opportunityScore.mercado}/20</span>
+              </div>
+              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                <div className="bg-blue-600 h-full rounded-full" style={{ width: `${(opp.opportunityScore.mercado / 20) * 100}%` }} />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex justify-between text-[11px] mb-1">
+                <span>Dor (Incidência e severidade):</span>
+                <span className="font-mono font-bold">{opp.opportunityScore.dor}/25</span>
+              </div>
+              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                <div className="bg-blue-600 h-full rounded-full" style={{ width: `${(opp.opportunityScore.dor / 25) * 100}%` }} />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex justify-between text-[11px] mb-1">
+                <span>Customer Operations Gap (Falta de solução no ERP):</span>
+                <span className="font-mono font-bold">{opp.opportunityScore.operationsGap}/25</span>
+              </div>
+              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                <div className="bg-blue-600 h-full rounded-full" style={{ width: `${(opp.opportunityScore.operationsGap / 25) * 100}%` }} />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex justify-between text-[11px] mb-1">
+                <span>Economia da Oportunidade (WTP & ROI claro):</span>
+                <span className="font-mono font-bold">{opp.opportunityScore.economia}/20</span>
+              </div>
+              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                <div className="bg-blue-600 h-full rounded-full" style={{ width: `${(opp.opportunityScore.economia / 20) * 100}%` }} />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex justify-between text-[11px] mb-1">
+                <span>Go-To-Market (Canais e distribuição):</span>
+                <span className="font-mono font-bold">{opp.opportunityScore.gtm}/10</span>
+              </div>
+              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                <div className="bg-blue-600 h-full rounded-full" style={{ width: `${(opp.opportunityScore.gtm / 10) * 100}%` }} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Confidence Score & Indicator Separation Callout */}
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3 text-xs">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-emerald-600" />
+                Nível de Confiança & Distinção de Indicadores
+              </h3>
+              <p className="text-[11px] text-slate-500 mt-0.5">
+                Avaliação atribuída de confiança na hipótese da oportunidade.
+              </p>
+            </div>
+            <span className="font-mono font-bold text-xs text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200 shrink-0">
+              Confiança atribuída: {opp.confidenceScore}%
+            </span>
+          </div>
+
+          <div className="p-3 rounded-lg bg-emerald-50/50 border border-emerald-200/80 text-emerald-950 text-[11px] space-y-1.5 leading-relaxed">
+            <div className="font-bold flex items-center gap-1.5">
+              <AlertCircle className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+              Definição do Nível de Confiança:
+            </div>
+            <p>
+              Indicador registrado para representar a confiança atual na hipótese. Não é uma probabilidade estatística.
+            </p>
+          </div>
+
+          {/* Distinção Conceitual entre os 3 Indicadores */}
+          <div className="space-y-2 pt-1">
+            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+              Distinção entre os 3 Indicadores da Oportunidade:
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+              <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
+                <span className="font-bold text-slate-900 block text-[10px] uppercase tracking-wide">1. Opportunity Score</span>
+                <span className="font-mono font-bold text-blue-700 block">{opp.opportunityScore.total}/100</span>
+                <p className="text-[10px] text-slate-500 leading-tight">
+                  Priorização estruturada atribuída (Mercado, Dor, Gap, Economia, GTM).
+                </p>
+              </div>
+
+              <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
+                <span className="font-bold text-slate-900 block text-[10px] uppercase tracking-wide">2. Confidence Score</span>
+                <span className="font-mono font-bold text-emerald-700 block">{opp.confidenceScore}%</span>
+                <p className="text-[10px] text-slate-500 leading-tight">
+                  Avaliação de confiança atribuída à hipótese. Não é probabilidade estatística.
+                </p>
+              </div>
+
+              <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
+                <span className="font-bold text-slate-900 block text-[10px] uppercase tracking-wide">3. Evidence Level</span>
+                <div className="mt-0.5">
+                  <EvidenceLevelBadge level={opp.evidenceLevel} />
+                </div>
+                <p className="text-[10px] text-slate-500 leading-tight mt-1">
+                  Maturidade e tipo de prova empírica coletada no campo (H0–H5).
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* AI Leverage Assessment (PRD Seção 34) */}
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3 text-xs">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+              <Cpu className="w-4 h-4 text-purple-600" />
+              Alavancagem de IA (AI Leverage - PRD Seção 34)
+            </h3>
+            <span className="font-mono font-bold text-sm text-purple-800 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
+              {opp.aiLeverage.total}/30
+            </span>
+          </div>
+          <p className="text-slate-500 text-[11px]">
+            Avaliação de viabilidade e impacto da IA nas 6 dimensões do PRD:
+          </p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1 font-mono text-[11px]">
+            <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
+              <span className="text-slate-500 block text-[10px]">1. Leitura Não Est.</span>
+              <span className="font-bold text-purple-900">{opp.aiLeverage.leituraNaoEstruturada}/5</span>
+            </div>
+            <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
+              <span className="text-slate-500 block text-[10px]">2. Classificação</span>
+              <span className="font-bold text-purple-900">{opp.aiLeverage.classificacao}/5</span>
+            </div>
+            <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
+              <span className="text-slate-500 block text-[10px]">3. Extração Dados</span>
+              <span className="font-bold text-purple-900">{opp.aiLeverage.extracao}/5</span>
+            </div>
+            <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
+              <span className="text-slate-500 block text-[10px]">4. Comparação</span>
+              <span className="font-bold text-purple-900">{opp.aiLeverage.comparacao}/5</span>
+            </div>
+            <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
+              <span className="text-slate-500 block text-[10px]">5. Geração</span>
+              <span className="font-bold text-purple-900">{opp.aiLeverage.geracao}/5</span>
+            </div>
+            <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
+              <span className="text-slate-500 block text-[10px]">6. Revisão Humana</span>
+              <span className="font-bold text-purple-900">{opp.aiLeverage.revisaoHumanaDisponivel}/5</span>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      {/* Kill Criteria & Experimentos (PRD Seção 44 e 45) */}
+      <section aria-label="Validação" className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-xs">
+        {/* Kill Criteria Table */}
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+              <ShieldAlert className="w-4 h-4 text-rose-600" />
+              Critérios de Descarte (Kill Criteria - PRD Seção 45)
+            </h3>
+            <span className="text-[11px] text-slate-400">Decisão Humana Obrigatória</span>
+          </div>
+
+          <div className="divide-y divide-slate-100">
+            {opp.killCriteria.map(kc => (
+              <div key={kc.id} className="py-2.5 first:pt-0 last:pb-0 space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-slate-900">{kc.criterio}</span>
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                    kc.status === 'seguro' ? 'bg-emerald-100 text-emerald-800' :
+                    kc.status === 'alerta' ? 'bg-amber-100 text-amber-900' : 'bg-rose-100 text-rose-900'
+                  }`}>
+                    {kc.status.toUpperCase()}
+                  </span>
+                </div>
+                <div className="text-[11px] text-slate-500">
+                  Limiar de corte: <span className="font-mono text-slate-700 font-semibold">{kc.limiar}</span>
+                </div>
+                <div className="text-[11px] text-slate-600">
+                  Condição atual observada: {kc.observacao}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Experimentos Validados */}
+        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+              <FlaskConical className="w-4 h-4 text-blue-600" />
+              Histórico de Experimentos (PRD Seção 44)
+            </h3>
+            <span className="text-[11px] text-slate-400">{opp.experimentos.length} realizados</span>
+          </div>
+
+          <div className="space-y-2.5">
+            {opp.experimentos.map(exp => (
+              <div key={exp.id} className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-900">{exp.tipo}</span>
+                  <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-semibold">
+                    {exp.conclusao}
+                  </span>
+                </div>
+                <div className="text-slate-600 text-[11px]">
+                  <strong>Hipótese:</strong> {exp.hipotese}
+                </div>
+                <div className="text-slate-500 text-[11px]">
+                  <strong>Resultado observado:</strong> {exp.resultadoObservado}
+                </div>
+                <div className="text-[10px] text-slate-400 pt-1">
+                  Data: {exp.data}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* CORE EVIDENCE CHAIN (Rastreabilidade Integral - PRD Seção 4 & 81.16) */}
       <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
@@ -680,403 +1079,6 @@ export const OpportunityDetailView: React.FC = () => {
         </div>
       </div>
 
-      {/* Opportunity Card Details (PRD Seção 40) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left: Job to be Done, Solution & Gap */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4 text-xs">
-          <h3 className="text-sm font-bold text-slate-900">Definição Estratégica do Opportunity Card</h3>
-
-          <div className="space-y-3">
-            <div>
-              <span className="font-semibold text-slate-500 block">ICP Hipotético (Ideal Customer Profile):</span>
-              <p className="text-slate-900 font-medium mt-0.5">{opp.icpHipotetico}</p>
-            </div>
-
-            <div>
-              <span className="font-semibold text-slate-500 block">Problema Resolvido:</span>
-              <p className="text-slate-700 mt-0.5 leading-relaxed">{opp.problema}</p>
-            </div>
-
-            <div>
-              <span className="font-semibold text-slate-500 block">Job-to-be-done (JTBD):</span>
-              <p className="text-slate-700 mt-0.5 leading-relaxed bg-slate-50 p-2.5 rounded border border-slate-100">
-                "{opp.jobToBeDone}"
-              </p>
-            </div>
-
-            <div>
-              <span className="font-semibold text-slate-500 block">Processo Atual (Onde Ocorre o Customer Operations Gap):</span>
-              <p className="text-slate-700 mt-0.5 leading-relaxed bg-amber-50/50 p-2.5 rounded border border-amber-200">
-                {opp.processoAtual}
-              </p>
-            </div>
-
-            <div>
-              <span className="font-semibold text-slate-500 block">Hipótese de Solução:</span>
-              <p className="text-slate-700 mt-0.5 leading-relaxed">{opp.solucaoHipotetica}</p>
-            </div>
-
-            {/* Integrações Necessárias */}
-            <div>
-              <span className="font-semibold text-slate-700 block flex items-center gap-1.5 mb-1">
-                <Boxes className="w-3.5 h-3.5 text-blue-600" />
-                Integrações Necessárias:
-              </span>
-              <p className="text-[10px] text-slate-500 mb-1.5">
-                Integrações atualmente consideradas necessárias para testar a hipótese de solução.
-              </p>
-              {opp.integracoesNecessarias && opp.integracoesNecessarias.length > 0 ? (
-                <div className="flex flex-wrap gap-1.5">
-                  {opp.integracoesNecessarias.map((integ, idx) => (
-                    <span key={idx} className="font-mono text-[11px] px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 border border-slate-200 font-medium">
-                      {integ}
-                    </span>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-slate-400 italic text-[11px] bg-slate-50 p-2 rounded border border-slate-100">
-                  Nenhuma integração necessária registrada.
-                </p>
-              )}
-            </div>
-
-            {/* Monetização Hipotética */}
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-semibold text-slate-700 block flex items-center gap-1.5">
-                  <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
-                  Monetização Hipotética:
-                </span>
-                <span className="text-[10px] font-mono text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-semibold">
-                  Estimativa a Validar
-                </span>
-              </div>
-              {opp.monetizacaoHipotetica ? (
-                <div className="bg-emerald-50/40 p-2.5 rounded border border-emerald-200/80 space-y-1">
-                  <p className="text-emerald-950 font-bold font-mono text-xs">{opp.monetizacaoHipotetica}</p>
-                  <p className="text-[10px] text-slate-500 italic">
-                    Estimativa ainda sujeita a validação comercial.
-                  </p>
-                </div>
-              ) : (
-                <p className="text-slate-400 italic text-[11px] bg-slate-50 p-2 rounded border border-slate-100">
-                  Hipótese de monetização ainda não registrada.
-                </p>
-              )}
-            </div>
-
-            {/* Alternativas, Concorrentes & Diferenciação */}
-            <div className="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 space-y-3">
-              <div>
-                <span className="font-semibold text-slate-800 block flex items-center gap-1.5 mb-1">
-                  <Swords className="w-3.5 h-3.5 text-slate-700" />
-                  Alternativas & Concorrentes Mapeados:
-                </span>
-                <p className="text-[10px] text-slate-500 mb-1.5">
-                  Alternativas atuais, concorrentes percebidos e soluções substitutas consideradas no contexto do cliente.
-                </p>
-                {opp.concorrentesMapeados && opp.concorrentesMapeados.length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5">
-                    {opp.concorrentesMapeados.map((conc, idx) => (
-                      <span key={idx} className="text-[11px] px-2.5 py-1 rounded bg-white text-slate-800 border border-slate-200 font-medium shadow-2xs">
-                        {conc}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-slate-400 italic text-[11px] bg-white p-2 rounded border border-slate-100">
-                    Nenhuma alternativa ou concorrente mapeado até o momento.
-                  </p>
-                )}
-              </div>
-
-              <div className="pt-2 border-t border-slate-200">
-                <span className="font-semibold text-slate-800 block flex items-center gap-1.5 mb-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-                  Hipótese de Diferenciação:
-                </span>
-                {opp.diferenciacao ? (
-                  <p className="text-slate-700 leading-relaxed text-[11px] bg-white p-2.5 rounded border border-slate-200">
-                    {opp.diferenciacao}
-                  </p>
-                ) : (
-                  <p className="text-slate-400 italic text-[11px] bg-white p-2 rounded border border-slate-100">
-                    Hipótese de diferenciação ainda não registrada.
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <span className="font-semibold text-slate-500 block">Riscos Principais Identificados:</span>
-              <ul className="list-disc list-inside text-slate-600 mt-1 space-y-0.5">
-                {opp.riscos.map((r, i) => (
-                  <li key={i}>{r}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Right: Opportunity Score (0-100) & AI Leverage (0-30) */}
-        <div className="space-y-4">
-          {/* Opportunity Score Breakdown (PRD Seção 41) */}
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3 text-xs">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-              <div>
-                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                  Opportunity Score Breakdown (0–100)
-                  <span className="text-[10px] font-mono text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 font-semibold">
-                    Avaliação atribuída
-                  </span>
-                </h3>
-              </div>
-              <span className="font-mono font-bold text-base text-blue-700">{opp.opportunityScore.total}/100</span>
-            </div>
-
-            {/* Explicativo de Transparência Metodológica do Opportunity Score */}
-            <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 text-slate-600 text-[11px] space-y-1.5 leading-relaxed">
-              <div className="font-semibold text-slate-800 flex items-center gap-1.5">
-                <AlertCircle className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                Transparência Metodológica do Opportunity Score:
-              </div>
-              <p>
-                O score representa uma avaliação estruturada registrada para esta oportunidade. Ele não é recalculado automaticamente a partir das evidências de campo.
-              </p>
-              <p className="text-slate-500 italic pt-1 border-t border-slate-200/60 text-[10.5px]">
-                Os valores abaixo são avaliações atribuídas segundo o framework COSMO e devem ser revisados conforme novas evidências sejam coletadas.
-              </p>
-            </div>
-
-            <div className="space-y-2 pt-1">
-              <div>
-                <div className="flex justify-between text-[11px] mb-1">
-                  <span>Mercado (Tamanho e multiplicador B2B):</span>
-                  <span className="font-mono font-bold">{opp.opportunityScore.mercado}/20</span>
-                </div>
-                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-blue-600 h-full rounded-full" style={{ width: `${(opp.opportunityScore.mercado / 20) * 100}%` }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between text-[11px] mb-1">
-                  <span>Dor (Incidência e severidade):</span>
-                  <span className="font-mono font-bold">{opp.opportunityScore.dor}/25</span>
-                </div>
-                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-blue-600 h-full rounded-full" style={{ width: `${(opp.opportunityScore.dor / 25) * 100}%` }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between text-[11px] mb-1">
-                  <span>Customer Operations Gap (Falta de solução no ERP):</span>
-                  <span className="font-mono font-bold">{opp.opportunityScore.operationsGap}/25</span>
-                </div>
-                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-blue-600 h-full rounded-full" style={{ width: `${(opp.opportunityScore.operationsGap / 25) * 100}%` }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between text-[11px] mb-1">
-                  <span>Economia da Oportunidade (WTP & ROI claro):</span>
-                  <span className="font-mono font-bold">{opp.opportunityScore.economia}/20</span>
-                </div>
-                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-blue-600 h-full rounded-full" style={{ width: `${(opp.opportunityScore.economia / 20) * 100}%` }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between text-[11px] mb-1">
-                  <span>Go-To-Market (Canais e distribuição):</span>
-                  <span className="font-mono font-bold">{opp.opportunityScore.gtm}/10</span>
-                </div>
-                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-blue-600 h-full rounded-full" style={{ width: `${(opp.opportunityScore.gtm / 10) * 100}%` }} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Confidence Score & Indicator Separation Callout */}
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3 text-xs">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-              <div>
-                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-emerald-600" />
-                  Nível de Confiança & Distinção de Indicadores
-                </h3>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  Avaliação atribuída de confiança na hipótese da oportunidade.
-                </p>
-              </div>
-              <span className="font-mono font-bold text-xs text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200 shrink-0">
-                Confiança atribuída: {opp.confidenceScore}%
-              </span>
-            </div>
-
-            <div className="p-3 rounded-lg bg-emerald-50/50 border border-emerald-200/80 text-emerald-950 text-[11px] space-y-1.5 leading-relaxed">
-              <div className="font-bold flex items-center gap-1.5">
-                <AlertCircle className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                Definição do Nível de Confiança:
-              </div>
-              <p>
-                Indicador registrado para representar a confiança atual na hipótese. Não é uma probabilidade estatística.
-              </p>
-            </div>
-
-            {/* Distinção Conceitual entre os 3 Indicadores */}
-            <div className="space-y-2 pt-1">
-              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                Distinção entre os 3 Indicadores da Oportunidade:
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
-                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
-                  <span className="font-bold text-slate-900 block text-[10px] uppercase tracking-wide">1. Opportunity Score</span>
-                  <span className="font-mono font-bold text-blue-700 block">{opp.opportunityScore.total}/100</span>
-                  <p className="text-[10px] text-slate-500 leading-tight">
-                    Priorização estruturada atribuída (Mercado, Dor, Gap, Economia, GTM).
-                  </p>
-                </div>
-
-                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
-                  <span className="font-bold text-slate-900 block text-[10px] uppercase tracking-wide">2. Confidence Score</span>
-                  <span className="font-mono font-bold text-emerald-700 block">{opp.confidenceScore}%</span>
-                  <p className="text-[10px] text-slate-500 leading-tight">
-                    Avaliação de confiança atribuída à hipótese. Não é probabilidade estatística.
-                  </p>
-                </div>
-
-                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
-                  <span className="font-bold text-slate-900 block text-[10px] uppercase tracking-wide">3. Evidence Level</span>
-                  <div className="mt-0.5">
-                    <EvidenceLevelBadge level={opp.evidenceLevel} />
-                  </div>
-                  <p className="text-[10px] text-slate-500 leading-tight mt-1">
-                    Maturidade e tipo de prova empírica coletada no campo (H0–H5).
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* AI Leverage Assessment (PRD Seção 34) */}
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3 text-xs">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-                <Cpu className="w-4 h-4 text-purple-600" />
-                Alavancagem de IA (AI Leverage - PRD Seção 34)
-              </h3>
-              <span className="font-mono font-bold text-sm text-purple-800 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
-                {opp.aiLeverage.total}/30
-              </span>
-            </div>
-            <p className="text-slate-500 text-[11px]">
-              Avaliação de viabilidade e impacto da IA nas 6 dimensões do PRD:
-            </p>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1 font-mono text-[11px]">
-              <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
-                <span className="text-slate-500 block text-[10px]">1. Leitura Não Est.</span>
-                <span className="font-bold text-purple-900">{opp.aiLeverage.leituraNaoEstruturada}/5</span>
-              </div>
-              <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
-                <span className="text-slate-500 block text-[10px]">2. Classificação</span>
-                <span className="font-bold text-purple-900">{opp.aiLeverage.classificacao}/5</span>
-              </div>
-              <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
-                <span className="text-slate-500 block text-[10px]">3. Extração Dados</span>
-                <span className="font-bold text-purple-900">{opp.aiLeverage.extracao}/5</span>
-              </div>
-              <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
-                <span className="text-slate-500 block text-[10px]">4. Comparação</span>
-                <span className="font-bold text-purple-900">{opp.aiLeverage.comparacao}/5</span>
-              </div>
-              <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
-                <span className="text-slate-500 block text-[10px]">5. Geração</span>
-                <span className="font-bold text-purple-900">{opp.aiLeverage.geracao}/5</span>
-              </div>
-              <div className="p-2 bg-purple-50/50 rounded border border-purple-100">
-                <span className="text-slate-500 block text-[10px]">6. Revisão Humana</span>
-                <span className="font-bold text-purple-900">{opp.aiLeverage.revisaoHumanaDisponivel}/5</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Kill Criteria & Experimentos (PRD Seção 44 e 45) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-xs">
-        {/* Kill Criteria Table */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-              <ShieldAlert className="w-4 h-4 text-rose-600" />
-              Critérios de Descarte (Kill Criteria - PRD Seção 45)
-            </h3>
-            <span className="text-[11px] text-slate-400">Decisão Humana Obrigatória</span>
-          </div>
-
-          <div className="divide-y divide-slate-100">
-            {opp.killCriteria.map(kc => (
-              <div key={kc.id} className="py-2.5 first:pt-0 last:pb-0 space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-slate-900">{kc.criterio}</span>
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                    kc.status === 'seguro' ? 'bg-emerald-100 text-emerald-800' :
-                    kc.status === 'alerta' ? 'bg-amber-100 text-amber-900' : 'bg-rose-100 text-rose-900'
-                  }`}>
-                    {kc.status.toUpperCase()}
-                  </span>
-                </div>
-                <div className="text-[11px] text-slate-500">
-                  Limiar de corte: <span className="font-mono text-slate-700 font-semibold">{kc.limiar}</span>
-                </div>
-                <div className="text-[11px] text-slate-600">
-                  Condição atual observada: {kc.observacao}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Experimentos Validados */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-              <FlaskConical className="w-4 h-4 text-blue-600" />
-              Histórico de Experimentos (PRD Seção 44)
-            </h3>
-            <span className="text-[11px] text-slate-400">{opp.experimentos.length} realizados</span>
-          </div>
-
-          <div className="space-y-2.5">
-            {opp.experimentos.map(exp => (
-              <div key={exp.id} className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-slate-900">{exp.tipo}</span>
-                  <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-semibold">
-                    {exp.conclusao}
-                  </span>
-                </div>
-                <div className="text-slate-600 text-[11px]">
-                  <strong>Hipótese:</strong> {exp.hipotese}
-                </div>
-                <div className="text-slate-500 text-[11px]">
-                  <strong>Resultado observado:</strong> {exp.resultadoObservado}
-                </div>
-                <div className="text-[10px] text-slate-400 pt-1">
-                  Data: {exp.data}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
