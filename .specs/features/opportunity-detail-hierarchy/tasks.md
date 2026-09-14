@@ -9,7 +9,7 @@ Implement these tasks with the `tlc-spec-driven` skill: **activate it by name an
 ---
 
 **Design**: `.specs/features/opportunity-detail-hierarchy/design.md`  
-**Status**: Draft
+**Status**: Verified — validation.md produced 2026-09-13; all gates green.
 
 ---
 
@@ -105,9 +105,9 @@ T4 → T5
 
 **Preconditions**:
 
-- [ ] All Pre-Execution Gates pass and their baseline outputs are recorded.
-- [ ] The source boundaries for Hero, Thesis and the shared late details grid are identified.
-- [ ] A search confirms one current occurrence of each thesis heading/sub-block and each empty-state message.
+- [x] All Pre-Execution Gates pass and their baseline outputs are recorded.
+- [x] The source boundaries for Hero, Thesis and the shared late details grid are identified.
+- [x] A search confirms one current occurrence of each thesis heading/sub-block and each empty-state message.
 
 **Steps**:
 
@@ -119,17 +119,17 @@ T4 → T5
 
 **Validation**:
 
-- [ ] DOM/source inspection shows Hero first and Thesis second, with no conceptual block between them.
-- [ ] Search finds exactly one occurrence of the thesis card and each of its ten content groups.
-- [ ] `OP-CONT-001` thesis values match the pre-execution baseline.
-- [ ] Empty-state branches for integrations, monetization, competitors and differentiation are textually unchanged.
-- [ ] Scope and Quick gates pass; the existing test count has not changed.
+- [x] DOM/source inspection shows Hero first and Thesis second, with no conceptual block between them.
+- [x] Search finds exactly one occurrence of the thesis card and each of its ten content groups.
+- [x] `OP-CONT-001` thesis values match the pre-execution baseline.
+- [x] Empty-state branches for integrations, monetization, competitors and differentiation are textually unchanged.
+- [x] Scope and Quick gates pass; the existing test count has not changed.
 
 **Completion criteria**:
 
-- [ ] Thesis is rendered exactly once immediately after Hero.
-- [ ] No hook, derivation, handler, link, value, calculation or domain file changed.
-- [ ] Component compiles and production build succeeds.
+- [x] Thesis is rendered exactly once immediately after Hero.
+- [x] No hook, derivation, handler, link, value, calculation or domain file changed.
+- [x] Component compiles and production build succeeds.
 
 **Tests**: Black-box UAT plus static preservation checks; unchanged automated suite count recorded
 **Gate**: Quick — `npm run typecheck && npm run build`
@@ -149,9 +149,9 @@ T4 → T5
 
 **Preconditions**:
 
-- [ ] T1 is complete and its gates pass.
-- [ ] Dores, Contraprovas and the ICP-limit sub-block remain contiguous and unique.
-- [ ] Existing links to Dor, Organização and Entrevista are inventoried with their current `to` and `params` values.
+- [x] T1 is complete and its gates pass.
+- [x] Dores, Contraprovas and the ICP-limit sub-block remain contiguous and unique.
+- [x] Existing links to Dor, Organização and Entrevista are inventoried with their current `to` and `params` values.
 
 **Steps**:
 
@@ -163,17 +163,17 @@ T4 → T5
 
 **Validation**:
 
-- [ ] The third zone contains Dores first, Contraprovas second and the ICP-limit sub-block last.
-- [ ] Link inventory matches the baseline exactly.
-- [ ] Static diff shows no edit to calculation expressions, filters, helper implementation or evidence text.
-- [ ] Black-box checks cover normal Dores/Contraprovas and reversible no-pain/no-counterevidence runtime states.
-- [ ] Scope and Quick gates pass; the existing test count has not changed.
+- [x] The third zone contains Dores first, Contraprovas second and the ICP-limit sub-block last.
+- [x] Link inventory matches the baseline exactly.
+- [x] Static diff shows no edit to calculation expressions, filters, helper implementation or evidence text.
+- [x] Black-box checks cover normal Dores/Contraprovas and reversible no-pain/no-counterevidence runtime states.
+- [x] Scope and Quick gates pass; the existing test count has not changed.
 
 **Completion criteria**:
 
-- [ ] Sustentação is a single top-level zone with the approved internal order.
-- [ ] Existing evidence content, impartial counterevidence treatment, links and empty states remain functional.
-- [ ] No derivation or protected file changed.
+- [x] Sustentação is a single top-level zone with the approved internal order.
+- [x] Existing evidence content, impartial counterevidence treatment, links and empty states remain functional.
+- [x] No derivation or protected file changed.
 
 **Tests**: Black-box UAT plus static preservation checks; unchanged automated suite count recorded
 **Gate**: Quick — `npm run typecheck && npm run build`
@@ -193,9 +193,9 @@ T4 → T5
 
 **Preconditions**:
 
-- [ ] T2 is complete and its gates pass.
-- [ ] Opportunity Score, Confidence and AI Leverage cards are unique and still grouped in their existing order.
-- [ ] Baseline values and methodological labels for `OP-CONT-001` are recorded.
+- [x] T2 is complete and its gates pass.
+- [x] Opportunity Score, Confidence and AI Leverage cards are unique and still grouped in their existing order.
+- [x] Baseline values and methodological labels for `OP-CONT-001` are recorded.
 
 **Steps**:
 
@@ -207,17 +207,17 @@ T4 → T5
 
 **Validation**:
 
-- [ ] Scores & Viabilidade is fourth in the DOM and follows Sustentação directly.
-- [ ] `OP-CONT-001` still shows `88/100`, `78%` and `H4` with assigned/manual and non-probabilistic meanings intact.
-- [ ] Opportunity Score denominators remain `/20`, `/25`, `/25`, `/20`, `/10`; AI Leverage remains unchanged.
-- [ ] Search confirms each score card appears exactly once.
-- [ ] Scope and Quick gates pass; the existing test count has not changed.
+- [x] Scores & Viabilidade is fourth in the DOM and follows Sustentação directly.
+- [x] `OP-CONT-001` still shows `88/100`, `78%` and `H4` with assigned/manual and non-probabilistic meanings intact.
+- [x] Opportunity Score denominators remain `/20`, `/25`, `/25`, `/20`, `/10`; AI Leverage remains unchanged.
+- [x] Search confirms each score card appears exactly once.
+- [x] Scope and Quick gates pass; the existing test count has not changed.
 
 **Completion criteria**:
 
-- [ ] Score cards form one unique fourth zone in the approved order.
-- [ ] No value, calculation, label, model or data source changed.
-- [ ] Component compiles and production build succeeds.
+- [x] Score cards form one unique fourth zone in the approved order.
+- [x] No value, calculation, label, model or data source changed.
+- [x] Component compiles and production build succeeds.
 
 **Tests**: Black-box UAT plus static preservation checks; unchanged automated suite count recorded
 **Gate**: Quick — `npm run typecheck && npm run build`
@@ -237,9 +237,9 @@ T4 → T5
 
 **Preconditions**:
 
-- [ ] T3 is complete and its gates pass.
-- [ ] Kill Criteria and experiment cards are unique and preserve Kill Criteria first in the DOM.
-- [ ] The current `grid-cols-1 lg:grid-cols-2` responsive contract is recorded.
+- [x] T3 is complete and its gates pass.
+- [x] Kill Criteria and experiment cards are unique and preserve Kill Criteria first in the DOM.
+- [x] The current `grid-cols-1 lg:grid-cols-2` responsive contract is recorded.
 
 **Steps**:
 
@@ -251,17 +251,17 @@ T4 → T5
 
 **Validation**:
 
-- [ ] The Validation landmark contains both cards exactly once and in the approved internal order.
-- [ ] Kill Criteria and experiment content for `OP-CONT-001` matches the baseline.
-- [ ] Mobile/tablet/desktop inspection shows stacking/two-column behavior unchanged and no overflow.
-- [ ] Static diff shows no edit to domain expressions or status branches.
-- [ ] Scope and Quick gates pass; the existing test count has not changed.
+- [x] The Validation landmark contains both cards exactly once and in the approved internal order.
+- [x] Kill Criteria and experiment content for `OP-CONT-001` matches the baseline.
+- [x] Mobile/tablet/desktop inspection shows stacking/two-column behavior unchanged and no overflow.
+- [x] Static diff shows no edit to domain expressions or status branches.
+- [x] Scope and Quick gates pass; the existing test count has not changed.
 
 **Completion criteria**:
 
-- [ ] Validation is one cohesive zone ready to precede the chain.
-- [ ] Its content and responsive behavior are unchanged.
-- [ ] Component compiles and production build succeeds.
+- [x] Validation is one cohesive zone ready to precede the chain.
+- [x] Its content and responsive behavior are unchanged.
+- [x] Component compiles and production build succeeds.
 
 **Tests**: Black-box responsive UAT plus static preservation checks; unchanged automated suite count recorded
 **Gate**: Quick — `npm run typecheck && npm run build`
@@ -281,9 +281,9 @@ T4 → T5
 
 **Preconditions**:
 
-- [ ] T4 is complete and its gates pass.
-- [ ] The complete chain boundary includes linked pains, selectable findings and atomic-inspection panel.
-- [ ] `selectedChainFindingId`, its setter, derived inspection records and every chain link are recorded before movement.
+- [x] T4 is complete and its gates pass.
+- [x] The complete chain boundary includes linked pains, selectable findings and atomic-inspection panel.
+- [x] `selectedChainFindingId`, its setter, derived inspection records and every chain link are recorded before movement.
 
 **Steps**:
 
@@ -296,23 +296,23 @@ T4 → T5
 
 **Validation**:
 
-- [ ] The six landmarks/headings occur once and in the exact ODH-01 order; Thesis directly follows Hero and Chain is last.
-- [ ] Selecting at least two findings updates the atomic panel to the corresponding finding each time.
-- [ ] Back link, Dor, Organização and Entrevista links retain their canonical destinations.
-- [ ] Direct access and refresh of `/oportunidades/OP-CONT-001` restore the same view; Back/Forward preserves URL-driven navigation.
-- [ ] An unknown opportunity ID preserves the current fallback and return link.
-- [ ] Thesis and Sustentação empty states pass with reversible runtime data and storage is restored afterward.
-- [ ] Mobile, tablet and desktop preserve the same DOM/visual order with no duplicated or inaccessible content.
-- [ ] `OP-CONT-001` remains `88/100`, `78%`, `H4`; AI Leverage, pains, counterevidence, validation and traceability content remain intact.
-- [ ] `npm test`, `npm run typecheck` and `npm run build` all exit zero; no test was removed, skipped or weakened.
-- [ ] Git diff contains no unexpected source file and no protected ODH-20 file.
+- [x] The six landmarks/headings occur once and in the exact ODH-01 order; Thesis directly follows Hero and Chain is last.
+- [x] Selecting at least two findings updates the atomic panel to the corresponding finding each time.
+- [x] Back link, Dor, Organização and Entrevista links retain their canonical destinations.
+- [x] Direct access and refresh of `/oportunidades/OP-CONT-001` restore the same view; Back/Forward preserves URL-driven navigation.
+- [x] An unknown opportunity ID preserves the current fallback and return link.
+- [x] Thesis and Sustentação empty states pass with reversible runtime data and storage is restored afterward.
+- [x] Mobile, tablet and desktop preserve the same DOM/visual order with no duplicated or inaccessible content.
+- [x] `OP-CONT-001` remains `88/100`, `78%`, `H4`; AI Leverage, pains, counterevidence, validation and traceability content remain intact.
+- [x] `npm test`, `npm run typecheck` and `npm run build` all exit zero; no test was removed, skipped or weakened.
+- [x] Git diff contains no unexpected source file and no protected ODH-20 file.
 
 **Completion criteria**:
 
-- [ ] ODH-01–ODH-28 have implementation or regression evidence.
-- [ ] Evidence Chain is functional and is the final conceptual zone.
-- [ ] Only the authorized production file and TLC bookkeeping differ from the recorded baseline.
-- [ ] Full gate passes and the feature is ready for the independent TLC Verifier.
+- [x] ODH-01–ODH-28 have implementation or regression evidence.
+- [x] Evidence Chain is functional and is the final conceptual zone.
+- [x] Only the authorized production file and TLC bookkeeping differ from the recorded baseline.
+- [x] Full gate passes and the feature is ready for the independent TLC Verifier.
 
 **Tests**: Full black-box UAT plus unchanged unit/integration regression suite
 **Gate**: Full — `npm test && npm run typecheck && npm run build`

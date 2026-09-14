@@ -6,10 +6,10 @@ A `OpportunityDetailView` apresenta todos os elementos necessários para avaliar
 
 ## Goals
 
-- [ ] Posicionar a Tese Estratégica imediatamente após o Hero, sem outro bloco conceitual entre eles.
-- [ ] Organizar a leitura em seis zonas consecutivas: Hero, Tese Estratégica, Sustentação Empírica & Contraprovas, Scores & Viabilidade, Validação e Evidence Chain.
-- [ ] Preservar integralmente conteúdo, valores, regras metodológicas, navegação e persistência existentes.
-- [ ] Manter a tela funcional em acesso direto, refresh e navegação interna.
+- [x] Posicionar a Tese Estratégica imediatamente após o Hero, sem outro bloco conceitual entre eles.
+- [x] Organizar a leitura em seis zonas consecutivas: Hero, Tese Estratégica, Sustentação Empírica & Contraprovas, Scores & Viabilidade, Validação e Evidence Chain.
+- [x] Preservar integralmente conteúdo, valores, regras metodológicas, navegação e persistência existentes.
+- [x] Manter a tela funcional em acesso direto, refresh e navegação interna.
 
 ## Out of Scope
 
@@ -124,45 +124,45 @@ A `OpportunityDetailView` apresenta todos os elementos necessários para avaliar
 
 | Requirement ID | Story | Phase | Status |
 | -------------- | ----- | ----- | ------ |
-| ODH-01 | P1: Ler a tese antes de avaliar sua sustentação | Design | Pending |
-| ODH-02 | P1: Ler a tese antes de avaliar sua sustentação | Design | Pending |
-| ODH-03 | P1: Ler a tese antes de avaliar sua sustentação | Design | Pending |
-| ODH-04 | P1: Ler a tese antes de avaliar sua sustentação | Design | Pending |
-| ODH-05 | P1: Ler a tese antes de avaliar sua sustentação | Design | Pending |
-| ODH-06 | P1: Ler a tese antes de avaliar sua sustentação | Design | Pending |
-| ODH-07 | P1: Ler a tese antes de avaliar sua sustentação | Design | Pending |
-| ODH-08 | P1: Ler a tese antes de avaliar sua sustentação | Design | Pending |
-| ODH-09 | P1: Ler a tese antes de avaliar sua sustentação | Design | Pending |
-| ODH-10 | P1: Ler a tese antes de avaliar sua sustentação | Design | Pending |
-| ODH-11 | P1: Ler a tese antes de avaliar sua sustentação | Design | Pending |
-| ODH-12 | P1: Ler a tese antes de avaliar sua sustentação | Design | Pending |
-| ODH-13 | P1: Preservar comportamento e metodologia | Design | Pending |
-| ODH-14 | P1: Preservar comportamento e metodologia | Design | Pending |
-| ODH-15 | P1: Preservar comportamento e metodologia | Design | Pending |
-| ODH-16 | P1: Preservar comportamento e metodologia | Design | Pending |
-| ODH-17 | P1: Preservar comportamento e metodologia | Design | Pending |
-| ODH-18 | P1: Preservar comportamento e metodologia | Design | Pending |
-| ODH-19 | P1: Preservar comportamento e metodologia | Design | Pending |
-| ODH-20 | P1: Preservar comportamento e metodologia | Design | Pending |
-| ODH-21 | P1: Preservar comportamento e metodologia | Design | Pending |
-| ODH-22 | P1: Preservar comportamento e metodologia | Design | Pending |
-| ODH-23 | P1: Preservar comportamento e metodologia | Design | Pending |
-| ODH-24 | P1: Preservar comportamento e metodologia | Design | Pending |
-| ODH-25 | Edge cases | Design | Pending |
-| ODH-26 | Edge cases | Design | Pending |
-| ODH-27 | Edge cases | Design | Pending |
-| ODH-28 | Edge cases | Design | Pending |
+| ODH-01 | P1: Ler a tese antes de avaliar sua sustentação | Implementation | ✅ Verified |
+| ODH-02 | P1: Ler a tese antes de avaliar sua sustentação | Implementation | ✅ Verified |
+| ODH-03 | P1: Ler a tese antes de avaliar sua sustentação | Implementation | ✅ Verified |
+| ODH-04 | P1: Ler a tese antes de avaliar sua sustentação | Implementation | ✅ Verified |
+| ODH-05 | P1: Ler a tese antes de avaliar sua sustentação | Implementation | ✅ Verified |
+| ODH-06 | P1: Ler a tese antes de avaliar sua sustentação | Implementation | ✅ Verified |
+| ODH-07 | P1: Ler a tese antes de avaliar sua sustentação | Implementation | ✅ Verified |
+| ODH-08 | P1: Ler a tese antes de avaliar sua sustentação | Implementation | ✅ Verified |
+| ODH-09 | P1: Ler a tese antes de avaliar sua sustentação | Implementation | ✅ Verified |
+| ODH-10 | P1: Ler a tese antes de avaliar sua sustentação | Implementation | ✅ Verified |
+| ODH-11 | P1: Ler a tese antes de avaliar sua sustentação | Implementation | ✅ Verified |
+| ODH-12 | P1: Ler a tese antes de avaliar sua sustentação | Implementation | ✅ Verified |
+| ODH-13 | P1: Preservar comportamento e metodologia | Implementation | ✅ Verified |
+| ODH-14 | P1: Preservar comportamento e metodologia | Implementation | ✅ Verified |
+| ODH-15 | P1: Preservar comportamento e metodologia | Implementation | ✅ Verified |
+| ODH-16 | P1: Preservar comportamento e metodologia | Implementation | ✅ Verified |
+| ODH-17 | P1: Preservar comportamento e metodologia | Implementation | ✅ Verified |
+| ODH-18 | P1: Preservar comportamento e metodologia | Implementation | ✅ Verified |
+| ODH-19 | P1: Preservar comportamento e metodologia | Implementation | ✅ Verified |
+| ODH-20 | P1: Preservar comportamento e metodologia | Implementation | ✅ Verified |
+| ODH-21 | P1: Preservar comportamento e metodologia | Implementation | ✅ Verified |
+| ODH-22 | P1: Preservar comportamento e metodologia | Implementation | ✅ Verified |
+| ODH-23 | P1: Preservar comportamento e metodologia | Implementation | ✅ Verified |
+| ODH-24 | P1: Preservar comportamento e metodologia | Implementation | ✅ Verified |
+| ODH-25 | Edge cases | Implementation | ✅ Verified |
+| ODH-26 | Edge cases | Implementation | ✅ Verified |
+| ODH-27 | Edge cases | Implementation | ✅ Verified |
+| ODH-28 | Edge cases | Implementation | ✅ Verified |
 
-**Coverage:** 28 total, 0 mapped to tasks, 28 pending design/task mapping.
+**Coverage:** 28 total, 28 mapped to tasks, 28 verified. Evidence in `validation.md`.
 
 ---
 
 ## Success Criteria
 
-- [ ] As seis zonas aparecem na ordem conceitual aprovada em todos os breakpoints.
-- [ ] A Tese Estratégica aparece imediatamente após o Hero e reúne os dez grupos de conteúdo existentes.
-- [ ] `OP-CONT-001` continua exibindo Opportunity Score `88/100`, Confidence `78%` e Evidence Level `H4`.
-- [ ] Dores, contraprovas, links internos, validação e Evidence Chain permanecem funcionais.
-- [ ] Nenhum arquivo de dados, modelo, cálculo, rota, contexto, Ranking, Guided Journey ou persistência é alterado.
-- [ ] Refresh e acesso direto à rota dinâmica continuam funcionando.
-- [ ] TypeScript, suíte automatizada existente e build permanecem verdes.
+- [x] As seis zonas aparecem na ordem conceitual aprovada em todos os breakpoints.
+- [x] A Tese Estratégica aparece imediatamente após o Hero e reúne os dez grupos de conteúdo existentes.
+- [x] `OP-CONT-001` continua exibindo Opportunity Score `88/100`, Confidence `78%` e Evidence Level `H4`.
+- [x] Dores, contraprovas, links internos, validação e Evidence Chain permanecem funcionais.
+- [x] Nenhum arquivo de dados, modelo, cálculo, rota, contexto, Ranking, Guided Journey ou persistência é alterado.
+- [x] Refresh e acesso direto à rota dinâmica continuam funcionando.
+- [x] TypeScript, suíte automatizada existente e build permanecem verdes.
